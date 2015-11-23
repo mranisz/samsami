@@ -11,12 +11,12 @@ CFLAGS=-Wall -std=c++11 -O3
 	
 all: testSamSAMi
 
-testSamSAMi: testSamSAMi.cpp libfmdummy.a libs/libaelf64.a
+testSamSAMi: testSamSAMi.cpp libsamsami.a libs/$(ASMLIB)
 	$(CXX) $(CFLAGS) testSamSAMi.cpp libsamsami.a libs/$(ASMLIB) -o testSamSAMi
 
-libsamsami.a: samsami.h samsami.cpp shared/common.h shared/common.cpp shared/patterns.h shared/patterns.cpp shared/sais.h shared/sais.c shared/timer.h shared/timer.cpp shared/xxhash.h shared/xxhash.c shared/hash.h shared/hash.cpp
-	$(CXX) $(CFLAGS) -c samsami.cpp shared/common.cpp shared/patterns.cpp shared/sais.c shared/timer.cpp shared/xxhash.c shared/hash.cpp
-	ar rcs libsamsami.a samsami.o common.o patterns.o sais.o timer.o xxhash.o hash.o
+libsamsami.a: samsami.h samsami.cpp shared/common.h shared/common.cpp shared/patterns.h shared/patterns.cpp shared/timer.h shared/timer.cpp shared/sais.h shared/sais.c shared/xxhash.h shared/xxhash.c shared/hash.h shared/hash.cpp
+	$(CXX) $(CFLAGS) -c samsami.cpp shared/common.cpp shared/patterns.cpp shared/timer.cpp shared/sais.c shared/xxhash.c shared/hash.cpp
+	ar rcs libsamsami.a samsami.o common.o patterns.o timer.o sais.o xxhash.o hash.o
 	make cleanObjects
 
 cleanObjects:

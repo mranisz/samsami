@@ -1,21 +1,26 @@
-#include <vector>
-
 #ifndef SHARED_HASH_H_
 #define SHARED_HASH_H_
 
 namespace samsami {
+    
+/*HTBASE*/
 
-class HT {
-private:
+class HTBase {
+protected:
 	void freeMemory();
 	void initialize();
+        void setType(int type);
 	void setLoadFactor(double loadFactor);
 	void setK(unsigned int k);
-	unsigned int getUniqueSuffixNum(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-	void fillHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-	void fillHTDataWithEntries(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-
+        unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
+        
 public:
+        enum HTType {
+		TYPE_BASIC = 1,
+		TYPE_DENSE = 2
+	};
+        
+        int type;
 	double loadFactor;
 	unsigned int k;
 	unsigned long long bucketsNum;
@@ -23,35 +28,141 @@ public:
 	alignas(128) unsigned int lut2[256][256][2];
 	unsigned int *boundariesHT;
 	unsigned int *alignedBoundariesHT;
-	unsigned char *entriesHT;
-	unsigned char *alignedEntriesHT;
-
+        unsigned long long boundariesHTLen;
+        unsigned int *denseBoundariesHT;
+        unsigned int *alignedDenseBoundariesHT;
+        unsigned long long denseBoundariesHTLen;
+        
 	const static unsigned int emptyValueHT;
 
+	unsigned int getHTSize();
+	void save(FILE *outFile);
+	void loadBase(FILE *inFile);
+	void free();
+};
+    
+/*HT*/
+
+class HT : public HTBase {
+private:
+        void setFunctions();
+        void buildBasicHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+	void fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void getBasicHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getDenseHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        
+        void (HT::*getBoundariesOperation)(unsigned char *, unsigned char *, unsigned int *, unsigned int &, unsigned int &) = NULL;
+        
+public:
+
 	HT() {
-		this->initialize();
+                this->initialize();
+                this->setType(HTBase::TYPE_BASIC);
+		this->setK(8);
+		this->setLoadFactor(0.9);
+                this->setFunctions();
 	}
 
-	HT(unsigned int k, double loadFactor) {
+	HT(HTBase::HTType type, unsigned int k, double loadFactor) {
 		this->initialize();
+                this->setType(type);
 		this->setK(k);
 		this->setLoadFactor(loadFactor);
+                this->setFunctions();
 	};
 
-	unsigned int getHTSize();
-	unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
-	void build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-	void buildWithEntries(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-	void getBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
-	void getBoundariesWithEntries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
-	void save(FILE *outFile);
-	void load(FILE *inFile);
-	void free();
+        void build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void load(FILE *inFile);
+        void getBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
 
 	~HT() {
 		this->freeMemory();
 	}
 };
+
+/*HTEXT*/
+
+class HTExt {
+private:
+	void freeMemory();
+	void initialize();
+        void setType(int type);
+	void setLoadFactor(double loadFactor);
+	void setK(unsigned int k);
+        void setFunctions();
+        unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
+	void buildBasicHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void buildDoubleDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+	void fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void fillDoubleDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void getBasicHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getDoubleDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        
+        void (HTExt::*getBoundariesOperation)(unsigned char *, unsigned int &, unsigned int &) = NULL;
+
+public:
+        enum HTExtType {
+                TYPE_BASIC = 1,
+                TYPE_DENSE = 2,
+                TYPE_DOUBLE_DENSE = 3
+	};
+        
+        int type;
+	double loadFactor;
+	unsigned int k;
+	unsigned long long bucketsNum;
+
+	alignas(128) unsigned int lut2[256][256][2];
+	unsigned int *boundariesHT;
+	unsigned int *alignedBoundariesHT;
+        unsigned long long boundariesHTLen;
+        unsigned int *denseBoundariesHT;
+        unsigned int *alignedDenseBoundariesHT;
+        unsigned long long denseBoundariesHTLen;
+	unsigned char *entriesHT;
+	unsigned char *alignedEntriesHT;
+        unsigned long long entriesHTLen;
+        
+
+	const static unsigned int emptyValueHT;
+
+	HTExt() {
+		this->initialize();
+                this->setType(HTExt::TYPE_BASIC);
+		this->setK(8);
+		this->setLoadFactor(0.9);
+                this->setFunctions();
+	}
+
+	HTExt(HTExt::HTExtType type, unsigned int k, double loadFactor) {
+		this->initialize();
+                this->setType(type);
+		this->setK(k);
+		this->setLoadFactor(loadFactor);
+                this->setFunctions();
+	};
+
+	unsigned int getHTSize();
+        
+        void build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void getBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
+	void save(FILE *outFile);
+	void load(FILE *inFile);
+	void free();
+
+	~HTExt() {
+		this->freeMemory();
+	}
+};
+
+/*SHARED STUFF*/
+
+unsigned int getUniqueSuffixNum(unsigned int k, unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
 
 }
 

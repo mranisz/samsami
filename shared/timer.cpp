@@ -1,16 +1,14 @@
-#include <cstdio>
 #include "timer.h"
 
-void CStopWatch::startTimer() {
-	gettimeofday(&(timer.start),NULL);
+void ChronoStopWatch::startTimer() {
+	timer.start = high_resolution_clock::now();
 }
 
-void CStopWatch::stopTimer() {
-	gettimeofday(&(timer.stop),NULL);
+void ChronoStopWatch::stopTimer() {
+	timer.stop = high_resolution_clock::now();
 }
 
-double CStopWatch::getElapsedTime() {
-	timeval res;
-	timersub(&(timer.stop),&(timer.start),&res);
-	return res.tv_sec + res.tv_usec/1000000.0; // 10^6 uSec per second
+double ChronoStopWatch::getElapsedTime() {
+        nanoseconds time_span = duration_cast<nanoseconds>(timer.stop - timer.start);
+	return (double)time_span.count() / 1000000000.0;
 }

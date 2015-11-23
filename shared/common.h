@@ -1,10 +1,10 @@
+#ifndef SHARED_COMMON_H_
+#define SHARED_COMMON_H_
+
 #include <string.h>
 #include <vector>
 
 using namespace std;
-
-#ifndef SHARED_COMMON_H_
-#define SHARED_COMMON_H_
 
 namespace samsami {
 
@@ -28,8 +28,6 @@ void checkNullChar(unsigned char *text, unsigned int textLen);
 unsigned int *getSA(unsigned char *text, unsigned int textLen, unsigned int &saLen, unsigned int addLen, bool verbose);
 unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, unsigned int &bwtLen, bool verbose);
 unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int &bwtLen, bool verbose);
-unsigned int getUniqueSuffixNum(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, unsigned int k);
-unsigned int getHashValue(unsigned char* str);
 void fillArrayC(unsigned char *text, unsigned int textLen, unsigned int* C, bool verbose);
 string getStringFromSelectedChars(vector<unsigned char> selectedChars, string separator);
 void binarySearch(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end);
