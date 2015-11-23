@@ -68,8 +68,8 @@ void setVerbose(bool verbose);
 
 Parameters:
 - indexType:
-      - SamSAMi1::TYPE_STANDARD (default)
-      - SamSAMi1::TYPE_SKETCHES
+      - SamSAMi1::STANDARD (default)
+      - SamSAMi1::WITH_SKETCHES
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 
@@ -87,13 +87,13 @@ SamSAMi1-hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled
 
 Parameters:
 - indexType:
-      - SamSAMi1::TYPE_STANDARD (default)
-      - SamSAMi1::TYPE_SKETCHES
+      - SamSAMi1::STANDARD (default)
+      - SamSAMi1::WITH_SKETCHES
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 - hash type:
-      - HT::TYPE_BASIC - 
-      - HT::TYPE_DENSE - 
+      - HT::STANDARD - using 8 bytes for each entry: 4 bytes for left boundary + 4 bytes for right boundary
+      - HT::DENSE - using 6 bytes for each entry: 4 bytes for left boundary + 2 bytes for right boundary
 - k - length of prefixes of suffixes from suffix array (k ≥ 2)
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 
@@ -109,8 +109,8 @@ SamSAMi1(SamSAMi1::IndexType indexType, unsigned int q, unsigned int p, HT::HTTy
 
 Parameters:
 - indexType:
-      - SamSAMi2::TYPE_STANDARD (default)
-      - SamSAMi2::TYPE_SKETCHES
+      - SamSAMi2::STANDARD (default)
+      - SamSAMi2::WITH_SKETCHES
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 
@@ -128,13 +128,13 @@ SamSAMi2-hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled
 
 Parameters:
 - indexType:
-      - SamSAMi2::TYPE_STANDARD (default)
-      - SamSAMi2::TYPE_SKETCHES
+      - SamSAMi2::STANDARD (default)
+      - SamSAMi2::WITH_SKETCHES
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 - hash type:
-      - HT::TYPE_BASIC - 
-      - HT::TYPE_DENSE - 
+      - HTSamSAMi2::STANDARD - using 8 bytes for each entry: 4 bytes for left boundary + 4 bytes for right boundary
+      - HTSamSAMi2::DENSE - using 6 bytes for each entry: 4 bytes for left boundary + 2 bytes for right boundary
 - k - length of prefixes of suffixes from suffix array (k ≥ 2)
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 
@@ -143,7 +143,7 @@ Limitations:
 
 Constructors:
 ```
-SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HT::HTType hTType, unsigned int k, double loadFactor);
+SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HTSamSAMi2::HTType hTType, unsigned int k, double loadFactor);
 ```
 
 ##SamSAMi1 usage example
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
 		samSAMi1 = new SamSAMi1();
 		samSAMi1->load(indexFileName);
 	} else {
-		samSAMi1 = new SamSAMi1(SamSAMi1::TYPE_SKETCHES, 6, 2);
+		samSAMi1 = new SamSAMi1(SamSAMi1::WITH_SKETCHES, 6, 2);
 		samSAMi1->setVerbose(true);
 		text = readText(textFileName, textLen, 0);
 		samSAMi1->build(text, textLen);

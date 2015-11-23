@@ -16,7 +16,7 @@ namespace samsami {
 const unsigned int HTBase::emptyValueHT = (unsigned int)-1;
 
 void HTBase::setType(int type) {
-	if (type != HTBase::TYPE_BASIC && type != HTBase::TYPE_DENSE) {
+	if (type != HTBase::STANDARD && type != HTBase::DENSE) {
 		cout << "Error: not valid hash type" << endl;
 		exit(1);
 	}
@@ -151,10 +151,10 @@ void HT::load(FILE *inFile) {
 
 void HT::setFunctions() {
         switch (this->type) {
-        case HTBase::TYPE_BASIC:
-                this->getBoundariesOperation = &HT::getBasicHTBoundaries;
+        case HTBase::STANDARD:
+                this->getBoundariesOperation = &HT::getStandardHTBoundaries;
                 break;
-        case HTBase::TYPE_DENSE:
+        case HTBase::DENSE:
                 this->getBoundariesOperation = &HT::getDenseHTBoundaries;
                 break;
         default:
@@ -163,7 +163,7 @@ void HT::setFunctions() {
         }
 }
 
-void HT::fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen) {
+void HT::fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen) {
 	unsigned long long hash = this->bucketsNum;
         this->boundariesHTLen = 2 * this->bucketsNum;
 	this->boundariesHT = new unsigned int[this->boundariesHTLen + 32];
@@ -293,16 +293,16 @@ void HT::build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsi
 	unsigned int uniqueSuffixNum = getUniqueSuffixNum(this->k, text, textLen, sa, saLen);
 	this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
         switch(this->type) {
-        case HTBase::TYPE_BASIC:
-                this->fillBasicHTData(text, textLen, sa, saLen);
+        case HTBase::STANDARD:
+                this->fillStandardHTData(text, textLen, sa, saLen);
                 break;
-        case HTBase::TYPE_DENSE:
+        case HTBase::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen);
                 break;     
         }
 }
 
-void HT::getBasicHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
+void HT::getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
 	unsigned int leftBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][0];
 	unsigned int rightBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][1];
 	if (leftBoundaryLUT2 < rightBoundaryLUT2) {
@@ -368,7 +368,7 @@ void HT::getBoundaries(unsigned char *pattern, unsigned char *text, unsigned int
 const unsigned int HTExt::emptyValueHT = (unsigned int)-1;
 
 void HTExt::setType(int type) {
-	if (type != HTExt::TYPE_BASIC && type != HTExt::TYPE_DENSE && type != HTExt::TYPE_DOUBLE_DENSE) {
+	if (type != HTExt::STANDARD && type != HTExt::DENSE && type != HTExt::DOUBLE_DENSE) {
 		cout << "Error: not valid hash type" << endl;
 		exit(1);
 	}
@@ -393,13 +393,13 @@ void HTExt::setLoadFactor(double loadFactor) {
 
 void HTExt::setFunctions() {
         switch (this->type) {
-        case HTExt::TYPE_BASIC:
-                this->getBoundariesOperation = &HTExt::getBasicHTBoundaries;
+        case HTExt::STANDARD:
+                this->getBoundariesOperation = &HTExt::getStandardHTBoundaries;
                 break;
-        case HTExt::TYPE_DENSE:
+        case HTExt::DENSE:
                 this->getBoundariesOperation = &HTExt::getDenseHTBoundaries;
                 break;
-        case HTExt::TYPE_DOUBLE_DENSE:
+        case HTExt::DOUBLE_DENSE:
                 this->getBoundariesOperation = &HTExt::getDoubleDenseHTBoundaries;
                 break;
         default:
@@ -535,7 +535,7 @@ unsigned long long HTExt::getHashValue(unsigned char* str, unsigned int strLen) 
 	return XXH64(str, strLen, 0);
 }
 
-void HTExt::fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
+void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
 	bool isSelectedChars = (selectedChars.size() != 0);
 	unsigned long long hash = this->bucketsNum;
         this->boundariesHTLen = 2 * this->bucketsNum;
@@ -781,19 +781,19 @@ void HTExt::build(unsigned char *text, unsigned int textLen, unsigned int *sa, u
 	unsigned int uniqueSuffixNum = getUniqueSuffixNum(this->k, text, textLen, sa, saLen, selectedChars);
 	this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
         switch(this->type) {
-        case HTExt::TYPE_BASIC:
-                this->fillBasicHTData(text, textLen, sa, saLen, selectedChars);
+        case HTExt::STANDARD:
+                this->fillStandardHTData(text, textLen, sa, saLen, selectedChars);
                 break;
-        case HTExt::TYPE_DENSE:
+        case HTExt::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen, selectedChars);
                 break;
-        case HTExt::TYPE_DOUBLE_DENSE:
+        case HTExt::DOUBLE_DENSE:
                 this->fillDoubleDenseHTData(text, textLen, sa, saLen, selectedChars);
                 break;
         }
 }
 
-void HTExt::getBasicHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary) {
+void HTExt::getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary) {
 	unsigned int leftBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][0];
 	unsigned int rightBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][1];
 	if (leftBoundaryLUT2 < rightBoundaryLUT2) {

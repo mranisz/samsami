@@ -49,13 +49,13 @@ private:
         
 public:
 	enum IndexType {
-		TYPE_STANDARD = 1,
-		TYPE_SKETCHES = 2
+		STANDARD = 1,
+		WITH_SKETCHES = 2
 	};
 
 	SamSAMi1() {
 		this->initialize();
-                this->setType(SamSAMi1::TYPE_STANDARD);
+                this->setType(SamSAMi1::STANDARD);
                 this->setQ(4);
                 this->setP(1);
 		this->setFunctions();
@@ -113,7 +113,7 @@ public:
 
 	HTSamSAMi2() {
                 this->initialize();
-                this->setType(HTBase::TYPE_BASIC);
+                this->setType(HTBase::STANDARD);
 		this->setK(8);
 		this->setLoadFactor(0.9);
                 this->setFunctions();
@@ -176,13 +176,13 @@ private:
         
 public:
 	enum IndexType {
-		TYPE_STANDARD = 1,
-		TYPE_SKETCHES = 2
+		STANDARD = 1,
+		WITH_SKETCHES = 2
 	};
 
 	SamSAMi2() {
 		this->initialize();
-                this->setType(SamSAMi2::TYPE_STANDARD);
+                this->setType(SamSAMi2::STANDARD);
                 this->setQ(4);
                 this->setP(1);
 		this->setFunctions();
@@ -196,7 +196,7 @@ public:
 		this->setFunctions();
 	}
 
-	SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HT::HTType hTType, unsigned int k, double loadFactor) {
+	SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HTSamSAMi2::HTType hTType, unsigned int k, double loadFactor) {
 		this->initialize();
 		this->setType(indexType);
                 this->setQ(q);

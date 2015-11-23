@@ -11,7 +11,7 @@ namespace samsami {
 /*SAMSAMI1*/
 
 void SamSAMi1::setType(int indexType) {
-	if (indexType != SamSAMi1::TYPE_STANDARD && indexType != SamSAMi1::TYPE_SKETCHES) {
+	if (indexType != SamSAMi1::STANDARD && indexType != SamSAMi1::WITH_SKETCHES) {
 		cout << "Error: not valid index type" << endl;
 		exit(1);
 	}
@@ -42,11 +42,11 @@ void SamSAMi1::setMinPatternLenForHash() {
 void SamSAMi1::setFunctions() {
 	if (this->ht != NULL) {
 		switch (this->type) {
-		case SamSAMi1::TYPE_STANDARD:
+		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi1::build_std;
                         this->countOperation = &SamSAMi1::count_std_hash;
 			break;
-		case SamSAMi1::TYPE_SKETCHES:
+		case SamSAMi1::WITH_SKETCHES:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches_hash;
 			break;
@@ -56,11 +56,11 @@ void SamSAMi1::setFunctions() {
 		}
 	} else {
 		switch (this->type) {
-		case SamSAMi1::TYPE_STANDARD:
+		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi1::build_std;
                         this->countOperation = &SamSAMi1::count_std;
 			break;
-		case SamSAMi1::TYPE_SKETCHES:
+		case SamSAMi1::WITH_SKETCHES:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches;
 			break;
@@ -465,7 +465,7 @@ void SamSAMi1::load(const char *fileName) {
 /*SAMSAMI2*/
 
 void SamSAMi2::setType(int indexType) {
-	if (indexType != SamSAMi2::TYPE_STANDARD && indexType != SamSAMi2::TYPE_SKETCHES) {
+	if (indexType != SamSAMi2::STANDARD && indexType != SamSAMi2::WITH_SKETCHES) {
 		cout << "Error: not valid index type" << endl;
 		exit(1);
 	}
@@ -496,11 +496,11 @@ void SamSAMi2::setMinPatternLenForHash() {
 void SamSAMi2::setFunctions() {
 	if (this->ht != NULL) {
 		switch (this->type) {
-		case SamSAMi2::TYPE_STANDARD:
+		case SamSAMi2::STANDARD:
                         this->builder = &SamSAMi2::build_std;
                         this->countOperation = &SamSAMi2::count_std_hash;
 			break;
-		case SamSAMi2::TYPE_SKETCHES:
+		case SamSAMi2::WITH_SKETCHES:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches_hash;
 			break;
@@ -510,11 +510,11 @@ void SamSAMi2::setFunctions() {
 		}
 	} else {
 		switch (this->type) {
-		case SamSAMi1::TYPE_STANDARD:
+		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi2::build_std;
                         this->countOperation = &SamSAMi2::count_std;
 			break;
-		case SamSAMi1::TYPE_SKETCHES:
+		case SamSAMi1::WITH_SKETCHES:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches;
 			break;
@@ -945,10 +945,10 @@ void HTSamSAMi2::load(FILE *inFile) {
 
 void HTSamSAMi2::setFunctions() {
         switch (this->type) {
-        case HT::TYPE_BASIC:
+        case HT::STANDARD:
                 this->getBoundariesOperation = &HTSamSAMi2::getBasicHTBoundaries;
                 break;
-        case HT::TYPE_DENSE:
+        case HT::DENSE:
                 this->getBoundariesOperation = &HTSamSAMi2::getDenseHTBoundaries;
                 break;
         default:
@@ -1087,10 +1087,10 @@ void HTSamSAMi2::build(unsigned char *text, unsigned int textLen, unsigned int *
 	unsigned int uniqueSuffixNum = getUniqueSuffixNumForSamSAMi2(this->k, text, textLen, sa, saLen);
 	this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
         switch(this->type) {
-        case HTBase::TYPE_BASIC:
+        case HTBase::STANDARD:
                 this->fillBasicHTData(text, textLen, sa, saLen);
                 break;
-        case HTBase::TYPE_DENSE:
+        case HTBase::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen);
                 break;     
         }

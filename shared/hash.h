@@ -16,8 +16,8 @@ protected:
         
 public:
         enum HTType {
-		TYPE_BASIC = 1,
-		TYPE_DENSE = 2
+		STANDARD = 1,
+		DENSE = 2
 	};
         
         int type;
@@ -46,11 +46,11 @@ public:
 class HT : public HTBase {
 private:
         void setFunctions();
-        void buildBasicHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void buildStandardHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-	void fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-        void getBasicHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDenseHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
         
         void (HT::*getBoundariesOperation)(unsigned char *, unsigned char *, unsigned int *, unsigned int &, unsigned int &) = NULL;
@@ -59,7 +59,7 @@ public:
 
 	HT() {
                 this->initialize();
-                this->setType(HTBase::TYPE_BASIC);
+                this->setType(HTBase::STANDARD);
 		this->setK(8);
 		this->setLoadFactor(0.9);
                 this->setFunctions();
@@ -93,13 +93,13 @@ private:
 	void setK(unsigned int k);
         void setFunctions();
         unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
-	void buildBasicHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+	void buildStandardHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void buildDoubleDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-	void fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void fillDoubleDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-        void getBasicHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDoubleDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         
@@ -107,9 +107,9 @@ private:
 
 public:
         enum HTExtType {
-                TYPE_BASIC = 1,
-                TYPE_DENSE = 2,
-                TYPE_DOUBLE_DENSE = 3
+                STANDARD = 1,
+                DENSE = 2,
+                DOUBLE_DENSE = 3
 	};
         
         int type;
@@ -133,7 +133,7 @@ public:
 
 	HTExt() {
 		this->initialize();
-                this->setType(HTExt::TYPE_BASIC);
+                this->setType(HTExt::STANDARD);
 		this->setK(8);
 		this->setLoadFactor(0.9);
                 this->setFunctions();
