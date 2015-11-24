@@ -46,8 +46,6 @@ public:
 class HT : public HTBase {
 private:
         void setFunctions();
-        void buildStandardHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-        void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
 	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
@@ -93,9 +91,6 @@ private:
 	void setK(unsigned int k);
         void setFunctions();
         unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
-	void buildStandardHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-        void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-        void buildDoubleDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
 	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void fillDoubleDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});

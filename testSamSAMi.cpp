@@ -27,8 +27,8 @@ void getUsage(char **argv) {
 	cout << "Select index you want to test:" << endl;
 	cout << "SamSAMi1: ./" << argv[0] << " 1 std|sketches q p fileName patternNum patternLen" << endl;
         cout << "SamSAMi2: ./" << argv[0] << " 2 std|sketches q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMi1-hash: ./" << argv[0] << " 1 std|sketches hash|hash-dense q p k loadFactor fileName patternNum patternLen" << endl;
-        cout << "SamSAMi2-hash: ./" << argv[0] << " 2 std|sketches hash|hash-dense q p k loadFactor fileName patternNum patternLen" << endl;
+        cout << "SamSAMi1-hash: ./" << argv[0] << " 1 std|sketches q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
+        cout << "SamSAMi2-hash: ./" << argv[0] << " 2 std|sketches q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
         cout << "where:" << endl;
         cout << "q - window length " << endl;
 	cout << "p - minimizer length, p <= q" << endl;
@@ -46,21 +46,21 @@ int main(int argc, char *argv[]) {
 	}
         if ((string)argv[1] == "1") {
 		if (SamSAMi1IndexTypesMap.find(string(argv[2])) != SamSAMi1IndexTypesMap.end()) {
-                        if (SamSAMi1HashTypesMap.find(string(argv[3])) != SamSAMi1HashTypesMap.end()) {
-                                samSAMi1Hash(string(argv[2]), string(argv[4]), string(argv[5]), string(argv[3]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
+                        if (SamSAMi1HashTypesMap.find(string(argv[5])) != SamSAMi1HashTypesMap.end()) {
+                                if (argc == 11) samSAMi1Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
                         }
                         else {
-                                samSAMi1(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+                                if (argc == 8) samSAMi1(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
                         }
 		}
 	}
         else if ((string)argv[1] == "2") {
 		if (SamSAMi2IndexTypesMap.find(string(argv[2])) != SamSAMi2IndexTypesMap.end()) {
-                        if (SamSAMi2HashTypesMap.find(string(argv[3])) != SamSAMi2HashTypesMap.end()) {
-                                samSAMi2Hash(string(argv[2]), string(argv[4]), string(argv[5]), string(argv[3]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
+                        if (SamSAMi2HashTypesMap.find(string(argv[5])) != SamSAMi2HashTypesMap.end()) {
+                                if (argc == 11) samSAMi2Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
                         }
                         else {
-                                samSAMi2(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+                                if (argc == 8) samSAMi2(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
                         }
 		}
 	}

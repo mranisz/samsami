@@ -618,17 +618,26 @@ void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsign
 void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
 	bool isSelectedChars = (selectedChars.size() != 0);
 	unsigned long long hash = this->bucketsNum;
-        this->boundariesHTLen = 2 * this->bucketsNum;
+        unsigned int beg = 0, end = 0, step = 0;
+        this->boundariesHTLen = this->bucketsNum;
 	this->boundariesHT = new unsigned int[this->boundariesHTLen + 32];
 	this->alignedBoundariesHT = this->boundariesHT;
 	while ((unsigned long long)(this->alignedBoundariesHT) % 128) ++(this->alignedBoundariesHT);
+        this->denseBoundariesHTLen = this->boundariesHTLen / 2 + this->boundariesHTLen % 2;
+        this->denseBoundariesHT = new unsigned int[this->denseBoundariesHTLen + 32];
+	this->alignedDenseBoundariesHT = this->denseBoundariesHT;
+	while ((unsigned long long)(this->alignedDenseBoundariesHT) % 128) ++(this->alignedDenseBoundariesHT);
+        unsigned int* boundariesHTTemp = new unsigned int[this->boundariesHTLen];
         this->entriesHTLen = this->bucketsNum * this->k;
 	this->entriesHT = new unsigned char[this->entriesHTLen + 128];
 	this->alignedEntriesHT = this->entriesHT;
 	while ((unsigned long long)(this->alignedEntriesHT) % 128) ++(this->alignedEntriesHT);
 
-	for (unsigned long long i = 0; i < this->boundariesHTLen; ++i) this->alignedBoundariesHT[i] = HT::emptyValueHT;
-
+	for (unsigned long long i = 0; i < this->boundariesHTLen; ++i) {
+            this->alignedBoundariesHT[i] = HT::emptyValueHT;
+            boundariesHTTemp[i] = 0;
+        }
+            
 	unsigned char *lastPattern = new unsigned char[this->k + 1];
 	for (unsigned int i = 0; i < this->k; ++i) lastPattern[i] = 255;
 	lastPattern[this->k] = '\0';
@@ -652,8 +661,8 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 		else {
 			strcpy((char *)lastPattern, (const char *)pattern);
 			if (hash != this->bucketsNum) {
-				if (notLastOutsideText) this->alignedBoundariesHT[2 * hash + 1] = i;
-				else this->alignedBoundariesHT[2 * hash + 1] = lastNotOutsideTextIndex;
+				if (notLastOutsideText) boundariesHTTemp[hash] = (unsigned int)ceil(((double)i - beg) / step);
+				else boundariesHTTemp[hash] = (unsigned int)ceil(((double)lastNotOutsideTextIndex - beg) / step);
 			}
 			notLastOutsideText = true;
 			if (isSelectedChars) {
@@ -679,8 +688,11 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 			hash = getHashValue(pattern, this->k) % this->bucketsNum;
 		}
 		while (true) {
-			if (this->alignedBoundariesHT[2 * hash] == HT::emptyValueHT) {
-				this->alignedBoundariesHT[2 * hash] = i;
+			if (this->alignedBoundariesHT[hash] == HT::emptyValueHT) {
+                                beg = this->lut2[pattern[0]][pattern[1]][0];
+				end = this->lut2[pattern[0]][pattern[1]][1];
+				step = (unsigned int)ceil(((double)end + 1 - beg) / 65536);
+				this->alignedBoundariesHT[hash] = i;
 				for (unsigned int j = 0; j < this->k; ++j) this->alignedEntriesHT[hash * this->k + j] = pattern[j];
 				break;
 			}
@@ -689,8 +701,11 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 			}
 		}
 	}
-	if (hash != this->bucketsNum) this->alignedBoundariesHT[2 * hash + 1] = saLen;
+	if (hash != this->bucketsNum) boundariesHTTemp[hash] = (unsigned int)ceil(((double)saLen - beg) / step);
 
+        for (unsigned long long i = 0; i < this->denseBoundariesHTLen; ++i) this->alignedDenseBoundariesHT[i] = (boundariesHTTemp[2 * i] << 16) + boundariesHTTemp[2 * i + 1];
+        
+        delete[] boundariesHTTemp;
 	delete[] lastPattern;
 	delete[] pattern;
 }
@@ -821,14 +836,17 @@ void HTExt::getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBo
 }
 
 void HTExt::getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary) {
+        unsigned int step;
 	unsigned int leftBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][0];
 	unsigned int rightBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][1];
 	if (leftBoundaryLUT2 < rightBoundaryLUT2) {
 		unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
 		while (true) {
-			leftBoundary = this->alignedBoundariesHT[2 * hash];
+			leftBoundary = this->alignedBoundariesHT[hash];
 			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)&(this->alignedEntriesHT[hash * this->k]), this->k) == 0) {
-				rightBoundary = this->alignedBoundariesHT[2 * hash + 1];
+				step = (unsigned int)ceil(((double)rightBoundaryLUT2 + 1 - leftBoundaryLUT2) / 65536);
+                                if ((hash & 1) == 0) rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] >> 16) * step + leftBoundaryLUT2;
+                                else rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] & 0xFFFF) * step + leftBoundaryLUT2;
 				break;
 			}
 			if (leftBoundary == HT::emptyValueHT) {
