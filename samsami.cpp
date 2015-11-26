@@ -308,10 +308,7 @@ unsigned int SamSAMi1::count_std_hash(unsigned char *pattern, unsigned int patte
 }
 
 unsigned int SamSAMi1::count_sketches_hash(unsigned char *pattern, unsigned int patternLen) {
-        if (patternLen < this->q) {
-                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
-                exit(1);
-        }
+        if (patternLen < this->minPatternLenForHash) return this->count_sketches(pattern, patternLen);
 	unsigned int beg = 0, end = 0, count = 0;
 	unsigned int pos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {

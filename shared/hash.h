@@ -125,6 +125,7 @@ public:
         
 
 	const static unsigned int emptyValueHT;
+        const static unsigned int emptyValueDenseHT;
 
 	HTExt() {
 		this->initialize();

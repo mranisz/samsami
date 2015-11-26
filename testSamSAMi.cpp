@@ -46,28 +46,18 @@ int main(int argc, char *argv[]) {
 	}
         if ((string)argv[1] == "1") {
 		if (SamSAMi1IndexTypesMap.find(string(argv[2])) != SamSAMi1IndexTypesMap.end()) {
-                        if (SamSAMi1HashTypesMap.find(string(argv[5])) != SamSAMi1HashTypesMap.end()) {
-                                if (argc == 11) samSAMi1Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
-                        }
-                        else {
-                                if (argc == 8) samSAMi1(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
-                        }
+                        if (argc == 8) samSAMi1(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+                        else if (argc == 11 && SamSAMi1HashTypesMap.find(string(argv[5])) != SamSAMi1HashTypesMap.end()) samSAMi1Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
 		}
 	}
         else if ((string)argv[1] == "2") {
 		if (SamSAMi2IndexTypesMap.find(string(argv[2])) != SamSAMi2IndexTypesMap.end()) {
-                        if (SamSAMi2HashTypesMap.find(string(argv[5])) != SamSAMi2HashTypesMap.end()) {
-                                if (argc == 11) samSAMi2Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
-                        }
-                        else {
-                                if (argc == 8) samSAMi2(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
-                        }
+                        if (argc == 8) samSAMi2(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+                        else if (argc == 11 && SamSAMi2HashTypesMap.find(string(argv[5])) != SamSAMi2HashTypesMap.end()) samSAMi2Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), string(argv[7]), argv[8], atoi(argv[9]), atoi(argv[10]));
 		}
 	}
-        else {
-		getUsage(argv);
-		exit(1);
-	}
+        getUsage(argv);
+        exit(1);
 }
 
 void samSAMi1(string indexType, string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
