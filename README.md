@@ -1,7 +1,7 @@
 # SamSAMi text indexes library
 
 ##What is it?
-The SamSAMi text indexes are ...
+The SamSAMi text indexes are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (=Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
 
 The current version handles only the count query (i.e., returns the number of occurrences of the given pattern).
 
@@ -106,6 +106,7 @@ SamSAMi1(SamSAMi1::IndexType indexType, unsigned int q, unsigned int p, HT::HTTy
 ```
 
 ##SamSAMi2
+To speed up searches, SamSAMi2 stores some extra data on 4 most significant bits in each SamSAMi offset (this is the reason for which the longest indexed text for SamSAMi2 is limited in our implementation to 256 MB only).
 
 Parameters:
 - indexType:

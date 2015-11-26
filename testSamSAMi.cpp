@@ -42,7 +42,7 @@ void getUsage(char **argv) {
 int main(int argc, char *argv[]) {
 	if (argc < 8) {
 		getUsage(argv);
-		return 1;
+		exit(1);
 	}
         if ((string)argv[1] == "1") {
 		if (SamSAMi1IndexTypesMap.find(string(argv[2])) != SamSAMi1IndexTypesMap.end()) {
@@ -108,6 +108,7 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 	delete[] indexCounts;
 	delete samSAMi1;
 	delete P;
+        exit(0);
 }
 
 void samSAMi1Hash(string indexType, string q, string p, string hTType, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
@@ -158,6 +159,7 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 	delete[] indexCounts;
 	delete samSAMi1;
 	delete P;
+        exit(0);
 }
 
 void samSAMi2(string indexType, string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
@@ -208,6 +210,7 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 	delete[] indexCounts;
 	delete samSAMi2;
 	delete P;
+        exit(0);
 }
 
 void samSAMi2Hash(string indexType, string q, string p, string hTType, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
@@ -258,4 +261,5 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 	delete[] indexCounts;
 	delete samSAMi2;
 	delete P;
+        exit(0);
 }
