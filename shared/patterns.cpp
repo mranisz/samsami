@@ -13,13 +13,17 @@ void Patterns::initialize() {
 }
 
 void Patterns::initializePatterns() {
-	stringstream ss;
+	unsigned int textLen, queriesFirstIndexArrayLen;
+	unsigned char *text = readFileChar(this->textFileName, textLen, 0);
+        if (textLen < this->m) {
+                cout << "Error: text shorter than pattern length" << endl;
+                exit(1);
+        }
+	unsigned int *queriesFirstIndexArray;
+        stringstream ss;
 	ss << "patterns-" << this->textFileName << "-" << this->m << "-" << this->queriesNum << "-" << getStringFromSelectedChars(this->selectedChars, ".") << ".dat";
 	string s = ss.str();
 	char *patternFileName = (char *)(s.c_str());
-	unsigned int textLen, queriesFirstIndexArrayLen;
-	unsigned char *text = readFileChar(this->textFileName, textLen, 0);
-	unsigned int *queriesFirstIndexArray;
 
 	if (!fileExists(patternFileName)) {
 		cout << "Generating " << this->queriesNum << " patterns of length " << this->m << " from " << this->textFileName;
@@ -30,7 +34,7 @@ void Patterns::initializePatterns() {
 
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_int_distribution<unsigned int> dis(100, textLen - m - 101);
+		uniform_int_distribution<unsigned int> dis(0, textLen - this->m);
 
 		queriesFirstIndexArray = new unsigned int[this->queriesNum];
 
@@ -55,14 +59,7 @@ void Patterns::initializePatterns() {
 				}
 			}
 		} else {
-			for (unsigned int i = 0; i < this->queriesNum; ++i) {
-				genVal = dis(gen);
-				if ((int)text[genVal + m - 1] == 255) {
-					--i;
-					continue;
-				}
-				queriesFirstIndexArray[i] = genVal;
-			}
+			for (unsigned int i = 0; i < this->queriesNum; ++i) queriesFirstIndexArray[i] = dis(gen);
 		}
 		cout << "Done" << endl;
 		cout << "Saving patterns in " << patternFileName << " ... " << flush;

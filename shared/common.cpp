@@ -184,6 +184,11 @@ string getStringFromSelectedChars(vector<unsigned char> selectedChars, string se
 }
 
 void binarySearch(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
+	if (pattern[patternLength - 1] == 255) binarySearchStrncmp(sa, text, lStart,rStart, pattern, patternLength, beg, end);
+	else binarySearchAStrcmp(sa, text, lStart,rStart, pattern, patternLength, beg, end);
+}
+
+void binarySearchAStrcmp(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
 	unsigned int l = lStart;
 	unsigned int r = rStart;
 	unsigned int mid;
@@ -209,6 +214,33 @@ void binarySearch(unsigned int *sa, unsigned char *text, unsigned int lStart, un
 		}
 	}
 	--pattern[patternLength - 1];
+	end = r;
+}
+
+void binarySearchStrncmp(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
+	unsigned int l = lStart;
+	unsigned int r = rStart;
+	unsigned int mid;
+	while (l < r) {
+		mid = (l + r) / 2;
+		if (strncmp((const char*)pattern, (const char*)(text + sa[mid]), patternLength) > 0) {
+			l = mid + 1;
+		}
+		else {
+			r = mid;
+		}
+	}
+	beg = l;
+	r = rStart;
+	while (l < r) {
+		mid = (l + r) / 2;
+		if (strncmp((const char*)pattern, (const char*)(text + sa[mid]), patternLength) < 0) {
+			r = mid;
+		}
+		else {
+			l = mid + 1;
+		}
+	}
 	end = r;
 }
 

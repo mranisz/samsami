@@ -1,7 +1,9 @@
 # SamSAMi text indexes library
 
 ##What is it?
-The SamSAMi text indexes are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (=Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
+The SamSAMi text indexes are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
+
+SamSAMi1 uses 5n bytes of RAM in the worst case (which is however unlikely). This includes 1n bytes for the input text and 4n bytes for the index. Typically its memory use depends on the parameters q, p and on average the required memory is about 1n+8/(q-p+2)n bytes.
 
 The current version handles only the count query (i.e., returns the number of occurrences of the given pattern).
 
@@ -69,7 +71,7 @@ void setVerbose(bool verbose);
 Parameters:
 - indexType:
       - SamSAMi1::STANDARD (default)
-      - SamSAMi1::WITH_SKETCHES
+      - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 
@@ -88,12 +90,12 @@ SamSAMi1-hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled
 Parameters:
 - indexType:
       - SamSAMi1::STANDARD (default)
-      - SamSAMi1::WITH_SKETCHES
+      - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 - hash type:
-      - HT::STANDARD - using 8 bytes for each entry: 4 bytes for left boundary + 4 bytes for right boundary
-      - HT::DENSE - using 6 bytes for each entry: 4 bytes for left boundary + 2 bytes for right boundary
+      - HT::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
+      - HT::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
 - k - length of prefixes of suffixes from suffix array (k ≥ 2)
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 
@@ -111,7 +113,7 @@ To speed up searches, SamSAMi2 stores some extra data on 4 most significant bits
 Parameters:
 - indexType:
       - SamSAMi2::STANDARD (default)
-      - SamSAMi2::WITH_SKETCHES
+      - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 
@@ -130,12 +132,12 @@ SamSAMi2-hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled
 Parameters:
 - indexType:
       - SamSAMi2::STANDARD (default)
-      - SamSAMi2::WITH_SKETCHES
+      - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p <= q (default: p = 1)
 - hash type:
-      - HTSamSAMi2::STANDARD - using 8 bytes for each entry: 4 bytes for left boundary + 4 bytes for right boundary
-      - HTSamSAMi2::DENSE - using 6 bytes for each entry: 4 bytes for left boundary + 2 bytes for right boundary
+      - HTSamSAMi2::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
+      - HTSamSAMi2::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
 - k - length of prefixes of suffixes from suffix array (k ≥ 2)
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 

@@ -101,11 +101,12 @@ void SamSAMi1::build(unsigned char* text, unsigned int textLen) {
 	this->free();
         if (this->verbose) cout << "Reading text ... " << flush;
 	this->textLen = textLen;
-        this->text = new unsigned char [this->textLen + this->q + 128];
+        this->text = new unsigned char [this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
         for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        this->alignedText[this->textLen] = '\0';
         if (this->verbose) cout << "Done" << endl;
         
         unsigned int saLen;
@@ -232,7 +233,7 @@ void SamSAMi1::build_sketches(unsigned int* sa, unsigned int saLen) {
 unsigned int SamSAMi1::getIndexSize() {
 	unsigned int size = sizeof(this->type) + sizeof(this->q) + sizeof(this->p) + sizeof(this->samSAMiLen) + sizeof(this->sketchesLen) + sizeof(this->bitShift) + sizeof(this->minPatternLenForHash) + sizeof(this->ht);
         if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
-        if (this->textLen > 0) size += (this->textLen + this->q + 128) * sizeof(unsigned char);
+        if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
         if (this->sketchesLen > 0) size += (this->sketchesLen + 32) * sizeof(unsigned int);
         if (this->ht != NULL) size += this->ht->getHTSize();
 	return size;
@@ -414,11 +415,12 @@ void SamSAMi1::load(const char *fileName) {
 		exit(1);
 	}
 	if (this->textLen > 0) {
-		this->text = new unsigned char[this->textLen + this->q + 128];
+		this->text = new unsigned char[this->textLen + this->q + 128 + 1];
                 for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
 		this->alignedText = this->text + this->q;
 		while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
 		result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
+                this->alignedText[this->textLen] = '\0';
 		if (result != this->textLen) {
 			cout << "Error loading index from " << fileName << endl;
 			exit(1);
@@ -552,11 +554,12 @@ void SamSAMi2::build(unsigned char* text, unsigned int textLen) {
 	this->free();
         if (this->verbose) cout << "Reading text ... " << flush;
 	this->textLen = textLen;
-        this->text = new unsigned char [this->textLen + this->q + 128];
+        this->text = new unsigned char [this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
         for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        this->alignedText[this->textLen] = '\0';
         if (this->verbose) cout << "Done" << endl;
         
         unsigned int saLen;
@@ -694,7 +697,7 @@ void SamSAMi2::build_sketches(unsigned int* sa, unsigned int saLen) {
 unsigned int SamSAMi2::getIndexSize() {
 	unsigned int size = sizeof(this->type) + sizeof(this->q) + sizeof(this->p) + sizeof(this->samSAMiLen) + sizeof(this->sketchesLen) + sizeof(this->bitShift) + sizeof(this->minPatternLenForHash) + sizeof(this->ht);
         if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
-        if (this->textLen > 0) size += (this->textLen + this->q + 128) * sizeof(unsigned char);
+        if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
         if (this->sketchesLen > 0) size += (this->sketchesLen + 32) * sizeof(unsigned int);
         if (this->ht != NULL) size += this->ht->getHTSize();
 	return size;
@@ -888,11 +891,12 @@ void SamSAMi2::load(const char *fileName) {
 		exit(1);
 	}
 	if (this->textLen > 0) {
-		this->text = new unsigned char[this->textLen + this->q + 128];
+		this->text = new unsigned char[this->textLen + this->q + 128 + 1];
                 for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
 		this->alignedText = this->text + this->q;
 		while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
 		result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
+                this->alignedText[this->textLen] = '\0';
 		if (result != this->textLen) {
 			cout << "Error loading index from " << fileName << endl;
 			exit(1);
@@ -1268,6 +1272,11 @@ void fillLUT2ForSamSAMi2(unsigned int lut2[256][256][2], unsigned char *text, un
 }
 
 void binarySearchForSamSAMi2(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
+	if (pattern[patternLength - 1] == 255) binarySearchStrncmpForSamSAMi2(sa, text, lStart,rStart, pattern, patternLength, beg, end);
+	else binarySearchAStrcmpForSamSAMi2(sa, text, lStart,rStart, pattern, patternLength, beg, end);
+}
+
+void binarySearchAStrcmpForSamSAMi2(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
 	unsigned int l = lStart;
 	unsigned int r = rStart;
 	unsigned int mid;
@@ -1293,6 +1302,33 @@ void binarySearchForSamSAMi2(unsigned int *sa, unsigned char *text, unsigned int
 		}
 	}
 	--pattern[patternLength - 1];
+	end = r;
+}
+
+void binarySearchStrncmpForSamSAMi2(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
+	unsigned int l = lStart;
+	unsigned int r = rStart;
+	unsigned int mid;
+	while (l < r) {
+		mid = (l + r) / 2;
+		if (strncmp((const char*)pattern, (const char*)(text + (sa[mid] & 0x0FFFFFFF)), patternLength) > 0) {
+			l = mid + 1;
+		}
+		else {
+			r = mid;
+		}
+	}
+	beg = l;
+	r = rStart;
+	while (l < r) {
+		mid = (l + r) / 2;
+		if (strncmp((const char*)pattern, (const char*)(text + (sa[mid] & 0x0FFFFFFF)), patternLength) < 0) {
+			r = mid;
+		}
+		else {
+			l = mid + 1;
+		}
+	}
 	end = r;
 }
 
