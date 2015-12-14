@@ -29,6 +29,7 @@ void HTBase::setK(unsigned int k) {
 		exit(1);
 	}
 	this->k = k;
+        this->prefixLength = k - 2;
 }
 
 void HTBase::setLoadFactor(double loadFactor) {
@@ -60,7 +61,7 @@ void HTBase::free() {
 }
 
 unsigned int HTBase::getHTSize() {
-	int size = sizeof(this->type) + sizeof(this->loadFactor) + sizeof(this->k) + sizeof(this->bucketsNum) + sizeof(HT::emptyValueHT) + 256 * 256 * 2 * sizeof(unsigned int) + sizeof(this->alignedBoundariesHT) + sizeof(this->alignedDenseBoundariesHT) + sizeof(this->boundariesHTLen) + sizeof(this->denseBoundariesHTLen);
+	int size = sizeof(this->type) + sizeof(this->loadFactor) + sizeof(this->k) + sizeof(this->prefixLength) + sizeof(this->bucketsNum) + sizeof(HT::emptyValueHT) + 256 * 256 * 2 * sizeof(unsigned int) + sizeof(this->alignedBoundariesHT) + sizeof(this->alignedDenseBoundariesHT) + sizeof(this->boundariesHTLen) + sizeof(this->denseBoundariesHTLen);
         if (this->boundariesHTLen > 0) size += (this->boundariesHTLen + 32) * sizeof(unsigned int);
         if (this->denseBoundariesHTLen > 0) size += (this->denseBoundariesHTLen + 32) * sizeof(unsigned int);
 	return size;
@@ -96,6 +97,7 @@ void HTBase::loadBase(FILE *inFile) {
 		cout << "Error loading index" << endl;
 		exit(1);
 	}
+        this->prefixLength = this->k - 2;
 	result = fread(&this->bucketsNum, (size_t)sizeof(unsigned long long), (size_t)1, inFile);
 	if (result != 1) {
 		cout << "Error loading index" << endl;
@@ -309,7 +311,7 @@ void HT::getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, un
 		unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
 		while (true) {
 			leftBoundary = this->alignedBoundariesHT[2 * hash];
-			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)(text + sa[leftBoundary]), this->k) == 0) {
+			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern + 2, (const char *)(text + sa[leftBoundary] + 2), this->prefixLength) == 0) {
 				rightBoundary = this->alignedBoundariesHT[2 * hash + 1];
 				break;
 			}
@@ -337,7 +339,7 @@ void HT::getDenseHTBoundaries(unsigned char *pattern, unsigned char *text, unsig
 		unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
 		while (true) {
 			leftBoundary = this->alignedBoundariesHT[hash];
-			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)(text + sa[leftBoundary]), this->k) == 0) {
+			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern + 2, (const char *)(text + sa[leftBoundary] + 2), this->prefixLength) == 0) {
 				step = (unsigned int)ceil(((double)rightBoundaryLUT2 + 1 - leftBoundaryLUT2) / 65536);
                                 if ((hash & 1) == 0) rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] >> 16) * step + leftBoundaryLUT2;
                                 else rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] & 0xFFFF) * step + leftBoundaryLUT2;
@@ -369,7 +371,7 @@ const unsigned int HTExt::emptyValueHT = (unsigned int)-1;
 const unsigned int HTExt::emptyValueDenseHT = ((unsigned int)-1 >> 16);
 
 void HTExt::setType(int type) {
-	if (type != HTExt::STANDARD && type != HTExt::DENSE && type != HTExt::DOUBLE_DENSE) {
+	if (type != HTExt::STANDARD && type != HTExt::DENSE) {
 		cout << "Error: not valid hash type" << endl;
 		exit(1);
 	}
@@ -382,6 +384,7 @@ void HTExt::setK(unsigned int k) {
 		exit(1);
 	}
 	this->k = k;
+        this->prefixLength = k - 2;
 }
 
 void HTExt::setLoadFactor(double loadFactor) {
@@ -399,9 +402,6 @@ void HTExt::setFunctions() {
                 break;
         case HTExt::DENSE:
                 this->getBoundariesOperation = &HTExt::getDenseHTBoundaries;
-                break;
-        case HTExt::DOUBLE_DENSE:
-                this->getBoundariesOperation = &HTExt::getDoubleDenseHTBoundaries;
                 break;
         default:
                 cout << "Error: not valid hash type" << endl;
@@ -434,7 +434,7 @@ void HTExt::free() {
 }
 
 unsigned int HTExt::getHTSize() {
-	int size = sizeof(this->type) + sizeof(this->loadFactor) + sizeof(this->k) + sizeof(this->bucketsNum) + sizeof(HT::emptyValueHT) + 256 * 256 * 2 * sizeof(unsigned int) + sizeof(this->alignedBoundariesHT) + sizeof(this->alignedDenseBoundariesHT) + sizeof(this->alignedEntriesHT) + sizeof(this->boundariesHTLen) + sizeof(this->denseBoundariesHTLen) + sizeof(this->entriesHTLen);
+	int size = sizeof(this->type) + sizeof(this->loadFactor) + sizeof(this->k) + sizeof(this->prefixLength) + sizeof(this->bucketsNum) + sizeof(HT::emptyValueHT) + 256 * 256 * 2 * sizeof(unsigned int) + sizeof(this->alignedBoundariesHT) + sizeof(this->alignedDenseBoundariesHT) + sizeof(this->alignedEntriesHT) + sizeof(this->boundariesHTLen) + sizeof(this->denseBoundariesHTLen) + sizeof(this->entriesHTLen);
         if (this->boundariesHTLen > 0) size += (this->boundariesHTLen + 32) * sizeof(unsigned int);
         if (this->denseBoundariesHTLen > 0) size += (this->denseBoundariesHTLen + 32) * sizeof(unsigned int);
         if (this->entriesHTLen > 0) size += (this->entriesHTLen + 128) * sizeof(unsigned char);
@@ -474,6 +474,7 @@ void HTExt::load(FILE *inFile) {
 		cout << "Error loading index" << endl;
 		exit(1);
 	}
+        this->prefixLength = this->k - 2;
 	result = fread(&this->bucketsNum, (size_t)sizeof(unsigned long long), (size_t)1, inFile);
 	if (result != 1) {
 		cout << "Error loading index" << endl;
@@ -543,7 +544,7 @@ void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsign
 	this->boundariesHT = new unsigned int[this->boundariesHTLen + 32];
 	this->alignedBoundariesHT = this->boundariesHT;
 	while ((unsigned long long)(this->alignedBoundariesHT) % 128) ++(this->alignedBoundariesHT);
-        this->entriesHTLen = this->bucketsNum * this->k;
+        this->entriesHTLen = this->bucketsNum * this->prefixLength;
 	this->entriesHT = new unsigned char[this->entriesHTLen + 128];
 	this->alignedEntriesHT = this->entriesHT;
 	while ((unsigned long long)(this->alignedEntriesHT) % 128) ++(this->alignedEntriesHT);
@@ -602,7 +603,7 @@ void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsign
 		while (true) {
 			if (this->alignedBoundariesHT[2 * hash] == HTExt::emptyValueHT) {
 				this->alignedBoundariesHT[2 * hash] = i;
-				for (unsigned int j = 0; j < this->k; ++j) this->alignedEntriesHT[hash * this->k + j] = pattern[j];
+				for (unsigned int j = 0; j < this->prefixLength; ++j) this->alignedEntriesHT[hash * this->prefixLength + j] = pattern[j + 2];
 				break;
 			}
 			else {
@@ -629,7 +630,7 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 	this->alignedDenseBoundariesHT = this->denseBoundariesHT;
 	while ((unsigned long long)(this->alignedDenseBoundariesHT) % 128) ++(this->alignedDenseBoundariesHT);
         unsigned int* boundariesHTTemp = new unsigned int[this->boundariesHTLen];
-        this->entriesHTLen = this->bucketsNum * this->k;
+        this->entriesHTLen = this->bucketsNum * this->prefixLength;
 	this->entriesHT = new unsigned char[this->entriesHTLen + 128];
 	this->alignedEntriesHT = this->entriesHT;
 	while ((unsigned long long)(this->alignedEntriesHT) % 128) ++(this->alignedEntriesHT);
@@ -694,7 +695,7 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 				end = this->lut2[pattern[0]][pattern[1]][1];
 				step = (unsigned int)ceil(((double)end + 1 - beg) / 65536);
 				this->alignedBoundariesHT[hash] = i;
-				for (unsigned int j = 0; j < this->k; ++j) this->alignedEntriesHT[hash * this->k + j] = pattern[j];
+				for (unsigned int j = 0; j < this->prefixLength; ++j) this->alignedEntriesHT[hash * this->prefixLength + j] = pattern[j + 2];
 				break;
 			}
 			else {
@@ -711,90 +712,6 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 	delete[] pattern;
 }
 
-void HTExt::fillDoubleDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
-	bool isSelectedChars = (selectedChars.size() != 0);
-	unsigned long long hash = this->bucketsNum;
-        unsigned int beg = 0, end = 0, step = 0;
-        this->denseBoundariesHTLen = this->bucketsNum;
-        this->denseBoundariesHT = new unsigned int[this->denseBoundariesHTLen + 32];
-	this->alignedDenseBoundariesHT = this->denseBoundariesHT;
-	while ((unsigned long long)(this->alignedDenseBoundariesHT) % 128) ++(this->alignedDenseBoundariesHT);
-         this->entriesHTLen = this->bucketsNum * this->k;
-	this->entriesHT = new unsigned char[this->entriesHTLen + 128];
-	this->alignedEntriesHT = this->entriesHT;
-	while ((unsigned long long)(this->alignedEntriesHT) % 128) ++(this->alignedEntriesHT);
-
-	for (unsigned long long i = 0; i < this->denseBoundariesHTLen; ++i) this->alignedDenseBoundariesHT[i] = HTExt::emptyValueHT;
-    
-	unsigned char *lastPattern = new unsigned char[this->k + 1];
-	for (unsigned int i = 0; i < this->k; ++i) lastPattern[i] = 255;
-	lastPattern[this->k] = '\0';
-
-	unsigned char *pattern = new unsigned char[this->k + 1];
-	unsigned int lastNotOutsideTextIndex;
-	bool notLastOutsideText = true;
-
-	for (unsigned int i = 0; i < saLen; i++) {
-		if (sa[i] > (textLen - this->k)) {
-			if (notLastOutsideText) lastNotOutsideTextIndex = i;
-			notLastOutsideText = false;
-			continue;
-		}
-		strncpy((char *)pattern, (const char *)(text + sa[i]), this->k);
-		pattern[this->k] = '\0';
-		if (strcmp((char *)pattern, (const char *)lastPattern) == 0) {
-			notLastOutsideText = true;
-			continue;
-		}
-		else {
-			strcpy((char *)lastPattern, (const char *)pattern);
-			if (hash != this->bucketsNum) {
-				if (notLastOutsideText) this->alignedDenseBoundariesHT[hash] += (unsigned int)ceil(((double)i - beg) / step);
-				else this->alignedDenseBoundariesHT[hash] += (unsigned int)ceil(((double)lastNotOutsideTextIndex - beg) / step);
-			}
-			notLastOutsideText = true;
-			if (isSelectedChars) {
-				bool rejectPattern = false;
-				for (unsigned int j = 0; j < this->k; ++j) {
-					bool symbolInSelectedChars = false;
-					for (vector<unsigned char>::iterator it = selectedChars.begin(); it != selectedChars.end(); ++it) {
-						if ((unsigned int)pattern[j] == (*it)) {
-							symbolInSelectedChars = true;
-							break;
-						}
-					}
-					if (!symbolInSelectedChars) {
-						rejectPattern = true;
-						break;
-					}
-				}
-				if (rejectPattern) {
-					hash = this->bucketsNum;
-					continue;
-				}
-			}
-			hash = getHashValue(pattern, this->k) % this->bucketsNum;
-		}
-		while (true) {
-			if (this->alignedDenseBoundariesHT[hash] == HTExt::emptyValueHT) {
-                                beg = this->lut2[pattern[0]][pattern[1]][0];
-				end = this->lut2[pattern[0]][pattern[1]][1];
-				step = (unsigned int)ceil(((double)end + 1 - beg) / 65536);
-				this->alignedDenseBoundariesHT[hash] = ((unsigned int)floor(((double)i - beg) / step) << 16);
-				for (unsigned int j = 0; j < this->k; ++j) this->alignedEntriesHT[hash * this->k + j] = pattern[j];
-				break;
-			}
-			else {
-				hash = (hash + 1) % this->bucketsNum;
-			}
-		}
-	}
-	if (hash != this->bucketsNum) this->alignedDenseBoundariesHT[hash] += (unsigned int)ceil(((double)saLen - beg) / step);
-
-	delete[] lastPattern;
-	delete[] pattern;
-}
-
 void HTExt::build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
         this->free();
         fillLUT2(this->lut2, text, sa, saLen);
@@ -807,9 +724,6 @@ void HTExt::build(unsigned char *text, unsigned int textLen, unsigned int *sa, u
         case HTExt::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen, selectedChars);
                 break;
-        case HTExt::DOUBLE_DENSE:
-                this->fillDoubleDenseHTData(text, textLen, sa, saLen, selectedChars);
-                break;
         }
 }
 
@@ -820,7 +734,7 @@ void HTExt::getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBo
 		unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
 		while (true) {
 			leftBoundary = this->alignedBoundariesHT[2 * hash];
-			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)&(this->alignedEntriesHT[hash * this->k]), this->k) == 0) {
+			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern + 2, (const char *)&(this->alignedEntriesHT[hash * this->prefixLength]), this->prefixLength) == 0) {
 				rightBoundary = this->alignedBoundariesHT[2 * hash + 1];
 				break;
 			}
@@ -848,42 +762,13 @@ void HTExt::getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBound
 		unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
 		while (true) {
 			leftBoundary = this->alignedBoundariesHT[hash];
-			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)&(this->alignedEntriesHT[hash * this->k]), this->k) == 0) {
+			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern + 2, (const char *)&(this->alignedEntriesHT[hash * this->prefixLength]), this->prefixLength) == 0) {
 				step = (unsigned int)ceil(((double)rightBoundaryLUT2 + 1 - leftBoundaryLUT2) / 65536);
                                 if ((hash & 1) == 0) rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] >> 16) * step + leftBoundaryLUT2;
                                 else rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] & 0xFFFF) * step + leftBoundaryLUT2;
 				break;
 			}
 			if (leftBoundary == HTExt::emptyValueHT) {
-				leftBoundary = 0;
-				rightBoundary = 0;
-				return;
-			}
-			++hash;
-			if (hash == this->bucketsNum) {
-				hash = 0;
-			}
-		}
-	} else {
-		leftBoundary = 0;
-		rightBoundary = 0;
-	}
-}
-
-void HTExt::getDoubleDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary) {
-	unsigned int step;
-	unsigned int leftBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][0];
-	unsigned int rightBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][1];
-	if (leftBoundaryLUT2 < rightBoundaryLUT2) {
-                unsigned long long hash = this->getHashValue(pattern, this->k) % this->bucketsNum;
-		while (true) {
-                        step = (unsigned int)ceil(((double)rightBoundaryLUT2 + 1 - leftBoundaryLUT2) / 65536);
-                        leftBoundary = (this->alignedDenseBoundariesHT[hash] >> 16) * step + leftBoundaryLUT2;
-			if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)&(this->alignedEntriesHT[hash * this->k]), this->k) == 0) {
-                                rightBoundary = (this->alignedDenseBoundariesHT[hash] & 0xFFFF) * step + leftBoundaryLUT2;
-				break;
-			}
-			if (leftBoundary == HTExt::emptyValueDenseHT) {
 				leftBoundary = 0;
 				rightBoundary = 0;
 				return;

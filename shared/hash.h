@@ -23,6 +23,7 @@ public:
         int type;
 	double loadFactor;
 	unsigned int k;
+        unsigned int prefixLength;
 	unsigned long long bucketsNum;
 
 	alignas(128) unsigned int lut2[256][256][2];
@@ -93,23 +94,21 @@ private:
         unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
 	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
-        void fillDoubleDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
-        void getDoubleDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         
         void (HTExt::*getBoundariesOperation)(unsigned char *, unsigned int &, unsigned int &) = NULL;
 
 public:
         enum HTExtType {
                 STANDARD = 1,
-                DENSE = 2,
-                DOUBLE_DENSE = 3
+                DENSE = 2
 	};
         
         int type;
 	double loadFactor;
 	unsigned int k;
+        unsigned int prefixLength;
 	unsigned long long bucketsNum;
 
 	alignas(128) unsigned int lut2[256][256][2];
