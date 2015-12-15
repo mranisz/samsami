@@ -92,7 +92,7 @@ private:
 	void setK(unsigned int k);
         void setFunctions();
         unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
-	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {}, unsigned char *cutOutEntries = NULL);
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
         void getStandardHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDenseHTBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
@@ -144,7 +144,7 @@ public:
 
 	unsigned int getHTSize();
         
-        void build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
+        void build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {}, unsigned char *cutOutEntries = NULL);
         void getBoundaries(unsigned char *pattern, unsigned int &leftBoundary, unsigned int &rightBoundary);
 	void save(FILE *outFile);
 	void load(FILE *inFile);

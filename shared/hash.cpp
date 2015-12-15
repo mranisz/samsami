@@ -537,7 +537,7 @@ unsigned long long HTExt::getHashValue(unsigned char* str, unsigned int strLen) 
 	return XXH64(str, strLen, 0);
 }
 
-void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
+void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars, unsigned char *cutOutEntries) {
 	bool isSelectedChars = (selectedChars.size() != 0);
 	unsigned long long hash = this->bucketsNum;
         this->boundariesHTLen = 2 * this->bucketsNum;
@@ -603,8 +603,9 @@ void HTExt::fillStandardHTData(unsigned char *text, unsigned int textLen, unsign
 		while (true) {
 			if (this->alignedBoundariesHT[2 * hash] == HTExt::emptyValueHT) {
 				this->alignedBoundariesHT[2 * hash] = i;
+                                if (cutOutEntries != NULL)  for (unsigned int j = 0; j < 2; ++j) cutOutEntries[hash * 2 + j] = pattern[j];
 				for (unsigned int j = 0; j < this->prefixLength; ++j) this->alignedEntriesHT[hash * this->prefixLength + j] = pattern[j + 2];
-				break;
+                                break;
 			}
 			else {
 				hash = (hash + 1) % this->bucketsNum;
@@ -712,14 +713,14 @@ void HTExt::fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned 
 	delete[] pattern;
 }
 
-void HTExt::build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars) {
+void HTExt::build(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars, unsigned char *cutOutEntries) {
         this->free();
         fillLUT2(this->lut2, text, sa, saLen);
 	unsigned int uniqueSuffixNum = getUniqueSuffixNum(this->k, text, textLen, sa, saLen, selectedChars);
 	this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
         switch(this->type) {
         case HTExt::STANDARD:
-                this->fillStandardHTData(text, textLen, sa, saLen, selectedChars);
+                this->fillStandardHTData(text, textLen, sa, saLen, selectedChars, cutOutEntries);
                 break;
         case HTExt::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen, selectedChars);
