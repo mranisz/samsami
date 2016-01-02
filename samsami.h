@@ -100,11 +100,11 @@ public:
 class HTSamSAMi2 : public HTBase {
 private:
         void setFunctions();
-        void buildBasicHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+        void buildStandardHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void buildDenseHT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-	void fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
+	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
         void fillDenseHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen);
-        void getBasicHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
+        void getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
         void getDenseHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary);
         
         void (HTSamSAMi2::*getBoundariesOperation)(unsigned char *, unsigned char *, unsigned int *, unsigned int &, unsigned int &) = NULL;

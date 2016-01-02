@@ -12,7 +12,6 @@ protected:
         void setType(int type);
 	void setLoadFactor(double loadFactor);
 	void setK(unsigned int k);
-        unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
         
 public:
         enum HTType {
@@ -36,6 +35,7 @@ public:
         
 	const static unsigned int emptyValueHT;
 
+        unsigned long long getHashValue(unsigned char* str, unsigned int strLen);
 	unsigned int getHTSize();
 	void save(FILE *outFile);
 	void loadBase(FILE *inFile);

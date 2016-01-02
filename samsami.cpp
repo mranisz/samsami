@@ -99,7 +99,7 @@ void SamSAMi1::freeMemory() {
 void SamSAMi1::build(unsigned char* text, unsigned int textLen) {
 	checkNullChar(text, textLen);
 	this->free();
-        if (this->verbose) cout << "Reading text ... " << flush;
+        if (this->verbose) cout << "Loading text ... " << flush;
 	this->textLen = textLen;
         this->text = new unsigned char [this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
@@ -118,7 +118,7 @@ void SamSAMi1::build(unsigned char* text, unsigned int textLen) {
 }
 
 void SamSAMi1::build_std(unsigned int* sa, unsigned int saLen) {
-        if (this->verbose) cout << "Creating SamSAMi ... " << flush;
+        if (this->verbose) cout << "Building SamSAMi ... " << flush;
     	bool *markers = new bool[this->textLen];
 	for (unsigned int i = 0; i < this->textLen; ++i) markers[i] = false;
 
@@ -154,7 +154,7 @@ void SamSAMi1::build_std(unsigned int* sa, unsigned int saLen) {
         if (this->verbose) cout << "Done" << endl;
         
         if (this->ht != NULL) {
-                if (this->verbose) cout << "Creating hash table ... " << flush;
+                if (this->verbose) cout << "Building hash table ... " << flush;
 		this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
 		if (this->verbose) cout << "Done" << endl;
 	}
@@ -165,7 +165,7 @@ void SamSAMi1::build_std(unsigned int* sa, unsigned int saLen) {
 }
 
 void SamSAMi1::build_sketches(unsigned int* sa, unsigned int saLen) {
-        if (this->verbose) cout << "Creating SamSAMi ... " << flush;
+        if (this->verbose) cout << "Building SamSAMi ... " << flush;
     	bool *markers = new bool[this->textLen];
 	for (unsigned int i = 0; i < this->textLen; ++i) markers[i] = false;
 
@@ -220,7 +220,7 @@ void SamSAMi1::build_sketches(unsigned int* sa, unsigned int saLen) {
         if (this->verbose) cout << "Done" << endl;
         
         if (this->ht != NULL) {
-                if (this->verbose) cout << "Creating hash table ... " << flush;
+                if (this->verbose) cout << "Building hash table ... " << flush;
 		this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
 		if (this->verbose) cout << "Done" << endl;
 	}
@@ -248,8 +248,7 @@ unsigned int SamSAMi1::count_std(unsigned char *pattern, unsigned int patternLen
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
         }
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0;
+	unsigned int beg, end, count = 0, pos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			pos = i;
@@ -270,8 +269,7 @@ unsigned int SamSAMi1::count_sketches(unsigned char *pattern, unsigned int patte
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
         }
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0;
+	unsigned int beg, end, count = 0, pos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			pos = i;
@@ -289,8 +287,7 @@ unsigned int SamSAMi1::count_sketches(unsigned char *pattern, unsigned int patte
 
 unsigned int SamSAMi1::count_std_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_std(pattern, patternLen);
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0;
+	unsigned int beg, end, count = 0, pos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			pos = i;
@@ -310,8 +307,7 @@ unsigned int SamSAMi1::count_std_hash(unsigned char *pattern, unsigned int patte
 
 unsigned int SamSAMi1::count_sketches_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_sketches(pattern, patternLen);
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0;
+	unsigned int beg, end, count = 0, pos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			pos = i;
@@ -552,7 +548,7 @@ void SamSAMi2::freeMemory() {
 void SamSAMi2::build(unsigned char* text, unsigned int textLen) {
 	checkNullChar(text, textLen);
 	this->free();
-        if (this->verbose) cout << "Reading text ... " << flush;
+        if (this->verbose) cout << "Loading text ... " << flush;
 	this->textLen = textLen;
         this->text = new unsigned char [this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
@@ -571,7 +567,7 @@ void SamSAMi2::build(unsigned char* text, unsigned int textLen) {
 }
 
 void SamSAMi2::build_std(unsigned int* sa, unsigned int saLen) {
-        if (this->verbose) cout << "Creating SamSAMi ... " << flush;
+        if (this->verbose) cout << "Building SamSAMi ... " << flush;
     	bool *markers = new bool[this->textLen];
         unsigned int *positions = new unsigned int[this->textLen];
 	for (unsigned int i = 0; i < this->textLen; ++i) {
@@ -611,7 +607,7 @@ void SamSAMi2::build_std(unsigned int* sa, unsigned int saLen) {
 	if (this->verbose) cout << "Done" << endl;
         
         if (this->ht != NULL) {
-                if (this->verbose) cout << "Creating hash table ... " << flush;
+                if (this->verbose) cout << "Building hash table ... " << flush;
 		this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
 		if (this->verbose) cout << "Done" << endl;
 	}
@@ -623,7 +619,7 @@ void SamSAMi2::build_std(unsigned int* sa, unsigned int saLen) {
 }
 
 void SamSAMi2::build_sketches(unsigned int* sa, unsigned int saLen) {
-        if (this->verbose) cout << "Creating SamSAMi ... " << flush;
+        if (this->verbose) cout << "Building SamSAMi ... " << flush;
     	bool *markers = new bool[this->textLen];
         unsigned int *positions = new unsigned int[this->textLen];
 	for (unsigned int i = 0; i < this->textLen; ++i) {
@@ -682,7 +678,7 @@ void SamSAMi2::build_sketches(unsigned int* sa, unsigned int saLen) {
         if (this->verbose) cout << "Done" << endl;
         
         if (this->ht != NULL) {
-                if (this->verbose) cout << "Creating hash table ... " << flush;
+                if (this->verbose) cout << "Building hash table ... " << flush;
 		this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
 		if (this->verbose) cout << "Done" << endl;
 	}
@@ -712,8 +708,7 @@ unsigned int SamSAMi2::count_std(unsigned char *pattern, unsigned int patternLen
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
         }
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0, prevPos = 0;
+	unsigned int beg, end, count = 0, pos = 0, prevPos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			prevPos = pos;
@@ -737,8 +732,7 @@ unsigned int SamSAMi2::count_sketches(unsigned char *pattern, unsigned int patte
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
         }
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0, prevPos = 0;
+	unsigned int beg, end, count = 0, pos = 0, prevPos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			prevPos = pos;
@@ -759,8 +753,7 @@ unsigned int SamSAMi2::count_sketches(unsigned char *pattern, unsigned int patte
 
 unsigned int SamSAMi2::count_std_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_std(pattern, patternLen);
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0, prevPos = 0;
+	unsigned int beg, end, count = 0, pos = 0, prevPos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			prevPos = pos;
@@ -783,8 +776,7 @@ unsigned int SamSAMi2::count_std_hash(unsigned char *pattern, unsigned int patte
 
 unsigned int SamSAMi2::count_sketches_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_sketches(pattern, patternLen);
-	unsigned int beg = 0, end = 0, count = 0;
-	unsigned int pos = 0, prevPos = 0;
+	unsigned int beg, end, count = 0, pos = 0, prevPos = 0;
 	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
 		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
 			prevPos = pos;
@@ -947,7 +939,7 @@ void HTSamSAMi2::load(FILE *inFile) {
 void HTSamSAMi2::setFunctions() {
         switch (this->type) {
         case HT::STANDARD:
-                this->getBoundariesOperation = &HTSamSAMi2::getBasicHTBoundaries;
+                this->getBoundariesOperation = &HTSamSAMi2::getStandardHTBoundaries;
                 break;
         case HT::DENSE:
                 this->getBoundariesOperation = &HTSamSAMi2::getDenseHTBoundaries;
@@ -958,7 +950,7 @@ void HTSamSAMi2::setFunctions() {
         }
 }
 
-void HTSamSAMi2::fillBasicHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen) {
+void HTSamSAMi2::fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen) {
 	unsigned long long hash = this->bucketsNum;
         this->boundariesHTLen = 2 * this->bucketsNum;
 	this->boundariesHT = new unsigned int[this->boundariesHTLen + 32];
@@ -1089,7 +1081,7 @@ void HTSamSAMi2::build(unsigned char *text, unsigned int textLen, unsigned int *
 	this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
         switch(this->type) {
         case HTBase::STANDARD:
-                this->fillBasicHTData(text, textLen, sa, saLen);
+                this->fillStandardHTData(text, textLen, sa, saLen);
                 break;
         case HTBase::DENSE:
                 this->fillDenseHTData(text, textLen, sa, saLen);
@@ -1097,7 +1089,7 @@ void HTSamSAMi2::build(unsigned char *text, unsigned int textLen, unsigned int *
         }
 }
 
-void HTSamSAMi2::getBasicHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
+void HTSamSAMi2::getStandardHTBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
 	unsigned int leftBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][0];
 	unsigned int rightBoundaryLUT2 = this->lut2[pattern[0]][pattern[1]][1];
 	if (leftBoundaryLUT2 < rightBoundaryLUT2) {

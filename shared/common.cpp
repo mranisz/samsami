@@ -127,7 +127,7 @@ void checkNullChar(unsigned char *text, unsigned int textLen) {
 
 unsigned int *getSA(unsigned char *text, unsigned int textLen, unsigned int &saLen, unsigned int addLen, bool verbose) {
 	saLen = textLen + 1;
-	if (verbose) cout << "Creating SA ... " << flush;
+	if (verbose) cout << "Building SA ... " << flush;
 	unsigned int *sa = new unsigned int[saLen + addLen];
 	sa[0] = textLen;
 	++sa;
@@ -137,11 +137,11 @@ unsigned int *getSA(unsigned char *text, unsigned int textLen, unsigned int &saL
 	return sa;
 }
 
-unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, unsigned int &bwtLen, bool verbose) {
-	if (verbose) cout << "Creating BWT ... " << flush;
+unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, unsigned int &bwtLen, unsigned int addLen, bool verbose) {
+	if (verbose) cout << "Building BWT ... " << flush;
 	bwtLen = textLen + 1;
-	unsigned char *bwt = new unsigned char[bwtLen + 1];
-	bwt[bwtLen] = '\0';
+	unsigned char *bwt = new unsigned char[bwtLen + 1 + addLen];
+	bwt[bwtLen + addLen] = '\0';
 	bwt[0] = text[textLen - 1];
 	for (unsigned int i = 1; i < saLen; ++i) {
 		if (sa[i] == 0) bwt[i] = '\0';
@@ -151,16 +151,16 @@ unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int *s
 	return bwt;
 }
 
-unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int &bwtLen, bool verbose) {
+unsigned char *getBWT(unsigned char *text, unsigned int textLen, unsigned int &bwtLen, unsigned int addLen, bool verbose) {
 	unsigned int saLen;
 	unsigned int *sa = getSA(text, textLen, saLen, 0, verbose);
-	unsigned char *bwt = getBWT(text, textLen, sa, saLen, bwtLen, verbose);
+	unsigned char *bwt = getBWT(text, textLen, sa, saLen, bwtLen, addLen, verbose);
 	delete[] sa;
 	return bwt;
 }
 
 void fillArrayC(unsigned char *text, unsigned int textLen, unsigned int* C, bool verbose) {
-	if (verbose) cout << "Creating array C ... " << flush;
+	if (verbose) cout << "Building array C ... " << flush;
 	for (int i = 0; i < 257; ++i) C[i] = 0;
 	for (unsigned int i = 0; i < textLen; ++i) {
 		++C[text[i] + 1];
@@ -184,8 +184,8 @@ string getStringFromSelectedChars(vector<unsigned char> selectedChars, string se
 }
 
 void binarySearch(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {
-	if (pattern[patternLength - 1] == 255) binarySearchStrncmp(sa, text, lStart,rStart, pattern, patternLength, beg, end);
-	else binarySearchAStrcmp(sa, text, lStart,rStart, pattern, patternLength, beg, end);
+	if (pattern[patternLength - 1] == 255) binarySearchStrncmp(sa, text, lStart, rStart, pattern, patternLength, beg, end);
+	else binarySearchAStrcmp(sa, text, lStart, rStart, pattern, patternLength, beg, end);
 }
 
 void binarySearchAStrcmp(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end) {

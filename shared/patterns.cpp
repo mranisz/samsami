@@ -69,7 +69,7 @@ void Patterns::initializePatterns() {
 		fclose(outFile);
 		cout << "Done" << endl;
 	} else {
-		cout << "Reading patterns from " << patternFileName << " ... " << flush;
+		cout << "Loading patterns from " << patternFileName << " ... " << flush;
 		queriesFirstIndexArray = readFileInt(patternFileName, queriesFirstIndexArrayLen, 0);
 		cout << "Done" << endl;
 	}
@@ -115,7 +115,7 @@ void Patterns::initializeSACounts() {
 		cout << "Done" << endl;
 
 	} else {
-		cout << "Reading counts from " << countsFileName << " ... " << flush;
+		cout << "Loading counts from " << countsFileName << " ... " << flush;
 		unsigned int countsLen;
 		this->counts = readFileInt(countsFileName, countsLen, 0);
 		cout << "Done" << endl;
