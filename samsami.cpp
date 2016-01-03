@@ -101,7 +101,7 @@ void SamSAMi1::build(unsigned char* text, unsigned int textLen) {
 	this->free();
         if (this->verbose) cout << "Loading text ... " << flush;
 	this->textLen = textLen;
-        this->text = new unsigned char [this->textLen + this->q + 128 + 1];
+        this->text = new unsigned char[this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;

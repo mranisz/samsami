@@ -73,10 +73,10 @@ Parameters:
       - SamSAMi1::STANDARD (default)
       - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
-- p - minimizer length, p <= q (default: p = 1)
+- p - minimizer length, p ≤ q (default: p = 1)
 
 Limitations: 
-- pattern length >= q
+- pattern length ≥ q
 
 Constructors:
 ```
@@ -92,7 +92,7 @@ Parameters:
       - SamSAMi1::STANDARD (default)
       - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
-- p - minimizer length, p <= q (default: p = 1)
+- p - minimizer length, p ≤ q (default: p = 1)
 - hash type:
       - HT::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
       - HT::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
@@ -100,7 +100,7 @@ Parameters:
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 
 Limitations: 
-- pattern length >= max(q, k + q - p) (in case k - p > 0, patterns shorter than (k + q - p) are handled by not-hashed variant of SamSAMi index if they are not shorter than q)
+- pattern length ≥ max(q, k + q - p) (in case k - p > 0, patterns shorter than (k + q - p) are handled by not-hashed variant of SamSAMi index if they are not shorter than q)
 
 Constructors:
 ```
@@ -115,10 +115,10 @@ Parameters:
       - SamSAMi2::STANDARD (default)
       - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
-- p - minimizer length, p <= q (default: p = 1)
+- p - minimizer length, p ≤ q (default: p = 1)
 
 Limitations: 
-- pattern length >= q
+- pattern length ≥ q
 
 Constructors:
 ```
@@ -134,7 +134,7 @@ Parameters:
       - SamSAMi2::STANDARD (default)
       - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
-- p - minimizer length, p <= q (default: p = 1)
+- p - minimizer length, p ≤ q (default: p = 1)
 - hash type:
       - HTSamSAMi2::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
       - HTSamSAMi2::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
@@ -142,7 +142,7 @@ Parameters:
 - loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
 
 Limitations: 
-- pattern length >= max(q, k + q - p) (in case k - p > 0, patterns shorter than (k + q - p) are handled by not-hashed variant of SamSAMi index if they are not shorter than q)
+- pattern length ≥ max(q, k + q - p) (in case k - p > 0, patterns shorter than (k + q - p) are handled by not-hashed variant of SamSAMi index if they are not shorter than q)
 
 Constructors:
 ```
