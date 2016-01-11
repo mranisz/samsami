@@ -13,8 +13,8 @@ using namespace samsami;
 
 ChronoStopWatch timer;
 
-map<string, SamSAMi1::IndexType> SamSAMi1IndexTypesMap = {{"std", SamSAMi1::STANDARD}, {"sketches", SamSAMi1::WITH_SKETCHES}};
-map<string, SamSAMi2::IndexType> SamSAMi2IndexTypesMap = {{"std", SamSAMi2::STANDARD}, {"sketches", SamSAMi2::WITH_SKETCHES}};
+map<string, SamSAMi1::IndexType> SamSAMi1IndexTypesMap = {{"std", SamSAMi1::STANDARD}, {"sketches8x2", SamSAMi1::WITH_SKETCHES_8x2}, {"sketches4x4", SamSAMi1::WITH_SKETCHES_4x4}};
+map<string, SamSAMi2::IndexType> SamSAMi2IndexTypesMap = {{"std", SamSAMi2::STANDARD}, {"sketches8x2", SamSAMi2::WITH_SKETCHES_8x2}, {"sketches4x4", SamSAMi2::WITH_SKETCHES_4x4}};
 map<string, HT::HTType> SamSAMi1HashTypesMap = {{"hash", HT::STANDARD}, {"hash-dense", HT::DENSE}};
 map<string, HTSamSAMi2::HTType> SamSAMi2HashTypesMap = {{"hash", HTSamSAMi2::STANDARD}, {"hash-dense", HTSamSAMi2::DENSE}};
 
@@ -25,10 +25,10 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 
 void getUsage(char **argv) {
 	cout << "Select index you want to test:" << endl;
-	cout << "SamSAMi1: ./" << argv[0] << " 1 std|sketches q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMi2: ./" << argv[0] << " 2 std|sketches q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMi1-hash: ./" << argv[0] << " 1 std|sketches q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
-        cout << "SamSAMi2-hash: ./" << argv[0] << " 2 std|sketches q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi1: ./" << argv[0] << " 1 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
+        cout << "SamSAMi2: ./" << argv[0] << " 2 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
+        cout << "SamSAMi1-hash: ./" << argv[0] << " 1 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
+        cout << "SamSAMi2-hash: ./" << argv[0] << " 2 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
         cout << "where:" << endl;
         cout << "q - window length " << endl;
 	cout << "p - minimizer length, p <= q" << endl;

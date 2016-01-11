@@ -71,7 +71,8 @@ void setVerbose(bool verbose);
 Parameters:
 - indexType:
       - SamSAMi1::STANDARD (default)
-      - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi1::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi1::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p ≤ q (default: p = 1)
 
@@ -90,7 +91,8 @@ SamSAMi1-hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled
 Parameters:
 - indexType:
       - SamSAMi1::STANDARD (default)
-      - SamSAMi1::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi1::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi1::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p ≤ q (default: p = 1)
 - hash type:
@@ -113,7 +115,8 @@ To speed up searches, SamSAMi2 stores some extra data on 4 most significant bits
 Parameters:
 - indexType:
       - SamSAMi2::STANDARD (default)
-      - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi2::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi2::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p ≤ q (default: p = 1)
 
@@ -132,7 +135,8 @@ SamSAMi2-hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled
 Parameters:
 - indexType:
       - SamSAMi2::STANDARD (default)
-      - SamSAMi2::WITH_SKETCHES - reduces the number of verifications, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi2::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
+      - SamSAMi2::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
 - p - minimizer length, p ≤ q (default: p = 1)
 - hash type:
@@ -174,7 +178,7 @@ int main(int argc, char *argv[]) {
 		samSAMi1 = new SamSAMi1();
 		samSAMi1->load(indexFileName);
 	} else {
-		samSAMi1 = new SamSAMi1(SamSAMi1::WITH_SKETCHES, 6, 2);
+		samSAMi1 = new SamSAMi1(SamSAMi1::WITH_SKETCHES_4x4, 6, 2);
 		samSAMi1->setVerbose(true);
 		text = readText(textFileName, textLen, 0);
 		samSAMi1->build(text, textLen);

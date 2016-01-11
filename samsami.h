@@ -32,6 +32,7 @@ private:
 
         void (SamSAMi1::*builder)(unsigned int *, unsigned int) = NULL;
 	unsigned int (SamSAMi1::*countOperation)(unsigned char *, unsigned int) = NULL;
+        bool (*sketchOperation)(unsigned int, unsigned char *, unsigned int, unsigned int, unsigned int) = NULL;
 
 	void freeMemory();
 	void initialize();
@@ -50,7 +51,8 @@ private:
 public:
 	enum IndexType {
 		STANDARD = 1,
-		WITH_SKETCHES = 2
+		WITH_SKETCHES_8x2 = 2,
+                WITH_SKETCHES_4x4 = 3
 	};
 
 	SamSAMi1() {
@@ -159,6 +161,7 @@ private:
 
         void (SamSAMi2::*builder)(unsigned int *, unsigned int) = NULL;
 	unsigned int (SamSAMi2::*countOperation)(unsigned char *, unsigned int) = NULL;
+        bool (*sketchOperation)(unsigned int, unsigned char *, unsigned int, unsigned int, unsigned int) = NULL;
 
 	void freeMemory();
 	void initialize();
@@ -177,7 +180,8 @@ private:
 public:
 	enum IndexType {
 		STANDARD = 1,
-		WITH_SKETCHES = 2
+		WITH_SKETCHES_8x2 = 2,
+                WITH_SKETCHES_4x4 = 3
 	};
 
 	SamSAMi2() {
@@ -224,9 +228,12 @@ public:
 
 /*SHARED STUFF*/
 
-void markSketch(unsigned char *text, unsigned int bitShift, unsigned int textIndex, unsigned int *sketches, unsigned int sketchesIndex);
-unsigned int getBitShift(unsigned char *text, unsigned int textLen);
-bool isSketchEqual(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int sketch, unsigned int i);
+void markSketch_8x2(unsigned char *text, unsigned int bitShift, unsigned int textIndex, unsigned int *sketches, unsigned int sketchesIndex);
+unsigned int getBitShift_8x2(unsigned char *text, unsigned int textLen);
+bool isSketchEqual_8x2(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int sketch, unsigned int i);
+void markSketch_4x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex, unsigned int *sketches, unsigned int sketchesIndex);
+unsigned int getBitShift_4x4(unsigned char *text, unsigned int textLen);
+bool isSketchEqual_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int sketch, unsigned int i);
 unsigned int getUniqueSuffixNumForSamSAMi2(unsigned int k, unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
 void fillLUT2ForSamSAMi2(unsigned int lut2[256][256][2], unsigned char *text, unsigned int *sa, unsigned int saLen);
 void binarySearchForSamSAMi2(unsigned int *sa, unsigned char *text, unsigned int lStart, unsigned int rStart, unsigned char *pattern, int patternLength, unsigned int &beg, unsigned int &end);
