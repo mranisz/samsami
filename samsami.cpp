@@ -49,11 +49,13 @@ void SamSAMi1::setFunctions() {
 		case SamSAMi1::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches_hash;
+                        this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi1::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches_hash;
+                        this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
 		default:
@@ -69,11 +71,13 @@ void SamSAMi1::setFunctions() {
 		case SamSAMi1::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches;
+                        this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi1::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches;
+                        this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
 		default:
@@ -311,8 +315,10 @@ unsigned int SamSAMi1::count_sketches(unsigned char *pattern, unsigned int patte
 	binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
 	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
 		for (unsigned int i = beg; i < end; ++i) {
-			if (this->sketchOperation(this->bitShift, pattern, pos, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
 		}
 	}
 	return count;
@@ -351,8 +357,10 @@ unsigned int SamSAMi1::count_sketches_hash(unsigned char *pattern, unsigned int 
 	binarySearch(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
 	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
 		for (unsigned int i = beg; i < end; ++i) {
-			if (this->sketchOperation(this->bitShift, pattern, pos, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
 		}
 	}
 	return count;
@@ -531,11 +539,13 @@ void SamSAMi2::setFunctions() {
 		case SamSAMi2::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches_hash;
+                        this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi2::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches_hash;
+                        this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
 		default:
@@ -551,11 +561,13 @@ void SamSAMi2::setFunctions() {
 		case SamSAMi2::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches;
+                        this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi2::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches;
+                        this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
 		default:
@@ -808,10 +820,12 @@ unsigned int SamSAMi2::count_sketches(unsigned char *pattern, unsigned int patte
 	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
 	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
 		for (unsigned int i = beg; i < end; ++i) {
 			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
 			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-			if (this->sketchOperation(this->bitShift, pattern, pos, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
 		}
 	}
 	return count;
@@ -854,10 +868,12 @@ unsigned int SamSAMi2::count_sketches_hash(unsigned char *pattern, unsigned int 
 	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
 	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
 		for (unsigned int i = beg; i < end; ++i) {
 			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
 			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-			if (this->sketchOperation(this->bitShift, pattern, pos, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
 		}
 	}
 	return count;
@@ -1304,25 +1320,37 @@ unsigned int getBitShift_4x4(unsigned char *text, unsigned int textLen) {
         return bitShift;
 }
 
-bool isSketchEqual_8x2(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int sketch, unsigned int i) {
-	int k = 8;
-	if (pos < 8) k = pos;
+unsigned int getPatternSketch_8x2(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen) {
+        sketchLen = 8;
+        if (pos < 8) sketchLen = pos;
+        unsigned int patternSketch = 0;
+        for (unsigned int i = 1; i <= sketchLen; ++i) {
+                patternSketch += (((pattern[pos - i] >> bitShift) & 3) << (2 * (sketchLen - i)));
+        }
+        return patternSketch;
+}
+
+bool isSketchEqual_8x2(unsigned int patternSketch, unsigned int sketchLen, unsigned int sketch, unsigned int i) {
 	if ((i & 1) == 0) sketch = sketch >> 16;
 	else sketch = sketch & 0x0000FFFF;
-	for (int i = 1; i <= k; ++i) {
-		if (((sketch >> (16 - 2 * i)) & 3) != ((pattern[pos - i] >> bitShift) & 3)) return false;
-	}
+	if ((sketch >> (2 * (8 - sketchLen))) != patternSketch) return false;
 	return true;
 }
 
-bool isSketchEqual_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int sketch, unsigned int i) {
-	int k = 4;
-	if (pos < 4) k = pos;
+unsigned int getPatternSketch_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen) {
+        sketchLen = 4;
+        if (pos < 4) sketchLen = pos;
+        unsigned int patternSketch = 0;
+        for (unsigned int i = 1; i <= sketchLen; ++i) {
+                patternSketch += (((pattern[pos - i] >> bitShift) & 15) << (4 * (sketchLen - i)));
+        }
+        return patternSketch;
+}
+
+bool isSketchEqual_4x4(unsigned int patternSketch, unsigned int sketchLen, unsigned int sketch, unsigned int i) {
 	if ((i & 1) == 0) sketch = sketch >> 16;
 	else sketch = sketch & 0x0000FFFF;
-	for (int i = 1; i <= k; ++i) {
-		if (((sketch >> (16 - 4 * i)) & 15) != ((pattern[pos - i] >> bitShift) & 15)) return false;
-	}
+	if ((sketch >> (4 * (4 - sketchLen))) != patternSketch) return false;
 	return true;
 }
 

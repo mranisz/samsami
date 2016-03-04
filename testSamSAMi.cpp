@@ -25,10 +25,10 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 
 void getUsage(char **argv) {
 	cout << "Select index you want to test:" << endl;
-	cout << "SamSAMi1: ./" << argv[0] << " 1 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMi2: ./" << argv[0] << " 2 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMi1-hash: ./" << argv[0] << " 1 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
-        cout << "SamSAMi2-hash: ./" << argv[0] << " 2 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi1: " << argv[0] << " 1 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
+        cout << "SamSAMi2: " << argv[0] << " 2 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
+        cout << "SamSAMi1-hash: " << argv[0] << " 1 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
+        cout << "SamSAMi2-hash: " << argv[0] << " 2 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
         cout << "where:" << endl;
         cout << "q - window length " << endl;
 	cout << "p - minimizer length, p <= q" << endl;
