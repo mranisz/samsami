@@ -158,8 +158,8 @@ SamSAMi-FM is a hybrid of SamSAMi and FM. To speed up the verification phase (wh
 
 Parameters:
 - indexType:
-        - SamSAMiFM::TYPE_512 (default) - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
-        - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+      - SamSAMiFM::TYPE_512 (default) - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
+      - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
 - q - window length (default: q = 4)
 - p - minimizer length, p ≤ q (default: p = 1)
 - l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster (default: l = 16)
@@ -178,8 +178,8 @@ SamSAMi-FM-hash is SamSAMi-FM with hashed k-symbol prefixes of suffixes from sam
 
 Parameters:
 - indexType:
-        - SamSAMiFM::TYPE_512 - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
-        - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+      - SamSAMiFM::TYPE_512 - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
+      - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
 - q - window length
 - p - minimizer length, p ≤ q
 - l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster
