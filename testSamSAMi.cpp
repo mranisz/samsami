@@ -236,7 +236,7 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 		samSAMi2 = new SamSAMi2();
 		samSAMi2->load(indexFileName);
 	} else {
-		samSAMi2 = new SamSAMi2(SamSAMi2IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), HT::STANDARD, atoi(k.c_str()), atof(loadFactor.c_str()));
+		samSAMi2 = new SamSAMi2(SamSAMi2IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), SamSAMi2HashTypesMap[hTType], atoi(k.c_str()), atof(loadFactor.c_str()));
 		samSAMi2->setVerbose(true);
 		text = readText(textFileName, textLen, 0);
 		samSAMi2->build(text, textLen);
