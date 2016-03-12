@@ -12,7 +12,7 @@ The SamSAMi text indexes require:
 - C++11 ready compiler such as g++ version 4.7 or higher
 - a 64-bit operating system
 - text size is limited to:
-    - 4GB for SamSAMi1 and SamSAMiFM
+    - 4GB for SamSAMi1 and SamSAMi-FM
     - 256MB for SamSAMi2
 
 ##Installation
