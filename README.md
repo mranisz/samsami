@@ -12,7 +12,7 @@ The SamSAMi text indexes require:
 - C++11 ready compiler such as g++ version 4.7 or higher
 - a 64-bit operating system
 - text size is limited to:
-    - 4GB for SamSAMi1
+    - 4GB for SamSAMi1 and SamSAMiFM
     - 256MB for SamSAMi2
 
 ##Installation
@@ -90,11 +90,11 @@ SamSAMi1-hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled
 
 Parameters:
 - indexType:
-      - SamSAMi1::STANDARD (default)
+      - SamSAMi1::STANDARD
       - SamSAMi1::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SamSAMi1::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
-- q - window length (default: q = 4)
-- p - minimizer length, p ≤ q (default: p = 1)
+- q - window length
+- p - minimizer length, p ≤ q
 - hash type:
       - HT::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
       - HT::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
@@ -134,11 +134,11 @@ SamSAMi2-hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled
 
 Parameters:
 - indexType:
-      - SamSAMi2::STANDARD (default)
+      - SamSAMi2::STANDARD
       - SamSAMi2::WITH_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SamSAMi2::WITH_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
-- q - window length (default: q = 4)
-- p - minimizer length, p ≤ q (default: p = 1)
+- q - window length
+- p - minimizer length, p ≤ q
 - hash type:
       - HTSamSAMi2::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
       - HTSamSAMi2::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
@@ -151,6 +151,50 @@ Limitations:
 Constructors:
 ```
 SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HTSamSAMi2::HTType hTType, unsigned int k, double loadFactor);
+```
+
+##SamSAMi-FM
+SamSAMi-FM is a hybrid of SamSAMi and FM. To speed up the verification phase (which is costly for short patterns in standard SamSAMi indexes), the FM index (employing a binary Huffman-shaped wavelet tree) is used.
+
+Parameters:
+- indexType:
+        - SamSAMiFM::TYPE_512 (default) - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
+        - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+- q - window length (default: q = 4)
+- p - minimizer length, p ≤ q (default: p = 1)
+- l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster (default: l = 16)
+
+Limitations: 
+- pattern length ≥ q
+
+Constructors:
+```
+SamSAMiFM();
+SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsigned int l);
+```
+
+##SamSAMi-FM-hash
+SamSAMi-FM-hash is SamSAMi-FM with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
+
+Parameters:
+- indexType:
+        - SamSAMiFM::TYPE_512 - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
+        - SamSAMiFM::TYPE_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+- q - window length
+- p - minimizer length, p ≤ q
+- l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster
+- hash type:
+      - HT::STANDARD - using 8 bytes for each hashed entry: 4 bytes for left boundary + 4 bytes for right boundary
+      - HT::DENSE - using 6 bytes for each hashed entry: 4 bytes for left boundary + 2 bytes for right boundary
+- k - length of prefixes of suffixes from suffix array (k ≥ 2)
+- loadFactor - hash table load factor (0.0 < loadFactor < 1.0)
+
+Limitations: 
+- pattern length ≥ max(q, k + q - p) (in case k - p > 0, patterns shorter than (k + q - p) are handled by not-hashed variant of SamSAMi index if they are not shorter than q)
+
+Constructors:
+```
+SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsigned int l, HT::HTType hTType, unsigned int k, double loadFactor);
 ```
 
 ##SamSAMi1 usage example

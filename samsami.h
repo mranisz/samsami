@@ -2,6 +2,8 @@
 #define SAMSAMI_H_
 
 #include "shared/common.h"
+#include "shared/wt.h"
+#include "shared/huff.h"
 #include "shared/hash.h"
 #include <cstdio>
 
@@ -213,6 +215,102 @@ public:
 	}
 
 	~SamSAMi2() {
+		this->freeMemory();
+                if (this->ht != NULL) delete this->ht;
+	}
+
+	void build(unsigned char *text, unsigned int textLen);
+	void save(const char *fileName);
+	void load(const char *fileName);
+	void free();
+	unsigned int getIndexSize();
+	unsigned int getTextSize();
+
+	unsigned int count(unsigned char *pattern, unsigned int patternLen);
+	unsigned int *locate(unsigned char *pattern, unsigned int patternLen);
+};
+
+/*SAMSAMIFM*/ 
+    
+class SamSAMiFM : public Index {
+private:
+	unsigned int *samSAMi;
+	unsigned int *alignedSamSAMi;
+	unsigned int samSAMiLen;
+        unsigned char *text;
+        unsigned char *alignedText;
+        unsigned int textLen;
+        unsigned int *M;
+        unsigned int MLen;
+        unsigned int *alignedM;
+        unsigned int *H;
+        unsigned int HLen;
+        unsigned int *alignedH;
+        unsigned int minPatternLenForHash;
+        alignas(128) unsigned int c[257];
+        alignas(128) unsigned long long code[256];
+	alignas(128) unsigned int codeLen[256];
+	HT *ht = NULL;
+        WT *wt;
+
+	int type;
+        unsigned int q;
+        unsigned int p;
+        unsigned int l;
+
+        WT *(*builderWT)(unsigned char *, unsigned int, unsigned int, unsigned long long *, unsigned int *) = NULL;
+	unsigned int (SamSAMiFM::*countOperation)(unsigned char *, unsigned int) = NULL;
+        unsigned int (*countWTOperation)(unsigned char *, unsigned int, unsigned int *, WT *, unsigned int, unsigned int, unsigned long long *, unsigned int *) = NULL;
+
+	void freeMemory();
+	void initialize();
+	void setType(int indexType);
+        void setQ(unsigned int q);
+        void setP(unsigned int p);
+        void setL(unsigned int l);
+        void setMinPatternLenForHash();
+	void setFunctions();
+	void build_samsami(unsigned int *sa, unsigned int saLen);
+        unsigned int count_std(unsigned char *pattern, unsigned int patternLen);
+        unsigned int count_std_hash(unsigned char *pattern, unsigned int patternLen);
+        unsigned int getSAPos(unsigned int samSAMiPos);
+        
+public:
+	enum IndexType {
+		TYPE_512 = 8,
+		TYPE_1024 = 16
+	};
+
+	SamSAMiFM() {
+		this->initialize();
+                this->setType(SamSAMiFM::TYPE_512);
+                this->setQ(4);
+                this->setP(1);
+                this->setL(16);
+		this->setFunctions();
+	}
+
+	SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsigned int l) {
+		this->initialize();
+		this->setType(indexType);
+                this->setQ(q);
+                this->setP(p);
+                this->setL(l);
+		this->setFunctions();
+	}
+
+	SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsigned int l, HT::HTType hTType, unsigned int k, double loadFactor) {
+		this->initialize();
+		this->setType(indexType);
+                this->setQ(q);
+                this->setP(p);
+                this->setL(l);
+                this->ht = new HT(hTType, k, loadFactor);
+                this->setMinPatternLenForHash();
+		this->setFunctions();
+	}
+
+	~SamSAMiFM() {
 		this->freeMemory();
                 if (this->ht != NULL) delete this->ht;
 	}

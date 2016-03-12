@@ -273,7 +273,7 @@ unsigned int SamSAMi1::getIndexSize() {
         if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
         if (this->sketchesLen > 0) size += (this->sketchesLen + 32) * sizeof(unsigned int);
         if (this->ht != NULL) size += this->ht->getHTSize();
-	return size;
+        return size;
 }
 
 unsigned int SamSAMi1::getTextSize() {
@@ -390,7 +390,7 @@ void SamSAMi1::save(const char *fileName) {
 	if (this->textLen > 0) fwrite(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, outFile);
         fwrite(&this->sketchesLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
 	if (this->sketchesLen > 0) fwrite(this->alignedSketches, (size_t)sizeof(unsigned int), (size_t)this->sketchesLen, outFile);
-	fwrite(&this->bitShift, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+        fwrite(&this->bitShift, (size_t)sizeof(unsigned int), (size_t)1, outFile);
         if (this->ht == NULL) fwrite(&nullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
         else {
                 fwrite(&notNullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
@@ -483,7 +483,7 @@ void SamSAMi1::load(const char *fileName) {
 		cout << "Error loading index from " << fileName << endl;
 		exit(1);
 	}
-	result = fread(&isNotNullPointer, (size_t)sizeof(bool), (size_t)1, inFile);
+        result = fread(&isNotNullPointer, (size_t)sizeof(bool), (size_t)1, inFile);
 	if (result != 1) {
 		cout << "Error loading index from " << fileName << endl;
 		exit(1);
@@ -1230,6 +1230,458 @@ void HTSamSAMi2::getDenseHTBoundaries(unsigned char *pattern, unsigned char *tex
 
 void HTSamSAMi2::getBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
     return (this->*getBoundariesOperation)(pattern, text, sa, leftBoundary, rightBoundary);
+}
+
+/*SAMSAMIFM*/
+
+void SamSAMiFM::setType(int indexType) {
+	if (indexType != SamSAMiFM::TYPE_512 && indexType != SamSAMiFM::TYPE_1024) {
+		cout << "Error: not valid index type" << endl;
+		exit(1);
+	}
+	this->type = indexType;
+}
+
+void SamSAMiFM::setQ(unsigned int q) {
+	if (q == 0) {
+		cout << "Error: not valid q value" << endl;
+		exit(1);
+	}
+	this->q = q;
+}
+
+void SamSAMiFM::setP(unsigned int p) {
+	if (p == 0 || p > this->q) {
+		cout << "Error: not valid p value" << endl;
+		exit(1);
+	}
+	this->p = p;
+}
+
+void SamSAMiFM::setL(unsigned int l) {
+	if (l == 0) {
+		cout << "Error: not valid l value" << endl;
+		exit(1);
+	}
+	this->l = l;
+}
+
+void SamSAMiFM::setMinPatternLenForHash() {
+        if (this->q > (this->ht->k + this->q - this->p)) this->minPatternLenForHash = this->q;
+        else this->minPatternLenForHash = this->ht->k + this->q - this->p;
+}
+
+void SamSAMiFM::setFunctions() {
+        switch (this->type) {
+		case SamSAMiFM::TYPE_512:
+                        this->builderWT = &createWT2_512_counter40;
+                        this->countWTOperation = &count_WT2_512_counter40;
+                        break;
+		case SamSAMiFM::TYPE_1024:
+                        this->builderWT = &createWT2_1024_counter32;
+                        this->countWTOperation = &count_WT2_1024_counter32;
+                        break;
+		default:
+			cout << "Error: not valid index type" << endl;
+			exit(1);
+		}
+	if (this->ht != NULL) this->countOperation = &SamSAMiFM::count_std_hash;
+	else this->countOperation = &SamSAMiFM::count_std;
+}
+
+void SamSAMiFM::free() {
+	this->freeMemory();
+	this->initialize();
+}
+
+void SamSAMiFM::initialize() {
+        this->wt = NULL;
+	this->samSAMi = NULL;
+	this->alignedSamSAMi = NULL;
+	this->samSAMiLen = 0;
+        this->text = NULL;
+	this->alignedText = NULL;
+        this->textLen = 0;
+        this->M = NULL;
+        this->alignedM = NULL;
+        this->MLen = 0;
+        this->H = NULL;
+        this->alignedH = NULL;
+        this->HLen = 0;
+        for (int i = 0; i < 256; ++i) {
+		this->code[i] = 0;
+		this->codeLen[i] = 0;
+	}
+	for (int i = 0; i < 257; ++i) this->c[i] = 0;
+}
+
+void SamSAMiFM::freeMemory() {
+	if (this->samSAMi != NULL) delete[] this->samSAMi;
+        if (this->text != NULL) delete[] this->text;
+	if (this->ht != NULL) this->ht->free();
+        if (this->wt != NULL) delete this->wt;
+        if (this->M != NULL) delete this->M;
+        if (this->H != NULL) delete this->H;
+}
+
+void SamSAMiFM::build(unsigned char* text, unsigned int textLen) {
+	checkNullChar(text, textLen);
+	this->free();
+        if (this->verbose) cout << "Loading text ... " << flush;
+	this->textLen = textLen;
+        this->text = new unsigned char[this->textLen + this->q + 128 + 1];
+        for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
+        this->alignedText = this->text + this->q;
+        while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
+        for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        this->alignedText[this->textLen] = '\0';
+        if (this->verbose) cout << "Done" << endl;
+        
+        fillArrayC(this->alignedText, this->textLen, this->c, this->verbose);
+        
+        unsigned int saLen;
+        unsigned int *sa = getSA(this->alignedText, this->textLen, saLen, 0, this->verbose);
+        
+        unsigned int bwtLen;
+        unsigned char *bwt = getBWT(this->alignedText, this->textLen, sa, saLen, bwtLen, 0, this->verbose);
+        if (this->verbose) cout << "Huffman encoding ... " << flush;
+        encodeHuff(2, bwt, bwtLen, this->code, this->codeLen);
+        if (this->verbose) cout << "Done" << endl;
+	if (this->verbose) cout << "Building WT ... " << flush;
+        this->wt = (this->builderWT)(bwt, bwtLen, 0, this->code, this->codeLen);
+        delete[] bwt;
+        if (this->verbose) cout << "Done" << endl;
+        
+	this->build_samsami(sa, saLen);
+
+	delete[] sa;
+}
+
+void SamSAMiFM::build_samsami(unsigned int* sa, unsigned int saLen) {
+        if (this->verbose) cout << "Building SamSAMi ... " << flush;
+    	bool *markers = new bool[this->textLen];
+	for (unsigned int i = 0; i < this->textLen; ++i) markers[i] = false;
+
+	this->samSAMiLen = 1;
+	unsigned char *minimizer = new unsigned char[this->p + 1];
+	unsigned char *curr = new unsigned char[this->p + 1];
+	minimizer[this->p] = '\0';
+	curr[this->p] = '\0';
+	int pos = -1, prevPos = -1;
+
+	for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
+		for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
+		for (unsigned int j = i; j < i + this->q - this->p + 1; ++j) {
+			strncpy((char *)curr, (const char *)(this->alignedText + j), this->p);
+			if (strncmp((char *)curr, (const char *)minimizer, this->p) < 0) {
+				strcpy((char *)minimizer, (const char *)curr);
+				pos = j;
+			}
+		}
+		if (pos > prevPos) {
+			markers[pos] = true;
+			++(this->samSAMiLen);
+			prevPos = pos;
+		}
+	}
+
+        this->MLen = saLen / 32;
+        if (saLen % 32) ++this->MLen;
+        this->M = new unsigned int[this->MLen + 32];
+        this->alignedM = this->M;
+        while ((unsigned long long)this->alignedM % 128) ++this->alignedM;
+        for (unsigned int i = 0; i < this->MLen; ++i) this->alignedM[i] = 0;
+        
+        this->HLen = this->samSAMiLen / this->l;
+        if (this->samSAMiLen % this->l) ++this->HLen;
+        this->H = new unsigned int[this->HLen + 32];
+        this->alignedH = this->H;
+        while ((unsigned long long)this->alignedH % 128) ++this->alignedH;
+        for (unsigned int i = 0; i < this->HLen; ++i) this->alignedH[i] = 0;
+        
+	this->samSAMi = new unsigned int[this->samSAMiLen + 32];
+        this->alignedSamSAMi = this->samSAMi;
+        while ((unsigned long long)this->alignedSamSAMi % 128) ++this->alignedSamSAMi;
+	this->alignedSamSAMi[0] = sa[0];
+	unsigned int samSAMiCounter = 1, HCounter = 1;
+	for (unsigned int i = 1; i < saLen; ++i) if (markers[sa[i]]) {
+            if ((samSAMiCounter % this->l) == 0) this->alignedH[HCounter++] = i;
+            this->alignedSamSAMi[samSAMiCounter++] = sa[i];
+            this->alignedM[i / 32] += (1 << (31 - (i % 32)));
+        }
+        if (this->verbose) cout << "Done" << endl;
+        if (this->ht != NULL) {
+                if (this->verbose) cout << "Building hash table ... " << flush;
+		this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
+		if (this->verbose) cout << "Done" << endl;
+	}
+	
+        delete[] minimizer;
+	delete[] curr;
+	delete[] markers;
+}
+
+unsigned int SamSAMiFM::getIndexSize() {
+	unsigned int size = sizeof(this->type) + sizeof(this->q) + sizeof(this->p) + sizeof(this->l) + sizeof(this->samSAMiLen) + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + sizeof(this->wt) + sizeof(this->MLen) + sizeof(HLen) + 257 * sizeof(unsigned int) + 256 * sizeof(unsigned int) + 256 * sizeof(unsigned long long);
+        if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
+        if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
+        if (this->MLen > 0) size += (this->MLen + 32) * sizeof(unsigned int);
+        if (this->HLen > 0) size += (this->HLen + 32) * sizeof(unsigned int);
+        if (this->ht != NULL) size += this->ht->getHTSize();
+        if (this->wt != NULL) size += this->wt->getWTSize();
+	return size;
+}
+
+unsigned int SamSAMiFM::getTextSize() {
+	return this->textLen * sizeof(unsigned char);
+}
+
+unsigned int SamSAMiFM::count_std(unsigned char *pattern, unsigned int patternLen) {
+        if (patternLen < this->q) {
+                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
+                exit(1);
+        }
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+	binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) return end - beg;
+	else return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+}
+
+unsigned int SamSAMiFM::getSAPos(unsigned int samSAMiPos) {
+    if (samSAMiPos % this->l) {
+        unsigned int saPos = this->alignedH[samSAMiPos / this->l];
+        unsigned int rest = samSAMiPos % this->l;
+        unsigned int startBitInBlock = (saPos + 1) % 32;
+        unsigned int setBits = 0;
+        unsigned int bitsBlock;
+        if (startBitInBlock) {
+            bitsBlock = this->alignedM[saPos / 32];
+            setBits = __builtin_popcount(bitsBlock << startBitInBlock);
+            if (rest <= setBits) {
+                for (unsigned int i = startBitInBlock; i < 32; ++i) {
+                    if ((bitsBlock >> (31 - i)) & 1) {
+                        --rest;
+                        if (rest == 0) return saPos + (i - startBitInBlock) + 1;
+                    }
+                }
+            }
+        }
+        unsigned int MCounter = (saPos / 32) + 1;
+        while (rest > setBits) {
+            rest -= setBits;
+            setBits = __builtin_popcount(this->alignedM[MCounter++]);
+        }
+        --MCounter;
+        bitsBlock = this->alignedM[MCounter];
+        for (unsigned int i = 0; i < 32; ++i) {
+            if ((bitsBlock >> (31 - i)) & 1) {
+                --rest;
+                if (rest == 0) return 32 * MCounter + i;
+            }
+        }
+    }
+    return this->alignedH[samSAMiPos / this->l];
+}
+
+unsigned int SamSAMiFM::count_std_hash(unsigned char *pattern, unsigned int patternLen) {
+        if (patternLen < this->minPatternLenForHash) return this->count_std(pattern, patternLen);
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+        unsigned int leftBoundary, rightBoundary;
+	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
+	binarySearch(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) return end - beg;
+	else return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+}
+
+unsigned int SamSAMiFM::count(unsigned char *pattern, unsigned int patternLen) {
+	return (this->*countOperation)(pattern, patternLen);
+}
+
+unsigned int *SamSAMiFM::locate(unsigned char *pattern, unsigned int patternLen) {
+	return 0;
+}
+
+void SamSAMiFM::save(const char *fileName) {
+	if (this->verbose) cout << "Saving index in " << fileName << " ... " << flush;
+	bool nullPointer = false;
+	bool notNullPointer = true;
+	FILE *outFile;
+	outFile = fopen(fileName, "w");
+	fwrite(&this->verbose, (size_t)sizeof(bool), (size_t)1, outFile);
+	fwrite(&this->type, (size_t)sizeof(int), (size_t)1, outFile);
+        fwrite(&this->q, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+        fwrite(&this->p, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+        fwrite(&this->l, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+	fwrite(&this->samSAMiLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+	if (this->samSAMiLen > 0) fwrite(this->alignedSamSAMi, (size_t)sizeof(unsigned int), (size_t)this->samSAMiLen, outFile);
+        fwrite(&this->textLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+	if (this->textLen > 0) fwrite(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, outFile);
+        fwrite(this->c, (size_t)sizeof(unsigned int), (size_t)257, outFile);
+        fwrite(this->code, (size_t)sizeof(unsigned long long), (size_t)256, outFile);
+	fwrite(this->codeLen, (size_t)sizeof(unsigned int), (size_t)256, outFile);
+        fwrite(&this->MLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+	if (this->MLen > 0) fwrite(this->alignedM, (size_t)sizeof(unsigned int), (size_t)this->MLen, outFile);
+        fwrite(&this->HLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
+	if (this->HLen > 0) fwrite(this->alignedH, (size_t)sizeof(unsigned int), (size_t)this->HLen, outFile);
+        if (this->wt == NULL) fwrite(&nullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
+	else {
+		fwrite(&notNullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
+		this->wt->save(outFile);
+	}
+        if (this->ht == NULL) fwrite(&nullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
+        else {
+                fwrite(&notNullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
+                this->ht->save(outFile);
+        }
+	fclose(outFile);
+	if (this->verbose) cout << "Done" << endl;
+}
+
+void SamSAMiFM::load(const char *fileName) {
+	this->free();
+        if (this->ht != NULL) {
+                delete this->ht;
+                this->ht = NULL;
+        }
+	bool isNotNullPointer;
+	FILE *inFile;
+	inFile = fopen(fileName, "rb");
+	size_t result;
+	result = fread(&this->verbose, (size_t)sizeof(bool), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (this->verbose) cout << "Loading index from " << fileName << " ... " << flush;
+	result = fread(&this->type, (size_t)sizeof(int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+        result = fread(&this->q, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+        result = fread(&this->p, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+        result = fread(&this->l, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	result = fread(&this->samSAMiLen, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (this->samSAMiLen > 0) {
+		this->samSAMi = new unsigned int[this->samSAMiLen + 32];
+		this->alignedSamSAMi = this->samSAMi;
+		while ((unsigned long long)this->alignedSamSAMi % 128) ++this->alignedSamSAMi;
+		result = fread(this->alignedSamSAMi, (size_t)sizeof(unsigned int), (size_t)this->samSAMiLen, inFile);
+		if (result != this->samSAMiLen) {
+			cout << "Error loading index from " << fileName << endl;
+			exit(1);
+		}
+	}
+        result = fread(&this->textLen, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (this->textLen > 0) {
+		this->text = new unsigned char[this->textLen + this->q + 128 + 1];
+                for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
+		this->alignedText = this->text + this->q;
+		while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
+		result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
+                this->alignedText[this->textLen] = '\0';
+		if (result != this->textLen) {
+			cout << "Error loading index from " << fileName << endl;
+			exit(1);
+		}
+	}
+        result = fread(this->c, (size_t)sizeof(unsigned int), (size_t)257, inFile);
+	if (result != 257) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+        result = fread(this->code, (size_t)sizeof(unsigned long long), (size_t)256, inFile);
+	if (result != 256) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	result = fread(this->codeLen, (size_t)sizeof(unsigned int), (size_t)256, inFile);
+	if (result != 256) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+        result = fread(&this->MLen, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (this->MLen > 0) {
+		this->M = new unsigned int[this->MLen + 32];
+		this->alignedM = this->M;
+		while ((unsigned long long)this->alignedM % 128) ++this->alignedM;
+		result = fread(this->alignedM, (size_t)sizeof(unsigned int), (size_t)this->MLen, inFile);
+		if (result != this->MLen) {
+			cout << "Error loading index from " << fileName << endl;
+			exit(1);
+		}
+	}
+        result = fread(&this->HLen, (size_t)sizeof(unsigned int), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (this->HLen > 0) {
+		this->H = new unsigned int[this->HLen + 32];
+		this->alignedH = this->H;
+		while ((unsigned long long)this->alignedH % 128) ++this->alignedH;
+		result = fread(this->alignedH, (size_t)sizeof(unsigned int), (size_t)this->HLen, inFile);
+		if (result != this->HLen) {
+			cout << "Error loading index from " << fileName << endl;
+			exit(1);
+		}
+	}
+        result = fread(&isNotNullPointer, (size_t)sizeof(bool), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (isNotNullPointer) {
+		this->wt = new WT();
+		this->wt->load(inFile);
+	}
+	result = fread(&isNotNullPointer, (size_t)sizeof(bool), (size_t)1, inFile);
+	if (result != 1) {
+		cout << "Error loading index from " << fileName << endl;
+		exit(1);
+	}
+	if (isNotNullPointer) {
+                this->ht = new HT();
+                this->ht->load(inFile);
+                this->setMinPatternLenForHash();
+	}
+	fclose(inFile);
+	this->setFunctions();
+	if (this->verbose) cout << "Done" << endl;
 }
 
 /*SHARED STUFF*/
