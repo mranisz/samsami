@@ -1407,7 +1407,7 @@ void SamSAMiFM::build_samsami(unsigned int* sa, unsigned int saLen) {
 	for (unsigned int i = 1; i < saLen; ++i) if (markers[sa[i]]) {
             if ((samSAMiCounter % this->l) == 0) this->alignedH[HCounter++] = i;
             this->alignedSamSAMi[samSAMiCounter++] = sa[i];
-            this->alignedM[i / 32] += (1 << (31 - (i % 32)));
+            this->alignedM[i / 32] += (1 << (i % 32));
         }
         if (this->verbose) cout << "Done" << endl;
         if (this->ht != NULL) {
@@ -1461,12 +1461,12 @@ unsigned int SamSAMiFM::getSAPos(unsigned int samSAMiPos) {
         unsigned int bitsBlock;
         if (startBitInBlock) {
             bitsBlock = this->alignedM[saPos / 32];
-            setBits = __builtin_popcount(bitsBlock << startBitInBlock);
+            setBits = __builtin_popcount(bitsBlock >> startBitInBlock);
             if (rest <= setBits) {
                 for (unsigned int i = startBitInBlock; i < 32; ++i) {
-                    if ((bitsBlock >> (31 - i)) & 1) {
+                    if ((bitsBlock >> i) & 1) {
+                        if (rest == 1) return saPos + (i - startBitInBlock) + 1;
                         --rest;
-                        if (rest == 0) return saPos + (i - startBitInBlock) + 1;
                     }
                 }
             }
@@ -1479,9 +1479,9 @@ unsigned int SamSAMiFM::getSAPos(unsigned int samSAMiPos) {
         --MCounter;
         bitsBlock = this->alignedM[MCounter];
         for (unsigned int i = 0; i < 32; ++i) {
-            if ((bitsBlock >> (31 - i)) & 1) {
+            if ((bitsBlock >> i) & 1) {
+                if (rest == 1) return 32 * MCounter + i;
                 --rest;
-                if (rest == 0) return 32 * MCounter + i;
             }
         }
     }
