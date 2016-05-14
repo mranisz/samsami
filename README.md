@@ -5,8 +5,6 @@ The SamSAMi text indexes are variations of the sampled suffix array, which uses 
 
 SamSAMi1 uses 5n bytes of RAM in the worst case (which is however unlikely). This includes 1n bytes for the input text and 4n bytes for the index. Typically its memory use depends on the parameters q, p and on average the required memory is about 1n+8/(q-p+2)n bytes.
 
-The current version handles only the count query (i.e., returns the number of occurrences of the given pattern).
-
 ##Requirements
 The SamSAMi text indexes require:
 - C++11 ready compiler such as g++ version 4.7 or higher
@@ -60,6 +58,10 @@ unsigned int getTextSize();
 - get the result of **count** query:
 ```
 unsigned int count(unsigned char *pattern, unsigned int patternLen);
+```
+- get the result of **locate** query:
+```
+void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 ```
 - set **verbose** mode:
 ```
@@ -155,6 +157,7 @@ SamSAMi2(SamSAMi2::IndexType indexType, unsigned int q, unsigned int p, HTSamSAM
 
 ##SamSAMi-FM
 SamSAMi-FM is a hybrid of SamSAMi and FM. To speed up the verification phase (which is costly for short patterns in standard SamSAMi indexes), the FM index (employing a binary Huffman-shaped wavelet tree) is used.
+The current version handles only the count query.
 
 Parameters:
 - indexType:

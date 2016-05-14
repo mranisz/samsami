@@ -45,16 +45,19 @@ void SamSAMi1::setFunctions() {
 		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi1::build_std;
                         this->countOperation = &SamSAMi1::count_std_hash;
+                        this->locateOperation = &SamSAMi1::locate_std_hash;
 			break;
 		case SamSAMi1::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches_hash;
+                        this->locateOperation = &SamSAMi1::locate_sketches_hash;
                         this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi1::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches_hash;
+                        this->locateOperation = &SamSAMi1::locate_sketches_hash;
                         this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
@@ -67,16 +70,19 @@ void SamSAMi1::setFunctions() {
 		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi1::build_std;
                         this->countOperation = &SamSAMi1::count_std;
+                        this->locateOperation = &SamSAMi1::locate_std;
 			break;
 		case SamSAMi1::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches;
+                        this->locateOperation = &SamSAMi1::locate_sketches;
                         this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi1::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi1::build_sketches;
                         this->countOperation = &SamSAMi1::count_sketches;
+                        this->locateOperation = &SamSAMi1::locate_sketches;
                         this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
@@ -301,6 +307,26 @@ unsigned int SamSAMi1::count_std(unsigned char *pattern, unsigned int patternLen
 	return count;
 }
 
+void SamSAMi1::locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->q) {
+                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
+                exit(1);
+        }
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+	binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
+	else {
+		for (unsigned int i = beg; i < end; ++i) {
+			if (strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi1::count_sketches(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
@@ -324,6 +350,28 @@ unsigned int SamSAMi1::count_sketches(unsigned char *pattern, unsigned int patte
 	return count;
 }
 
+void SamSAMi1::locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->q) {
+                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
+                exit(1);
+        }
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+	binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
+	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
+		for (unsigned int i = beg; i < end; ++i) {
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi1::count_std_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_std(pattern, patternLen);
 	unsigned int beg, end, count = 0, pos = 0;
@@ -342,6 +390,28 @@ unsigned int SamSAMi1::count_std_hash(unsigned char *pattern, unsigned int patte
 		}
 	}
 	return count;
+}
+
+void SamSAMi1::locate_std_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->minPatternLenForHash) {
+            this->locate_std(pattern, patternLen, res);
+            return;
+        }
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+        unsigned int leftBoundary, rightBoundary;
+	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
+	binarySearch(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
+	else {
+		for (unsigned int i = beg; i < end; ++i) {
+			if (strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+		}
+	}
 }
 
 unsigned int SamSAMi1::count_sketches_hash(unsigned char *pattern, unsigned int patternLen) {
@@ -366,12 +436,36 @@ unsigned int SamSAMi1::count_sketches_hash(unsigned char *pattern, unsigned int 
 	return count;
 }
 
+void SamSAMi1::locate_sketches_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->minPatternLenForHash) {
+            this->locate_sketches(pattern, patternLen, res);
+            return;
+        }
+	unsigned int beg, end, pos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			pos = i;
+		}
+	}
+        unsigned int leftBoundary, rightBoundary;
+	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
+	binarySearch(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
+	else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
+		for (unsigned int i = beg; i < end; ++i) {
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi1::count(unsigned char *pattern, unsigned int patternLen) {
 	return (this->*countOperation)(pattern, patternLen);
 }
 
-unsigned int *SamSAMi1::locate(unsigned char *pattern, unsigned int patternLen) {
-	return 0;
+void SamSAMi1::locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+	(this->*locateOperation)(pattern, patternLen, res);
 }
 
 void SamSAMi1::save(const char *fileName) {
@@ -535,16 +629,19 @@ void SamSAMi2::setFunctions() {
 		case SamSAMi2::STANDARD:
                         this->builder = &SamSAMi2::build_std;
                         this->countOperation = &SamSAMi2::count_std_hash;
+                        this->locateOperation = &SamSAMi2::locate_std_hash;
 			break;
 		case SamSAMi2::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches_hash;
+                        this->locateOperation = &SamSAMi2::locate_sketches_hash;
                         this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi2::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches_hash;
+                        this->locateOperation = &SamSAMi2::locate_sketches_hash;
                         this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
@@ -557,16 +654,19 @@ void SamSAMi2::setFunctions() {
 		case SamSAMi1::STANDARD:
                         this->builder = &SamSAMi2::build_std;
                         this->countOperation = &SamSAMi2::count_std;
+                        this->locateOperation = &SamSAMi2::locate_std;
 			break;
 		case SamSAMi2::WITH_SKETCHES_8x2:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches;
+                        this->locateOperation = &SamSAMi2::locate_sketches;
                         this->getPatternSketchOperation = &getPatternSketch_8x2;
                         this->sketchOperation = &isSketchEqual_8x2;
 			break;
                 case SamSAMi2::WITH_SKETCHES_4x4:
                         this->builder = &SamSAMi2::build_sketches;
                         this->countOperation = &SamSAMi2::count_sketches;
+                        this->locateOperation = &SamSAMi2::locate_sketches;
                         this->getPatternSketchOperation = &getPatternSketch_4x4;
                         this->sketchOperation = &isSketchEqual_4x4;
 			break;
@@ -805,6 +905,32 @@ unsigned int SamSAMi2::count_std(unsigned char *pattern, unsigned int patternLen
 	return count;
 }
 
+void SamSAMi2::locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->q) {
+                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
+                exit(1);
+        }
+	unsigned int beg, end, pos = 0, prevPos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			prevPos = pos;
+			pos = i;
+		}
+	}
+	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) {
+            for (unsigned int i = beg; i < end; ++i) {
+                res.push_back(this->alignedSamSAMi[i] & 0x0FFFFFFF);
+            }
+	} else {
+		for (unsigned int i = beg; i < end; ++i) {
+			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
+			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+			if (strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi2::count_sketches(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
@@ -831,6 +957,34 @@ unsigned int SamSAMi2::count_sketches(unsigned char *pattern, unsigned int patte
 	return count;
 }
 
+void SamSAMi2::locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->q) {
+                cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
+                exit(1);
+        }
+	unsigned int beg, end, pos = 0, prevPos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			prevPos = pos;
+			pos = i;
+		}
+	}
+	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) {
+            for (unsigned int i = beg; i < end; ++i) {
+                res.push_back(this->alignedSamSAMi[i] & 0x0FFFFFFF);
+            }
+	} else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
+		for (unsigned int i = beg; i < end; ++i) {
+			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
+			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi2::count_std_hash(unsigned char *pattern, unsigned int patternLen) {
         if (patternLen < this->minPatternLenForHash) return this->count_std(pattern, patternLen);
 	unsigned int beg, end, count = 0, pos = 0, prevPos = 0;
@@ -852,6 +1006,34 @@ unsigned int SamSAMi2::count_std_hash(unsigned char *pattern, unsigned int patte
 		}
 	}
 	return count;
+}
+
+void SamSAMi2::locate_std_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->minPatternLenForHash) {
+            this->locate_std(pattern, patternLen, res);
+            return;
+	}
+        unsigned int beg, end, pos = 0, prevPos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			prevPos = pos;
+			pos = i;
+		}
+	}
+        unsigned int leftBoundary, rightBoundary;
+	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
+	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) {
+            for (unsigned int i = beg; i < end; ++i) {
+                res.push_back(this->alignedSamSAMi[i] & 0x0FFFFFFF);
+            }
+	} else {
+		for (unsigned int i = beg; i < end; ++i) {
+			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
+			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+			if (strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+		}
+	}
 }
 
 unsigned int SamSAMi2::count_sketches_hash(unsigned char *pattern, unsigned int patternLen) {
@@ -879,12 +1061,42 @@ unsigned int SamSAMi2::count_sketches_hash(unsigned char *pattern, unsigned int 
 	return count;
 }
 
+void SamSAMi2::locate_sketches_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        if (patternLen < this->minPatternLenForHash) {
+            this->locate_sketches(pattern, patternLen, res);
+            return;
+        }
+	unsigned int beg, end, pos = 0, prevPos = 0;
+	for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
+		if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+			prevPos = pos;
+			pos = i;
+		}
+	}
+        unsigned int leftBoundary, rightBoundary;
+	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
+	binarySearchForSamSAMi2(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
+	if (pos == 0) {
+            for (unsigned int i = beg; i < end; ++i) {
+                res.push_back(this->alignedSamSAMi[i] & 0x0FFFFFFF);
+            }
+	} else {
+                unsigned int sketchLen;
+                unsigned int patternSketch = this->getPatternSketchOperation(this->bitShift, pattern, pos, sketchLen);
+		for (unsigned int i = beg; i < end; ++i) {
+			unsigned int diffPos = this->alignedSamSAMi[i] >> 28;
+			if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+			if (this->sketchOperation(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+		}
+	}
+}
+
 unsigned int SamSAMi2::count(unsigned char *pattern, unsigned int patternLen) {
 	return (this->*countOperation)(pattern, patternLen);
 }
 
-unsigned int *SamSAMi2::locate(unsigned char *pattern, unsigned int patternLen) {
-	return 0;
+void SamSAMi2::locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+	(this->*locateOperation)(pattern, patternLen, res);
 }
 
 void SamSAMi2::save(const char *fileName) {
@@ -1505,10 +1717,6 @@ unsigned int SamSAMiFM::count_std_hash(unsigned char *pattern, unsigned int patt
 
 unsigned int SamSAMiFM::count(unsigned char *pattern, unsigned int patternLen) {
 	return (this->*countOperation)(pattern, patternLen);
-}
-
-unsigned int *SamSAMiFM::locate(unsigned char *pattern, unsigned int patternLen) {
-	return 0;
 }
 
 void SamSAMiFM::save(const char *fileName) {

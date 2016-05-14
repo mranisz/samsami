@@ -34,6 +34,7 @@ private:
 
         void (SamSAMi1::*builder)(unsigned int *, unsigned int) = NULL;
 	unsigned int (SamSAMi1::*countOperation)(unsigned char *, unsigned int) = NULL;
+        void (SamSAMi1::*locateOperation)(unsigned char *, unsigned int, vector<unsigned int> &) = NULL;
         unsigned int (*getPatternSketchOperation) (unsigned int, unsigned char *, unsigned int, unsigned int &) = NULL;
         bool (*sketchOperation)(unsigned int, unsigned int, unsigned int, unsigned int) = NULL;
 
@@ -50,6 +51,10 @@ private:
         unsigned int count_sketches(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_std_hash(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_sketches_hash(unsigned char *pattern, unsigned int patternLen);
+        void locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_std_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_sketches_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
         
 public:
 	enum IndexType {
@@ -97,7 +102,7 @@ public:
 	unsigned int getTextSize();
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen);
-	unsigned int *locate(unsigned char *pattern, unsigned int patternLen);
+	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 };
 
 /*HTSAMSAMI2*/
@@ -164,6 +169,7 @@ private:
 
         void (SamSAMi2::*builder)(unsigned int *, unsigned int) = NULL;
 	unsigned int (SamSAMi2::*countOperation)(unsigned char *, unsigned int) = NULL;
+        void (SamSAMi2::*locateOperation)(unsigned char *, unsigned int, vector<unsigned int> &) = NULL;
         unsigned int (*getPatternSketchOperation) (unsigned int, unsigned char *, unsigned int, unsigned int &) = NULL;
         bool (*sketchOperation)(unsigned int, unsigned int, unsigned int, unsigned int) = NULL;
 
@@ -180,6 +186,10 @@ private:
         unsigned int count_sketches(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_std_hash(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_sketches_hash(unsigned char *pattern, unsigned int patternLen);
+        void locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_std_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        void locate_sketches_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
         
 public:
 	enum IndexType {
@@ -227,7 +237,7 @@ public:
 	unsigned int getTextSize();
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen);
-	unsigned int *locate(unsigned char *pattern, unsigned int patternLen);
+	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 };
 
 /*SAMSAMIFM*/ 
@@ -260,6 +270,7 @@ private:
 
         WT *(*builderWT)(unsigned char *, unsigned int, unsigned int, unsigned long long *, unsigned int *) = NULL;
 	unsigned int (SamSAMiFM::*countOperation)(unsigned char *, unsigned int) = NULL;
+        //void (SamSAMiFM::*locateOperation)(unsigned char *, unsigned int, vector<unsigned int> &) = NULL;
         unsigned int (*countWTOperation)(unsigned char *, unsigned int, unsigned int *, WT *, unsigned int, unsigned int, unsigned long long *, unsigned int *) = NULL;
 
 	void freeMemory();
@@ -273,6 +284,8 @@ private:
 	void build_samsami(unsigned int *sa, unsigned int saLen);
         unsigned int count_std(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_std_hash(unsigned char *pattern, unsigned int patternLen);
+        //void locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
+        //void locate_std_hash(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
         unsigned int getSAPos(unsigned int samSAMiPos);
         
 public:
@@ -323,7 +336,7 @@ public:
 	unsigned int getTextSize();
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen);
-	unsigned int *locate(unsigned char *pattern, unsigned int patternLen);
+	//void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 };
 
 /*SHARED STUFF*/
