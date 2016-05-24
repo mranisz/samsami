@@ -30,7 +30,7 @@ void getUsage(char **argv) {
 	cout << "Select index you want to test:" << endl;
 	cout << "SamSAMi1: " << argv[0] << " 1 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
         cout << "SamSAMi2: " << argv[0] << " 2 std|sketches8x2|sketches4x4 q p fileName patternNum patternLen" << endl;
-        cout << "SamSAMiFM: " << argv[0] << " FM 512|2014 q p l fileName patternNum patternLen" << endl;
+        cout << "SamSAMiFM: " << argv[0] << " FM 512|1024 q p l fileName patternNum patternLen" << endl;
         cout << "SamSAMi1-hash: " << argv[0] << " 1 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
         cout << "SamSAMi2-hash: " << argv[0] << " 2 std|sketches8x2|sketches4x4 q p hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
         cout << "SamSAMiFM-hash: " << argv[0] << " FM 512|1024 q p l hash|hash-dense k loadFactor fileName patternNum patternLen" << endl;
