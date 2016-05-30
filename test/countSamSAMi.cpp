@@ -3,7 +3,6 @@
 #include <string>
 #include <stdlib.h>
 #include <map>
-#include "../shared/common.h"
 #include "../shared/patterns.h"
 #include "../shared/timer.h"
 #include "../samsami.h"

@@ -204,7 +204,6 @@ SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsign
 ```
 #include <iostream>
 #include <stdlib.h>
-#include "samsami/shared/common.h"
 #include "samsami/shared/patterns.h"
 #include "samsami/samsami.h"
 
