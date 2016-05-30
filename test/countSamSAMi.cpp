@@ -3,10 +3,10 @@
 #include <string>
 #include <stdlib.h>
 #include <map>
-#include "shared/common.h"
-#include "shared/patterns.h"
-#include "shared/timer.h"
-#include "samsami.h"
+#include "../shared/common.h"
+#include "../shared/patterns.h"
+#include "../shared/timer.h"
+#include "../samsami.h"
 
 using namespace std;
 using namespace samsami;
@@ -73,8 +73,6 @@ int main(int argc, char *argv[]) {
 }
 
 void samSAMi1(string indexType, string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMi1 *samSAMi1;
         string indexFileNameString = "SamSAMi1-" + indexType + "-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -85,8 +83,7 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 	} else {
 		samSAMi1 = new SamSAMi1(SamSAMi1IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()));
 		samSAMi1->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMi1->build(text, textLen);
+		samSAMi1->build(textFileName);
 		samSAMi1->save(indexFileName);
 	}
 
@@ -116,7 +113,6 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMi1;
 	delete P;
@@ -124,8 +120,6 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 }
 
 void samSAMi1Hash(string indexType, string q, string p, string hTType, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMi1 *samSAMi1;
         string indexFileNameString = "SamSAMi1-" + indexType + "-" + hTType + "-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -136,8 +130,7 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 	} else {
 		samSAMi1 = new SamSAMi1(SamSAMi1IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), SamSAMiHashTypesMap[hTType], atoi(k.c_str()), atof(loadFactor.c_str()));
 		samSAMi1->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMi1->build(text, textLen);
+		samSAMi1->build(textFileName);
 		samSAMi1->save(indexFileName);
 	}
 
@@ -167,7 +160,6 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMi1;
 	delete P;
@@ -175,8 +167,6 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 }
 
 void samSAMi2(string indexType, string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMi2 *samSAMi2;
         string indexFileNameString = "SamSAMi2-" + indexType + "-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -187,8 +177,7 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 	} else {
 		samSAMi2 = new SamSAMi2(SamSAMi2IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()));
 		samSAMi2->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMi2->build(text, textLen);
+		samSAMi2->build(textFileName);
 		samSAMi2->save(indexFileName);
 	}
 
@@ -218,7 +207,6 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMi2;
 	delete P;
@@ -226,8 +214,6 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 }
 
 void samSAMi2Hash(string indexType, string q, string p, string hTType, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMi2 *samSAMi2;
         string indexFileNameString = "SamSAMi2-" + indexType + "-" + hTType + "-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -238,8 +224,7 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 	} else {
 		samSAMi2 = new SamSAMi2(SamSAMi2IndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), SamSAMi2HashTypesMap[hTType], atoi(k.c_str()), atof(loadFactor.c_str()));
 		samSAMi2->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMi2->build(text, textLen);
+		samSAMi2->build(textFileName);
 		samSAMi2->save(indexFileName);
 	}
 
@@ -269,7 +254,6 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMi2;
 	delete P;
@@ -277,8 +261,6 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 }
 
 void samSAMiFM(string indexType, string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMiFM *samSAMiFM;
         string indexFileNameString = "SamSAMiFM-" + indexType + "-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -289,8 +271,7 @@ void samSAMiFM(string indexType, string q, string p, string l, const char *textF
 	} else {
 		samSAMiFM = new SamSAMiFM(SamSAMiFMIndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
 		samSAMiFM->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMiFM->build(text, textLen);
+		samSAMiFM->build(textFileName);
 		samSAMiFM->save(indexFileName);
 	}
 
@@ -320,7 +301,6 @@ void samSAMiFM(string indexType, string q, string p, string l, const char *textF
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMiFM;
 	delete P;
@@ -328,8 +308,6 @@ void samSAMiFM(string indexType, string q, string p, string l, const char *textF
 }
 
 void samSAMiFMHash(string indexType, string q, string p, string l, string hTType, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-        unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMiFM *samSAMiFM;
         string indexFileNameString = "SamSAMiFM-" + indexType + "-" + hTType + "-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
@@ -340,8 +318,7 @@ void samSAMiFMHash(string indexType, string q, string p, string l, string hTType
 	} else {
 		samSAMiFM = new SamSAMiFM(SamSAMiFMIndexTypesMap[indexType], atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), SamSAMiHashTypesMap[hTType], atoi(k.c_str()), atof(loadFactor.c_str()));
 		samSAMiFM->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMiFM->build(text, textLen);
+		samSAMiFM->build(textFileName);
 		samSAMiFM->save(indexFileName);
 	}
 
@@ -371,7 +348,6 @@ void samSAMiFMHash(string indexType, string q, string p, string l, string hTType
 	resultFile << endl;
 	resultFile.close();
 
-	if (text != NULL) delete[] text;
 	delete[] indexCounts;
 	delete samSAMiFM;
 	delete P;

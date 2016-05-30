@@ -118,24 +118,32 @@ void SamSAMi1::freeMemory() {
 	if (this->ht != NULL) this->ht->free();
 }
 
-void SamSAMi1::build(unsigned char* text, unsigned int textLen) {
-	checkNullChar(text, textLen);
-	this->free();
+void SamSAMi1::loadText(const char *textFileName) {
         if (this->verbose) cout << "Loading text ... " << flush;
-	this->textLen = textLen;
+        this->textLen = getFileSize(textFileName, sizeof(unsigned char));
         this->text = new unsigned char[this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
-        for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        FILE *inFile;
+	inFile = fopen(textFileName, "rb");
+        size_t result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
         this->alignedText[this->textLen] = '\0';
+        if (result != this->textLen) {
+                cout << "Error loading text from " << textFileName << endl;
+                exit(1);
+        }
+        fclose(inFile);
+        checkNullChar(this->alignedText, this->textLen);
         if (this->verbose) cout << "Done" << endl;
-        
-        unsigned int saLen;
-        unsigned int *sa = getSA(this->alignedText, this->textLen, saLen, 0, this->verbose);
-        
-	(this->*builder)(sa, saLen);
+}
 
+void SamSAMi1::build(const char *textFileName) {
+	this->free();
+        this->loadText(textFileName);
+        unsigned int saLen;
+        unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
+	(this->*builder)(sa, saLen);
 	delete[] sa;
 }
 
@@ -702,24 +710,32 @@ void SamSAMi2::freeMemory() {
 	if (this->ht != NULL) this->ht->free();
 }
 
-void SamSAMi2::build(unsigned char* text, unsigned int textLen) {
-	checkNullChar(text, textLen);
-	this->free();
+void SamSAMi2::loadText(const char *textFileName) {
         if (this->verbose) cout << "Loading text ... " << flush;
-	this->textLen = textLen;
-        this->text = new unsigned char [this->textLen + this->q + 128 + 1];
+        this->textLen = getFileSize(textFileName, sizeof(unsigned char));
+        this->text = new unsigned char[this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
-        for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        FILE *inFile;
+	inFile = fopen(textFileName, "rb");
+        size_t result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
         this->alignedText[this->textLen] = '\0';
+        if (result != this->textLen) {
+                cout << "Error loading text from " << textFileName << endl;
+                exit(1);
+        }
+        fclose(inFile);
+        checkNullChar(this->alignedText, this->textLen);
         if (this->verbose) cout << "Done" << endl;
-        
-        unsigned int saLen;
-        unsigned int *sa = getSA(this->alignedText, this->textLen, saLen, 0, this->verbose);
-        
-	(this->*builder)(sa, saLen);
+}
 
+void SamSAMi2::build(const char *textFileName) {
+	this->free();
+        this->loadText(textFileName);
+        unsigned int saLen;
+        unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
+	(this->*builder)(sa, saLen);
 	delete[] sa;
 }
 
@@ -1536,23 +1552,32 @@ void SamSAMiFM::freeMemory() {
         if (this->H != NULL) delete this->H;
 }
 
-void SamSAMiFM::build(unsigned char* text, unsigned int textLen) {
-	checkNullChar(text, textLen);
-	this->free();
+void SamSAMiFM::loadText(const char *textFileName) {
         if (this->verbose) cout << "Loading text ... " << flush;
-	this->textLen = textLen;
+        this->textLen = getFileSize(textFileName, sizeof(unsigned char));
         this->text = new unsigned char[this->textLen + this->q + 128 + 1];
         for (unsigned int i = 0; i < this->q; ++i) this->text[i] = '\0';
         this->alignedText = this->text + this->q;
         while ((unsigned long long)this->alignedText % 128) ++this->alignedText;
-        for (unsigned int i = 0; i < this->textLen; ++i) this->alignedText[i] = text[i];
+        FILE *inFile;
+	inFile = fopen(textFileName, "rb");
+        size_t result = fread(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, inFile);
         this->alignedText[this->textLen] = '\0';
+        if (result != this->textLen) {
+                cout << "Error loading text from " << textFileName << endl;
+                exit(1);
+        }
+        fclose(inFile);
+        checkNullChar(this->alignedText, this->textLen);
         if (this->verbose) cout << "Done" << endl;
-        
+}
+
+void SamSAMiFM::build(const char *textFileName) {
+	this->free();
+        this->loadText(textFileName);
         fillArrayC(this->alignedText, this->textLen, this->c, this->verbose);
-        
         unsigned int saLen;
-        unsigned int *sa = getSA(this->alignedText, this->textLen, saLen, 0, this->verbose);
+        unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
         
         unsigned int bwtLen;
         unsigned char *bwt = getBWT(this->alignedText, this->textLen, sa, saLen, bwtLen, 0, this->verbose);

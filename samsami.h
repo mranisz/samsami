@@ -45,6 +45,7 @@ private:
         void setP(unsigned int p);
         void setMinPatternLenForHash();
 	void setFunctions();
+        void loadText(const char *textFileName);
 	void build_std(unsigned int *sa, unsigned int saLen);
         void build_sketches(unsigned int *sa, unsigned int saLen);
         unsigned int count_std(unsigned char *pattern, unsigned int patternLen);
@@ -94,7 +95,7 @@ public:
                 if (this->ht != NULL) delete this->ht;
 	}
 
-	void build(unsigned char *text, unsigned int textLen);
+	void build(const char *textFileName);
 	void save(const char *fileName);
 	void load(const char *fileName);
 	void free();
@@ -180,6 +181,7 @@ private:
         void setP(unsigned int p);
         void setMinPatternLenForHash();
 	void setFunctions();
+        void loadText(const char *textFileName);
 	void build_std(unsigned int *sa, unsigned int saLen);
         void build_sketches(unsigned int *sa, unsigned int saLen);
         unsigned int count_std(unsigned char *pattern, unsigned int patternLen);
@@ -229,7 +231,7 @@ public:
                 if (this->ht != NULL) delete this->ht;
 	}
 
-	void build(unsigned char *text, unsigned int textLen);
+	void build(const char *textFileName);
 	void save(const char *fileName);
 	void load(const char *fileName);
 	void free();
@@ -281,6 +283,7 @@ private:
         void setL(unsigned int l);
         void setMinPatternLenForHash();
 	void setFunctions();
+        void loadText(const char *textFileName);
 	void build_samsami(unsigned int *sa, unsigned int saLen);
         unsigned int count_std(unsigned char *pattern, unsigned int patternLen);
         unsigned int count_std_hash(unsigned char *pattern, unsigned int patternLen);
@@ -328,7 +331,7 @@ public:
                 if (this->ht != NULL) delete this->ht;
 	}
 
-	void build(unsigned char *text, unsigned int textLen);
+	void build(const char *textFileName);
 	void save(const char *fileName);
 	void load(const char *fileName);
 	void free();

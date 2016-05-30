@@ -30,10 +30,10 @@ To use the SamSAMi library:
 - use "samsami" namespace
 
 ##API
-There are several functions you can call on each of the SamSAMi text index:
-- **build** the index using the text:
+There are several functions you can call on each of the FBCSA text index:
+- **build** the index using text file called textFileName:
 ```
-void build(unsigned char* text, unsigned int textLen);
+void build(const char *textFileName);
 ```
 - **save** the index to file called fileName:
 ```
@@ -215,8 +215,6 @@ int main(int argc, char *argv[]) {
 
 	unsigned int queriesNum = 1000000;
 	unsigned int patternLen = 20;
-	unsigned char* text = NULL;
-	unsigned int textLen;
 	SamSAMi1 *samSAMi1;
 	const char *textFileName = "english";
 	const char *indexFileName = "english-samsami1.idx";
@@ -227,8 +225,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		samSAMi1 = new SamSAMi1(SamSAMi1::WITH_SKETCHES_4x4, 6, 2);
 		samSAMi1->setVerbose(true);
-		text = readText(textFileName, textLen, 0);
-		samSAMi1->build(text, textLen);
+		samSAMi1->build(textFileName);
 		samSAMi1->save(indexFileName);
 	}
 
@@ -242,7 +239,6 @@ int main(int argc, char *argv[]) {
 		cout << "Pattern |" << patterns[i] << "| occurs " << samSAMi1->count(patterns[i], patternLen) << " times." << endl;
 	}
 
-	if (text != NULL) delete[] text;
 	delete samSAMi1;
 	delete P;
 }
