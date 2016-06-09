@@ -87,6 +87,7 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 
@@ -134,6 +135,7 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 
@@ -181,6 +183,7 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 
@@ -228,6 +231,7 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 
@@ -275,6 +279,7 @@ void samSAMiFM(string indexType, string q, string p, string l, const char *textF
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 
@@ -322,6 +327,7 @@ void samSAMiFMHash(string indexType, string q, string p, string l, string hTType
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	unsigned int *indexCounts = new unsigned int[queriesNum];
 

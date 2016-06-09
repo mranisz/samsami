@@ -75,6 +75,7 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -121,6 +122,7 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -167,6 +169,7 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -213,6 +216,7 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 	}
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
+        //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
