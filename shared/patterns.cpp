@@ -304,27 +304,36 @@ void NegativePatterns::initializePatterns() {
         this->patterns = new unsigned char *[this->queriesNum];
 
 	if (!fileExists(patternFileName)) {
+                unsigned int saLen;
+		unsigned int *sa = getSA(this->textFileName, text, textLen, saLen, 0, true);
+            
 		cout << "Generating " << this->queriesNum << " negative patterns of length " << this->m << " from " << this->textFileName << " ... " << flush;
 
 		random_device rd;
 		mt19937 gen(rd());
 		uniform_int_distribution<unsigned int> dis(this->m - 1, textLen - 1);
+                uniform_int_distribution<unsigned int> disChars(1, 255);
                 
                 this->patterns[0] = new unsigned char[this->m + 1];
                 this->patterns[0][this->m] = '\0';
                 for (unsigned int j = 0; j < this->m; ++j) {
                         this->patterns[0][j] = (unsigned char)255;
                 }
-                
-                unsigned int saLen;
-		unsigned int *sa = getSA(this->textFileName, text, textLen, saLen, 0, true);
 
+                unsigned int genCounter = 0;
                 for (unsigned int i = 1; i < queriesNum; ++i) {
                         this->patterns[i] = new unsigned char[this->m + 1];
                         this->patterns[i][this->m] = '\0';
+                        genCounter = 0;
                         while(true) {
-                                for (unsigned int j = 0; j < this->m; ++j) this->patterns[i][j] = text[dis(gen) - j];
+                                if (genCounter < 10) for (unsigned int j = 0; j < this->m; ++j) this->patterns[i][j] = text[dis(gen) - j];
+                                else if (genCounter < 1000) for (unsigned int j = 0; j < this->m; ++j) this->patterns[i][j] = (unsigned char)disChars(gen);
+                                else {
+                                        cout << "Error: problem with generating negative patterns" << endl;
+                                        exit(1);
+                                }
                                 if (this->getSACount(sa, text, saLen, this->patterns[i], this->m) == 0) break;
+                                ++genCounter;
                         }
                 }
                 
@@ -343,11 +352,16 @@ void NegativePatterns::initializePatterns() {
 	} else {
 		cout << "Loading patterns from " << patternFileName << " ... " << flush;
 		FILE *inFile;
+                size_t result;
 		inFile = fopen(patternFileName, "rb");
                 for (unsigned int i = 0; i < queriesNum; ++i) {
                         this->patterns[i] = new unsigned char[this->m + 1];
                         this->patterns[i][this->m] = '\0';
-                        fread(this->patterns[i], (size_t)(sizeof(unsigned char)), (size_t)(this->m), inFile);
+                        result = fread(this->patterns[i], (size_t)(sizeof(unsigned char)), (size_t)(this->m), inFile);
+                        if (result != this->m) {
+                                cout << "Error loading patterns from " << patternFileName << endl;
+                                exit(1);
+                        }
                 }
 		fclose(inFile);
                 cout << "Done" << endl;
