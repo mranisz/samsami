@@ -1686,7 +1686,10 @@ unsigned int SamSAMiFM::count_std(unsigned char *pattern, unsigned int patternLe
 	}
 	binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
-	else return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+	else {  
+                if (beg == end) return 0;
+                return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+        }
 }
 
 unsigned int SamSAMiFM::getSAPos(unsigned int samSAMiPos) {
@@ -1737,7 +1740,10 @@ unsigned int SamSAMiFM::count_std_hash(unsigned char *pattern, unsigned int patt
 	this->ht->getBoundaries(pattern + pos, this->alignedText, this->alignedSamSAMi, leftBoundary, rightBoundary);
 	binarySearch(this->alignedSamSAMi, this->alignedText, leftBoundary, rightBoundary, pattern + pos, patternLen - pos, beg, end);
 	if (pos == 0) return end - beg;
-	else return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+	else {
+                if (beg == end) return 0;
+                return (this->countWTOperation)(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
+        }
 }
 
 unsigned int SamSAMiFM::count(unsigned char *pattern, unsigned int patternLen) {

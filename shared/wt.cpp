@@ -643,6 +643,7 @@ unsigned int count_WT2_512_counter40(unsigned char *pattern, unsigned int i, uns
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 448), 0, 3);
 		lastVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], lastVal, wt, 0);
@@ -652,6 +653,7 @@ unsigned int count_WT2_512_counter40(unsigned char *pattern, unsigned int i, uns
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], lastVal, wt, 0);
 	}
@@ -762,6 +764,7 @@ unsigned int count_WT2_1024_counter32(unsigned char *pattern, unsigned int i, un
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 960), 0, 3);
 		lastVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], lastVal, wt, 0);
@@ -771,6 +774,7 @@ unsigned int count_WT2_1024_counter32(unsigned char *pattern, unsigned int i, un
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], lastVal, wt, 0);
 	}
@@ -896,6 +900,7 @@ unsigned int count_WT4_512(unsigned char *pattern, unsigned int i, unsigned int 
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT4_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 192), 0, 3);
 		lastVal = C[c] + getRankWT4_512(code[c], codeLen[c], lastVal, wt, 0);
@@ -905,6 +910,7 @@ unsigned int count_WT4_512(unsigned char *pattern, unsigned int i, unsigned int 
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT4_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT4_512(code[c], codeLen[c], lastVal, wt, 0);
 	}
@@ -1044,6 +1050,7 @@ unsigned int count_WT4_1024(unsigned char *pattern, unsigned int i, unsigned int
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT4_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 448), 0, 3);
 		lastVal = C[c] + getRankWT4_1024(code[c], codeLen[c], lastVal, wt, 0);
@@ -1053,6 +1060,7 @@ unsigned int count_WT4_1024(unsigned char *pattern, unsigned int i, unsigned int
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT4_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT4_1024(code[c], codeLen[c], lastVal, wt, 0);
 	}
@@ -1280,6 +1288,7 @@ unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int 
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT8_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 84), 0, 3);
 		lastVal = C[c] + getRankWT8_512(code[c], codeLen[c], lastVal, wt, 0);
@@ -1289,6 +1298,7 @@ unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int 
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT8_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT8_512(code[c], codeLen[c], lastVal, wt, 0);
 	}
@@ -1449,6 +1459,7 @@ unsigned int count_WT8_1024(unsigned char *pattern, unsigned int i, unsigned int
 	while (firstVal <= lastVal && i > 1)
 	{
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT8_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 252), 0, 3);
 		lastVal = C[c] + getRankWT8_1024(code[c], codeLen[c], lastVal, wt, 0);
@@ -1458,6 +1469,7 @@ unsigned int count_WT8_1024(unsigned char *pattern, unsigned int i, unsigned int
 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
+                if (codeLen[c] == 0) return 0;
 		firstVal = C[c] + getRankWT8_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
 		lastVal = C[c] + getRankWT8_1024(code[c], codeLen[c], lastVal, wt, 0);
 	}
