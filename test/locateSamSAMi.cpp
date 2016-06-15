@@ -76,6 +76,9 @@ void samSAMi1(string indexType, string q, string p, const char *textFileName, un
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
         //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
+        /*SpecialPatterns *P = new SpecialPatterns(textFileName, m);
+        queriesNum = P->getQueriesNum();
+        if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -123,6 +126,9 @@ void samSAMi1Hash(string indexType, string q, string p, string hTType, string k,
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
         //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
+        /*SpecialPatterns *P = new SpecialPatterns(textFileName, m);
+        queriesNum = P->getQueriesNum();
+        if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -170,6 +176,9 @@ void samSAMi2(string indexType, string q, string p, const char *textFileName, un
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
         //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
+        /*SpecialPatterns *P = new SpecialPatterns(textFileName, m);
+        queriesNum = P->getQueriesNum();
+        if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
@@ -217,6 +226,9 @@ void samSAMi2Hash(string indexType, string q, string p, string hTType, string k,
 
 	Patterns *P = new Patterns(textFileName, queriesNum, m);
         //NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
+        /*SpecialPatterns *P = new SpecialPatterns(textFileName, m);
+        queriesNum = P->getQueriesNum();
+        if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
 	vector<unsigned int> *indexLocates = new vector<unsigned int>[queriesNum];
 
