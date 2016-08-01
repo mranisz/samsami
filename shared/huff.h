@@ -6,6 +6,8 @@
 using namespace std;
 
 namespace samsami {
+    
+const int ALPHABET = 256;
 
 class Symbol {
 public:
@@ -39,7 +41,8 @@ public:
 	bool operator()(const HuffNode* lh, const HuffNode* rh) const { return lh->freq > rh->freq; }
 };
 
-void encodeHuff(unsigned int d, unsigned char *text, unsigned int textLen, unsigned long long *huffCode, unsigned int *huffCodeLen);
+void encodeHuffFromFreq(unsigned int d, unsigned int *freq, unsigned long long *huffCode, unsigned int *huffCodeLen);
+void encodeHuffFromText(unsigned int d, unsigned char *text, unsigned int textLen, unsigned long long *huffCode, unsigned int *huffCodeLen);
 
 }
 

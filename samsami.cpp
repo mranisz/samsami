@@ -1582,7 +1582,7 @@ void SamSAMiFM::build(const char *textFileName) {
         unsigned int bwtLen;
         unsigned char *bwt = getBWT(this->alignedText, this->textLen, sa, saLen, bwtLen, 0, this->verbose);
         if (this->verbose) cout << "Huffman encoding ... " << flush;
-        encodeHuff(2, bwt, bwtLen, this->code, this->codeLen);
+        encodeHuffFromText(2, bwt, bwtLen, this->code, this->codeLen);
         if (this->verbose) cout << "Done" << endl;
 	if (this->verbose) cout << "Building WT ... " << flush;
         this->wt = (this->builderWT)(bwt, bwtLen, 0, this->code, this->codeLen);
