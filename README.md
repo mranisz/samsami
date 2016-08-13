@@ -27,7 +27,7 @@ To use the SamSAMi library:
 - compile it with "-std=c++11 -O3" options and link it with libraries:
   - samsami/libsamsami.a
   - samsami/libs/libaelf64.a (linux) or samsami/libs/libacof64.lib (windows)
-- use "samsami" namespace
+- use "samsami" and "shared" namespaces
 
 ##API
 There are several functions you can call on each of the FBCSA text index:
@@ -208,6 +208,7 @@ SamSAMiFM(SamSAMiFM::IndexType indexType, unsigned int q, unsigned int p, unsign
 #include "samsami/samsami.h"
 
 using namespace std;
+using namespace shared;
 using namespace samsami;
 
 int main(int argc, char *argv[]) {

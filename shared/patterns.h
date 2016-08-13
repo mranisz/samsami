@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace samsami {
+namespace shared {
 
 class Patterns {
 private:

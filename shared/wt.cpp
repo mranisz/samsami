@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace samsami {
+namespace shared {
 
 unsigned int WT::getWTSize() {
 	unsigned int size = sizeof(this->bitsLen) + sizeof(this->nodesLen) + sizeof(unsigned long long *);

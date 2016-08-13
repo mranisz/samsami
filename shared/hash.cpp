@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace samsami {
+namespace shared {
     
 /*HTBASE*/
 

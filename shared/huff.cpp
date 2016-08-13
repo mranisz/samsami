@@ -2,7 +2,7 @@
 #include <queue>
 #include <cmath>
 
-namespace samsami {
+namespace shared {
 
 void HuffNode::add(HuffNode *hNode, unsigned int d, unsigned int order) {
 	this->freq += hNode->freq;

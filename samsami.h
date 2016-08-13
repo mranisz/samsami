@@ -8,6 +8,7 @@
 #include <cstdio>
 
 using namespace std;
+using namespace shared;
 
 namespace samsami {
     

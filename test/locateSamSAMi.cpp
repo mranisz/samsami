@@ -8,6 +8,7 @@
 #include "../samsami.h"
 
 using namespace std;
+using namespace shared;
 using namespace samsami;
 
 ChronoStopWatch timer;
