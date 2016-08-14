@@ -24,7 +24,7 @@ make
 ##Usage
 To use the SamSAMi library:
 - include "samsami/samsami.h" to your project
-- compile it with "-std=c++11 -O3" options and link it with libraries:
+- compile it with "-std=c++11 -O3 -mpopcnt" options and link it with libraries:
   - samsami/libsamsami.a
   - samsami/libs/libaelf64.a (linux) or samsami/libs/libacof64.lib (windows)
 - use "samsami" and "shared" namespaces
