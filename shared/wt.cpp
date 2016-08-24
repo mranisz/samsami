@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <tuple>
 #include "wt.h"
 
 using namespace std;
@@ -587,173 +588,328 @@ WT *createWT8(int type, unsigned char *text, unsigned int textLen, unsigned int 
 	return node;
 }
 
-unsigned int getRankWT2_512_counter40(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> wtLevel) & 1;
+pair<unsigned int, unsigned int> getRankWT2_512_counters40(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+    unsigned int rank;
 
-	unsigned int j = i / 448;
-	unsigned long long *p = wt->alignedBits + 8 * j;
-	unsigned int rank = (*p) & 0x00000000FFFFFFFFULL;
-	unsigned int b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 128-bit prefix
-	unsigned int b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 256-bit prefix
-	unsigned int b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
-	unsigned int temp1, temp2;
-	++p;
+    for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+            int nextNode = (code >> wtLevel) & 1;
 
-	unsigned int k = i - (j * 448);
-	switch (k / 64) {
-	case 6:
-		rank += b3 + __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
-		break;
-	case 5:
-		temp1 = __builtin_popcountll(*(p + 4));
-		temp2 = __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
-		rank += b2 + temp1 + temp2;
-		break;
-	case 4:
-		rank += b2 + __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
-		break;
-	case 3:
-		temp1 = __builtin_popcountll(*(p + 2));
-		temp2 = __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
-		rank += b1 + temp1 + temp2;
-		break;
-	case 2:
-		rank += b1 + __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
-		break;
-	case 1:
-		temp1 = __builtin_popcountll(*p);
-		temp2 = __builtin_popcountll(*(p + 1) & bitMask[k % 64]);
-		rank += temp1 + temp2;
-		break;
-	case 0:
-		rank += __builtin_popcountll(*p & bitMask[k % 64]);
-	}
-	if (nextNode == 0) rank = i - rank;
+            // *** first
+            unsigned int j = iFirst / 448;
+            unsigned long long *p = wt->alignedBits + 8 * j;
+            //rank = (*p) & 0x00000000FFFFFFFFULL;
+            rank = (unsigned int)(*p);
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 448), 0, 3);
-	return getRankWT2_512_counter40(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+            //unsigned int b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 128-bit prefix
+            unsigned int b1 = ((*p) >> 56);  // popcount for 128-bit prefix
+            unsigned int b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 256-bit prefix
+            unsigned int b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
+            unsigned int temp1, temp2;
+
+            unsigned int k = iFirst - (j * 448);
+            switch (k / 64) {
+            case 6:
+                    rank += b3 + __builtin_popcountll(*(p + 7) & bitMask[k % 64]);
+                    break;
+            case 5:
+                    temp1 = __builtin_popcountll(*(p + 5));
+                    temp2 = __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
+                    rank += b2 + temp1 + temp2;
+                    break;
+            case 4:
+                    rank += b2 + __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
+                    break;
+            case 3:
+                    temp1 = __builtin_popcountll(*(p + 3));
+                    temp2 = __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
+                    rank += b1 + temp1 + temp2;
+                    break;
+            case 2:
+                    rank += b1 + __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
+                    break;
+            case 1:
+                    temp1 = __builtin_popcountll(*(p + 1));
+                    temp2 = __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
+                    rank += temp1 + temp2;
+                    break;
+            case 0:
+                    rank += __builtin_popcountll(*(p+1) & bitMask[k % 64]);
+            }
+            if (nextNode == 0) rank = iFirst - rank;
+
+            if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 448), 0, 3);
+            iFirst = rank;
+
+            // *** last
+            j = iLast / 448;
+            p = wt->alignedBits + 8 * j;
+            //rank = (*p) & 0x00000000FFFFFFFFULL;
+            rank = (unsigned int)(*p);
+
+            //b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 128-bit prefix
+            b1 = ((*p) >> 56);  // popcount for 128-bit prefix
+            b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 256-bit prefix
+            b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
+
+            k = iLast - (j * 448);
+            switch (k / 64) {
+            case 6:
+                    rank += b3 + __builtin_popcountll(*(p + 7) & bitMask[k % 64]);
+                    break;
+            case 5:
+                    temp1 = __builtin_popcountll(*(p + 5));
+                    temp2 = __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
+                    rank += b2 + temp1 + temp2;
+                    break;
+            case 4:
+                    rank += b2 + __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
+                    break;
+            case 3:
+                    temp1 = __builtin_popcountll(*(p + 3));
+                    temp2 = __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
+                    rank += b1 + temp1 + temp2;
+                    break;
+            case 2:
+                    rank += b1 + __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
+                    break;
+            case 1:
+                    temp1 = __builtin_popcountll(*(p + 1));
+                    temp2 = __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
+                    rank += temp1 + temp2;
+                    break;
+            case 0:
+                    rank += __builtin_popcountll(*(p + 1) & bitMask[k % 64]);
+            }
+            if (nextNode == 0) rank = iLast - rank;
+
+            if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 448), 0, 3);
+            iLast = rank;
+
+            wt = wt->nodes[nextNode];
+    }
+
+    return make_pair(iFirst, iLast);
 }
 
+
 unsigned int count_WT2_512_counter40(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
-	unsigned char c;
+        unsigned char c;
 	__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 448), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 448), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
-		c = pattern[i - 1];
+        while (firstVal <= lastVal && i > 1) {
+                c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 448), 0, 3);
-		lastVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], lastVal, wt, 0);
-		__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 448), 0, 3);
-		--i;
-	}
 
-	if (firstVal <= lastVal) {
-		c = pattern[i - 1];
+                tie(firstVal, lastVal) = getRankWT2_512_counters40(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+                firstVal += C[c] + 1;
+                __builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 448), 0, 3);
+                lastVal  += C[c];
+                __builtin_prefetch(wt->alignedBits + 8 * (lastVal / 448), 0, 3);
+                --i;
+        }
+
+        if (firstVal <= lastVal) {
+                c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT2_512_counter40(code[c], codeLen[c], lastVal, wt, 0);
-	}
+                tie(firstVal, lastVal) = getRankWT2_512_counters40(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+                firstVal += C[c] + 1;
+                lastVal  += C[c];
+        }
 
-	if (firstVal > lastVal) return 0;
-	else return lastVal - firstVal + 1;
-
+        if (firstVal > lastVal) return 0;
+        else return lastVal - firstVal + 1;
 }
 
-unsigned int getRankWT2_1024_counter32(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> wtLevel) & 1;
+pair<unsigned int, unsigned int>  getRankWT2_1024_counters32(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+        unsigned int rank;
 
-	unsigned int j = i / 960;
-	unsigned long long *p = wt->alignedBits + 16 * j;
-	unsigned int rank = (*p) & 0x00000000FFFFFFFFULL;
-	unsigned int b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 192-bit prefix
-	unsigned int b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
-	unsigned int b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 576-bit prefix
-	unsigned int b4 = b3 + (((*p) >> 32) & 0x00000000000000FFULL);  // popcount for 768-bit prefix
-	unsigned int temp1, temp2, temp3;
-	++p;
+        for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+                int nextNode = (code >> wtLevel) & 1;
 
-	unsigned int k = i - (j * 960);
-	switch (k / 64) {
-	case 14:
-		temp1 = __builtin_popcountll(*(p + 12));
-		temp2 = __builtin_popcountll(*(p + 13));
-		temp3 = __builtin_popcountll(*(p + 14) & bitMask[k % 64]);
-		rank += b4 + temp1 + temp2 + temp3;
-		break;
-	case 13:
-		temp1 = __builtin_popcountll(*(p + 12));
-		temp2 = __builtin_popcountll(*(p + 13) & bitMask[k % 64]);
-		rank += b4 + temp1 + temp2;
-		break;
-	case 12:
-		rank += b4 + __builtin_popcountll(*(p + 12) & bitMask[k % 64]);
-		break;
-	case 11:
-		temp1 = __builtin_popcountll(*(p + 9));
-		temp2 = __builtin_popcountll(*(p + 10));
-		temp3 = __builtin_popcountll(*(p + 11) & bitMask[k % 64]);
-		rank += b3 + temp1 + temp2 + temp3;
-		break;
-	case 10:
-		temp1 = __builtin_popcountll(*(p + 9));
-		temp2 = __builtin_popcountll(*(p + 10) & bitMask[k % 64]);
-		rank += b3 + temp1 + temp2;
-		break;
-	case 9:
-		rank += b3 + __builtin_popcountll(*(p + 9) & bitMask[k % 64]);
-		break;
-	case 8:
-		temp1 = __builtin_popcountll(*(p + 6));
-		temp2 = __builtin_popcountll(*(p + 7));
-		temp3 = __builtin_popcountll(*(p + 8) & bitMask[k % 64]);
-		rank += b2 + temp1 + temp2 + temp3;
-		break;
-	case 7:
-		temp1 = __builtin_popcountll(*(p + 6));
-		temp2 = __builtin_popcountll(*(p + 7) & bitMask[k % 64]);
-		rank += b2 + temp1 + temp2;
-		break;
-	case 6:
-		rank += b2 + __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
-		break;
-	case 5:
-		temp1 = __builtin_popcountll(*(p + 3));
-		temp2 = __builtin_popcountll(*(p + 4));
-		temp3 = __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
-		rank += b1 + temp1 + temp2 + temp3;
-		break;
-	case 4:
-		temp1 = __builtin_popcountll(*(p + 3));
-		temp2 = __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
-		rank += b1 + temp1 + temp2;
-		break;
-	case 3:
-		rank += b1 + __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
-		break;
-	case 2:
-		temp1 = __builtin_popcountll(*p);
-		temp2 = __builtin_popcountll(*(p + 1));
-		temp3 = __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
-		rank += temp1 + temp2 + temp3;
-		break;
-	case 1:
-		temp1 = __builtin_popcountll(*p);
-		temp2 = __builtin_popcountll(*(p + 1) & bitMask[k % 64]);
-		rank += temp1 + temp2;
-		break;
-	case 0:
-		rank += __builtin_popcountll(*p & bitMask[k % 64]);
-	}
+                // *** first
+                unsigned int j = iFirst / 960;
+                unsigned long long *p = wt->alignedBits + 16 * j;
+                //unsigned int rank = (*p) & 0x00000000FFFFFFFFULL;
+                rank = (unsigned int)(*p);
+                //unsigned int b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 192-bit prefix
+                unsigned int b1 = ((*p) >> 56);
+                unsigned int b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
+                unsigned int b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 576-bit prefix
+                unsigned int b4 = b3 + (((*p) >> 32) & 0x00000000000000FFULL);  // popcount for 768-bit prefix
+                unsigned int temp1, temp2, temp3;
 
-	if (nextNode == 0) rank = i - rank;
+                unsigned int k = iFirst - (j * 960);
+                switch (k / 64) {
+                case 14:
+                        temp1 = __builtin_popcountll(*(p + 13));
+                        temp2 = __builtin_popcountll(*(p + 14));
+                        temp3 = __builtin_popcountll(*(p + 15) & bitMask[k % 64]);
+                        rank += b4 + temp1 + temp2 + temp3;
+                        break;
+                case 13:
+                        temp1 = __builtin_popcountll(*(p + 13));
+                        temp2 = __builtin_popcountll(*(p + 14) & bitMask[k % 64]);
+                        rank += b4 + temp1 + temp2;
+                        break;
+                case 12:
+                        rank += b4 + __builtin_popcountll(*(p + 13) & bitMask[k % 64]);
+                        break;
+                case 11:
+                        temp1 = __builtin_popcountll(*(p + 10));
+                        temp2 = __builtin_popcountll(*(p + 11));
+                        temp3 = __builtin_popcountll(*(p + 12) & bitMask[k % 64]);
+                        rank += b3 + temp1 + temp2 + temp3;
+                        break;
+                case 10:
+                        temp1 = __builtin_popcountll(*(p + 10));
+                        temp2 = __builtin_popcountll(*(p + 11) & bitMask[k % 64]);
+                        rank += b3 + temp1 + temp2;
+                        break;
+                case 9:
+                        rank += b3 + __builtin_popcountll(*(p + 10) & bitMask[k % 64]);
+                        break;
+                case 8:
+                        temp1 = __builtin_popcountll(*(p + 7));
+                        temp2 = __builtin_popcountll(*(p + 8));
+                        temp3 = __builtin_popcountll(*(p + 9) & bitMask[k % 64]);
+                        rank += b2 + temp1 + temp2 + temp3;
+                        break;
+                case 7:
+                        temp1 = __builtin_popcountll(*(p + 7));
+                        temp2 = __builtin_popcountll(*(p + 8) & bitMask[k % 64]);
+                        rank += b2 + temp1 + temp2;
+                        break;
+                case 6:
+                        rank += b2 + __builtin_popcountll(*(p + 7) & bitMask[k % 64]);
+                        break;
+                case 5:
+                        temp1 = __builtin_popcountll(*(p + 4));
+                        temp2 = __builtin_popcountll(*(p + 5));
+                        temp3 = __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
+                        rank += b1 + temp1 + temp2 + temp3;
+                        break;
+                case 4:
+                        temp1 = __builtin_popcountll(*(p + 4));
+                        temp2 = __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
+                        rank += b1 + temp1 + temp2;
+                        break;
+                case 3:
+                        rank += b1 + __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
+                        break;
+                case 2:
+                        temp1 = __builtin_popcountll(*(p + 1));
+                        temp2 = __builtin_popcountll(*(p + 2));
+                        temp3 = __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
+                        rank += temp1 + temp2 + temp3;
+                        break;
+                case 1:
+                        temp1 = __builtin_popcountll(*(p + 1));
+                        temp2 = __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
+                        rank += temp1 + temp2;
+                        break;
+                case 0:
+                        rank += __builtin_popcountll(*(p + 1) & bitMask[k % 64]);
+                }
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 960), 0, 3);
-	return getRankWT2_1024_counter32(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+                if (nextNode == 0) rank = iFirst - rank;
+
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 960), 0, 3);
+                iFirst = rank;
+                
+                // *** last
+                j = iLast / 960;
+                p = wt->alignedBits + 16 * j;
+                //unsigned int rank = (*p) & 0x00000000FFFFFFFFULL;
+                rank = (unsigned int)(*p);
+                //b1 = ((*p) >> 56) & 0x00000000000000FFULL;  // popcount for 192-bit prefix
+                b1 = ((*p) >> 56);
+                b2 = b1 + (((*p) >> 48) & 0x00000000000000FFULL);  // popcount for 384-bit prefix
+                b3 = b2 + (((*p) >> 40) & 0x00000000000000FFULL);  // popcount for 576-bit prefix
+                b4 = b3 + (((*p) >> 32) & 0x00000000000000FFULL);  // popcount for 768-bit prefix
+
+                k = iLast - (j * 960);
+                switch (k / 64) {
+                case 14:
+                        temp1 = __builtin_popcountll(*(p + 13));
+                        temp2 = __builtin_popcountll(*(p + 14));
+                        temp3 = __builtin_popcountll(*(p + 15) & bitMask[k % 64]);
+                        rank += b4 + temp1 + temp2 + temp3;
+                        break;
+                case 13:
+                        temp1 = __builtin_popcountll(*(p + 13));
+                        temp2 = __builtin_popcountll(*(p + 14) & bitMask[k % 64]);
+                        rank += b4 + temp1 + temp2;
+                        break;
+                case 12:
+                        rank += b4 + __builtin_popcountll(*(p + 13) & bitMask[k % 64]);
+                        break;
+                case 11:
+                        temp1 = __builtin_popcountll(*(p + 10));
+                        temp2 = __builtin_popcountll(*(p + 11));
+                        temp3 = __builtin_popcountll(*(p + 12) & bitMask[k % 64]);
+                        rank += b3 + temp1 + temp2 + temp3;
+                        break;
+                case 10:
+                        temp1 = __builtin_popcountll(*(p + 10));
+                        temp2 = __builtin_popcountll(*(p + 11) & bitMask[k % 64]);
+                        rank += b3 + temp1 + temp2;
+                        break;
+                case 9:
+                        rank += b3 + __builtin_popcountll(*(p + 10) & bitMask[k % 64]);
+                        break;
+                case 8:
+                        temp1 = __builtin_popcountll(*(p + 7));
+                        temp2 = __builtin_popcountll(*(p + 8));
+                        temp3 = __builtin_popcountll(*(p + 9) & bitMask[k % 64]);
+                        rank += b2 + temp1 + temp2 + temp3;
+                        break;
+                case 7:
+                        temp1 = __builtin_popcountll(*(p + 7));
+                        temp2 = __builtin_popcountll(*(p + 8) & bitMask[k % 64]);
+                        rank += b2 + temp1 + temp2;
+                        break;
+                case 6:
+                        rank += b2 + __builtin_popcountll(*(p + 7) & bitMask[k % 64]);
+                        break;
+                case 5:
+                        temp1 = __builtin_popcountll(*(p + 4));
+                        temp2 = __builtin_popcountll(*(p + 5));
+                        temp3 = __builtin_popcountll(*(p + 6) & bitMask[k % 64]);
+                        rank += b1 + temp1 + temp2 + temp3;
+                        break;
+                case 4:
+                        temp1 = __builtin_popcountll(*(p + 4));
+                        temp2 = __builtin_popcountll(*(p + 5) & bitMask[k % 64]);
+                        rank += b1 + temp1 + temp2;
+                        break;
+                case 3:
+                        rank += b1 + __builtin_popcountll(*(p + 4) & bitMask[k % 64]);
+                        break;
+                case 2:
+                        temp1 = __builtin_popcountll(*(p + 1));
+                        temp2 = __builtin_popcountll(*(p + 2));
+                        temp3 = __builtin_popcountll(*(p + 3) & bitMask[k % 64]);
+                        rank += temp1 + temp2 + temp3;
+                        break;
+                case 1:
+                        temp1 = __builtin_popcountll(*(p + 1));
+                        temp2 = __builtin_popcountll(*(p + 2) & bitMask[k % 64]);
+                        rank += temp1 + temp2;
+                        break;
+                case 0:
+                        rank += __builtin_popcountll(*(p + 1) & bitMask[k % 64]);
+                }
+
+                if (nextNode == 0) rank = iLast - rank;
+
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 960), 0, 3);
+                iLast = rank;
+
+                wt = wt->nodes[nextNode];
+        }
+
+    return make_pair(iFirst, iLast);
 }
 
 unsigned int count_WT2_1024_counter32(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
@@ -761,13 +917,13 @@ unsigned int count_WT2_1024_counter32(unsigned char *pattern, unsigned int i, un
 	__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 960), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 960), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
+	while (firstVal <= lastVal && i > 1) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
+		tie(firstVal, lastVal) = getRankWT2_1024_counters32(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+		firstVal += C[c] + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 960), 0, 3);
-		lastVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], lastVal, wt, 0);
+		lastVal  += C[c];
 		__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 960), 0, 3);
 		--i;
 	}
@@ -775,8 +931,9 @@ unsigned int count_WT2_1024_counter32(unsigned char *pattern, unsigned int i, un
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT2_1024_counter32(code[c], codeLen[c], lastVal, wt, 0);
+		tie(firstVal, lastVal) = getRankWT2_1024_counters32(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+		firstVal += C[c] + 1;
+                lastVal  += C[c];
 	}
 
 	if (firstVal > lastVal) return 0;
@@ -822,224 +979,423 @@ unsigned long long getWT4BitVector3L(unsigned long long b) {
 	return (b & (b << 1)) & 0xAAAAAAAAAAAAAAAAULL;
 }
 
-unsigned int getRankWT4_512(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> (2 * wtLevel)) & 3;
+pair<unsigned int, unsigned int> getRankWT4_512(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+    unsigned int rank;
 
-	unsigned int rank;
-	unsigned int j = i / 192;
-	unsigned long long *p = wt->alignedBits + 8 * j + nextNode / 2;
-	if ((nextNode & 1) == 0) rank = (*p) >> 32;
-	else rank = (*p) & 0x00000000FFFFFFFFULL;
-	p += (2 - nextNode / 2);
+    for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+            int nextNode = (code >> (2 * wtLevel)) & 3;
 
-	i -= (j * 192);
-	unsigned int temp1 = 0;
-	unsigned int temp2 = 0;
-	unsigned int temp3 = 0;
-	switch (nextNode) {
-	case 0:
-		switch (i / 64) {
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	case 1:
-		switch (i / 64) {
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	case 2:
-		switch (i / 64) {
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	default:
-		switch (i / 64) {
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-	}
-	rank += temp1 + temp2 + temp3;
+            // *** first
+            unsigned int j = iFirst / 192;
+            unsigned long long *p = wt->alignedBits + 8 * j + nextNode / 2;
+            if ((nextNode & 1) == 0) rank = (*p) >> 32;
+            //else rank = (*p) & 0x00000000FFFFFFFFULL;
+            else rank = (unsigned int)(*p);
+            p += (2 - nextNode / 2);
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 192), 0, 3);
-	return getRankWT4_512(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+            iFirst -= (j * 192);
+            unsigned int temp1 = 0;
+            unsigned int temp2 = 0;
+            unsigned int temp3 = 0;
+            switch (nextNode) {
+            case 0:
+                    switch (iFirst / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                    }
+                    break;
+            case 1:
+                    switch (iFirst / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                    }
+                    break;
+            case 2:
+                    switch (iFirst / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                    }
+                    break;
+            default:
+                    switch (iFirst / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                    }
+            }
+            rank += temp1 + temp2 + temp3;
+
+            if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 192), 0, 3);
+            iFirst = rank;
+
+            // *** last
+            j = iLast / 192;
+            p = wt->alignedBits + 8 * j + nextNode / 2;
+            if ((nextNode & 1) == 0) rank = (*p) >> 32;
+            //else rank = (*p) & 0x00000000FFFFFFFFULL;
+            else rank = (unsigned int)(*p);
+            p += (2 - nextNode / 2);
+
+            iLast -= (j * 192);
+            temp1 = 0;
+            temp2 = 0;
+            temp3 = 0;
+            switch (nextNode) {
+            case 0:
+                    switch (iLast / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                    }
+                    break;
+            case 1:
+                    switch (iLast / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                    }
+                    break;
+            case 2:
+                    switch (iLast / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                    }
+                    break;
+            default:
+                    switch (iLast / 64) {
+                    case 2:
+                            temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                            p += 2;
+                    case 1:
+                            temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                            p += 2;
+                    case 0:
+                            temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                    }
+            }
+            rank += temp1 + temp2 + temp3;
+
+            if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 192), 0, 3);
+            iLast = rank;
+
+            wt = wt->nodes[nextNode];
+    }
+   
+    return make_pair(iFirst, iLast);
 }
 
 unsigned int count_WT4_512(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
-	unsigned char c;
+    unsigned char c;
 	__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 192), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 192), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
-		c = pattern[i - 1];
-                if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT4_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 192), 0, 3);
-		lastVal = C[c] + getRankWT4_512(code[c], codeLen[c], lastVal, wt, 0);
-		__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 192), 0, 3);
-		--i;
-	}
+    while (firstVal <= lastVal && i > 1) {
+        c = pattern[i - 1];
+        if (codeLen[c] == 0) return 0;
+        tie(firstVal, lastVal) = getRankWT4_512(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+        firstVal += C[c] + 1;
+        __builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 192), 0, 3);
+        lastVal += C[c];
+        __builtin_prefetch(wt->alignedBits + 8 * (lastVal / 192), 0, 3);
+        --i;
+    }
 
-	if (firstVal <= lastVal) {
-		c = pattern[i - 1];
-                if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT4_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT4_512(code[c], codeLen[c], lastVal, wt, 0);
-	}
+    if (firstVal <= lastVal) {
+        c = pattern[i - 1];
+        if (codeLen[c] == 0) return 0;
+        tie(firstVal, lastVal) = getRankWT4_512(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+        firstVal += C[c] + 1;
+        lastVal += C[c];
+    }
 
-	if (firstVal > lastVal) return 0;
-	else return lastVal - firstVal + 1;
-
+    if (firstVal > lastVal) return 0;
+    else return lastVal - firstVal + 1;
 }
 
-unsigned int getRankWT4_1024(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> (2 * wtLevel)) & 3;
+pair<unsigned int, unsigned int> getRankWT4_1024(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+        unsigned int rank;
+        
+        for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+                int nextNode = (code >> (2 * wtLevel)) & 3;
+                
+                // *** first
+                unsigned int j = iFirst / 448;
+                unsigned long long *p = wt->alignedBits + 16 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (2 - nextNode / 2);
 
-	unsigned int rank;
-	unsigned int j = i / 448;
-	unsigned long long *p = wt->alignedBits + 16 * j + nextNode / 2;
-	if ((nextNode & 1) == 0) rank = (*p) >> 32;
-	else rank = (*p) & 0x00000000FFFFFFFFULL;
-	p += (2 - nextNode / 2);
+                iFirst -= (j * 448);
+                unsigned int temp1 = 0;
+                unsigned int temp2 = 0;
+                unsigned int temp3 = 0;
+                unsigned int temp4 = 0;
+                unsigned int temp5 = 0;
+                unsigned int temp6 = 0;
+                unsigned int temp7 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iFirst / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                        }
+                        break;
+                case 1:
+                        switch (iFirst / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                        }
+                        break;
+                case 2:
+                        switch (iFirst / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                        }
+                        break;
+                default:
+                        switch (iFirst / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[iFirst % 64]);
+                        }
+                }
+                rank += temp1 + temp2 + temp3 + temp4 + temp5 + temp6 + temp7;
 
-	i -= (j * 448);
-	unsigned int temp1 = 0;
-	unsigned int temp2 = 0;
-	unsigned int temp3 = 0;
-	unsigned int temp4 = 0;
-	unsigned int temp5 = 0;
-	unsigned int temp6 = 0;
-	unsigned int temp7 = 0;
-	switch (nextNode) {
-	case 0:
-		switch (i / 64) {
-		case 6:
-			temp7 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 5:
-			temp6 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 4:
-			temp5 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 3:
-			temp4 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	case 1:
-		switch (i / 64) {
-		case 6:
-			temp7 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 5:
-			temp6 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 4:
-			temp5 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 3:
-			temp4 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	case 2:
-		switch (i / 64) {
-		case 6:
-			temp7 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 5:
-			temp6 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 4:
-			temp5 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 3:
-			temp4 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-		break;
-	default:
-		switch (i / 64) {
-		case 6:
-			temp7 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 5:
-			temp6 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 4:
-			temp5 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 3:
-			temp4 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 2:
-			temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 1:
-			temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[i % 64]);
-		}
-	}
-	rank += temp1 + temp2 + temp3 + temp4 + temp5 + temp6 + temp7;
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 448), 0, 3);
+                iFirst = rank;
+                
+                // *** last
+                j = iLast / 448;
+                p = wt->alignedBits + 16 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (2 - nextNode / 2);
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 448), 0, 3);
-	return getRankWT4_1024(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+                iLast -= (j * 448);
+                temp1 = 0;
+                temp2 = 0;
+                temp3 = 0;
+                temp4 = 0;
+                temp5 = 0;
+                temp6 = 0;
+                temp7 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iLast / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector0R(*p) | getWT4BitVector0L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                        }
+                        break;
+                case 1:
+                        switch (iLast / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector1R(*p) | getWT4BitVector1L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                        }
+                        break;
+                case 2:
+                        switch (iLast / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector2R(*p) | getWT4BitVector2L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                        }
+                        break;
+                default:
+                        switch (iLast / 64) {
+                        case 6:
+                                temp7 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 5:
+                                temp6 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 4:
+                                temp5 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT4BitVector3R(*p) | getWT4BitVector3L(*(p + 1))) & interlacedMask2[iLast % 64]);
+                        }
+                }
+                rank += temp1 + temp2 + temp3 + temp4 + temp5 + temp6 + temp7;
+
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 448), 0, 3);
+                iLast = rank;
+                
+                wt = wt->nodes[nextNode];
+        }
+	return make_pair(iFirst, iLast);
 }
 
 unsigned int count_WT4_1024(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
@@ -1047,13 +1403,13 @@ unsigned int count_WT4_1024(unsigned char *pattern, unsigned int i, unsigned int
 	__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 448), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 448), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
+	while (firstVal <= lastVal && i > 1) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT4_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
+                tie(firstVal, lastVal) = getRankWT4_1024(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+		firstVal += C[c] + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 448), 0, 3);
-		lastVal = C[c] + getRankWT4_1024(code[c], codeLen[c], lastVal, wt, 0);
+		lastVal += C[c];
 		__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 448), 0, 3);
 		--i;
 	}
@@ -1061,8 +1417,9 @@ unsigned int count_WT4_1024(unsigned char *pattern, unsigned int i, unsigned int
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT4_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT4_1024(code[c], codeLen[c], lastVal, wt, 0);
+		tie(firstVal, lastVal) = getRankWT4_1024(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+                firstVal += C[c] + 1;
+                lastVal += C[c];
 	}
 
 	if (firstVal > lastVal) return 0;
@@ -1187,97 +1544,193 @@ unsigned long long getWT8BitVector7L(unsigned long long b) {
 	return (b & (b << 1) & (b << 2)) & 0x4924924924924924ULL;
 }
 
-unsigned int getRankWT8_512(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> (3 * wtLevel)) & 7;
+pair<unsigned int, unsigned int> getRankWT8_512(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+        unsigned int rank;
+        
+        for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+                int nextNode = (code >> (3 * wtLevel)) & 7;
 
-	unsigned int rank;
-	unsigned int j = i / 84;
-	unsigned long long *p = wt->alignedBits + 8 * j + nextNode / 2;
-	if ((nextNode & 1) == 0) rank = (*p) >> 32;
-	else rank = (*p) & 0x00000000FFFFFFFFULL;
-	p += (4 - nextNode / 2);
+                // *** first
+                unsigned int j = iFirst / 84;
+                unsigned long long *p = wt->alignedBits + 8 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (4 - nextNode / 2);
 
-	i -= (j * 84);
-	unsigned int temp1 = 0;
-	unsigned int temp2 = 0;
-	switch (nextNode) {
-	case 0:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 1:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 2:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 3:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 4:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 5:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	case 6:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-		break;
-	default:
-		switch (i / 42) {
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)));
-			p += 2;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1))) & interlacedMask3[i % 42]);
-		}
-	}
-	rank += temp1 + temp2;
+                iFirst -= (j * 84);
+                unsigned int temp1 = 0;
+                unsigned int temp2 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 1:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 2:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 3:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 4:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 5:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                case 6:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                        break;
+                default:
+                        switch (iFirst / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1))) & interlacedMask3[iFirst % 42]);
+                        }
+                }
+                rank += temp1 + temp2;
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 84), 0, 3);
-	return getRankWT8_512(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 84), 0, 3);
+                iFirst = rank;
+                
+                // *** last
+                j = iLast / 84;
+                p = wt->alignedBits + 8 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (4 - nextNode / 2);
+
+                iLast -= (j * 84);
+                temp1 = 0;
+                temp2 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 1:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 2:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 3:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 4:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 5:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                case 6:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                        break;
+                default:
+                        switch (iLast / 42) {
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)));
+                                p += 2;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1))) & interlacedMask3[iLast % 42]);
+                        }
+                }
+                rank += temp1 + temp2;
+
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 8 * (rank / 84), 0, 3);
+                iLast = rank;
+                
+                wt = wt->nodes[nextNode];
+        }
+	return make_pair(iFirst, iLast);
 }
 
 unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
@@ -1285,13 +1738,13 @@ unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int 
 	__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 84), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 84), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
+	while (firstVal <= lastVal && i > 1) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT8_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
+                tie(firstVal, lastVal) = getRankWT8_512(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+		firstVal += C[c] + 1;
 		__builtin_prefetch(wt->alignedBits + 8 * ((firstVal - 1) / 84), 0, 3);
-		lastVal = C[c] + getRankWT8_512(code[c], codeLen[c], lastVal, wt, 0);
+		lastVal += C[c];
 		__builtin_prefetch(wt->alignedBits + 8 * (lastVal / 84), 0, 3);
 		--i;
 	}
@@ -1299,8 +1752,9 @@ unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int 
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT8_512(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT8_512(code[c], codeLen[c], lastVal, wt, 0);
+		tie(firstVal, lastVal) = getRankWT8_512(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+                firstVal += C[c] + 1;
+                lastVal += C[c];
 	}
 
 	if (firstVal > lastVal) return 0;
@@ -1308,147 +1762,293 @@ unsigned int count_WT8_512(unsigned char *pattern, unsigned int i, unsigned int 
 
 }
 
-unsigned int getRankWT8_1024(unsigned long long code, unsigned int codeLen, unsigned int i, WT *wt, unsigned int wtLevel) {
-	int nextNode = (code >> (3 * wtLevel)) & 7;
+pair<unsigned int, unsigned int> getRankWT8_1024(unsigned long long code, unsigned int codeLen, unsigned int iFirst, unsigned int iLast, WT *wt, unsigned int wtLevel) {
+        unsigned int rank;
+        
+        for (wtLevel = 0; wtLevel < codeLen; ++wtLevel) {
+                int nextNode = (code >> (3 * wtLevel)) & 7;
 
-	unsigned int rank;
-	unsigned int j = i / 252;
-	unsigned long long *p = wt->alignedBits + 16 * j + nextNode / 2;
-	if ((nextNode & 1) == 0) rank = (*p) >> 32;
-	else rank = (*p) & 0x00000000FFFFFFFFULL;
-	p += (4 - nextNode / 2);
+                // *** first
+                unsigned int j = iFirst / 252;
+                unsigned long long *p = wt->alignedBits + 16 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (4 - nextNode / 2);
 
-	i -= (j * 252);
-	unsigned int temp1 = 0;
-	unsigned int temp2 = 0;
-	unsigned int temp3 = 0;
-	unsigned int temp4 = 0;
-	switch (nextNode) {
-	case 0:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 1:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 2:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 3:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 4:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 5:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	case 6:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-		break;
-	default:
-		switch (i / 63) {
-		case 3:
-			temp4 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
-			p += 3;
-		case 2:
-			temp3 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
-			p += 3;
-		case 1:
-			temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
-			p += 3;
-		case 0:
-			temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2))) & interlacedMask3[i % 63]);
-		}
-	}
-	rank += temp1 + temp2 + temp3 + temp4;
+                iFirst -= (j * 252);
+                unsigned int temp1 = 0;
+                unsigned int temp2 = 0;
+                unsigned int temp3 = 0;
+                unsigned int temp4 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 1:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 2:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 3:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 4:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 5:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                case 6:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                        break;
+                default:
+                        switch (iFirst / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2))) & interlacedMask3[iFirst % 63]);
+                        }
+                }
+                rank += temp1 + temp2 + temp3 + temp4;
 
-	if (codeLen == (wtLevel + 1)) return rank;
-	__builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 252), 0, 3);
-	return getRankWT8_1024(code, codeLen, rank, wt->nodes[nextNode], wtLevel + 1);
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 252), 0, 3);
+                iFirst = rank;
+                
+                // *** last
+                j = iLast / 252;
+                p = wt->alignedBits + 16 * j + nextNode / 2;
+                if ((nextNode & 1) == 0) rank = (*p) >> 32;
+                //else rank = (*p) & 0x00000000FFFFFFFFULL;
+                else rank = (unsigned int)(*p);
+                p += (4 - nextNode / 2);
+
+                iLast -= (j * 252);
+                temp1 = 0;
+                temp2 = 0;
+                temp3 = 0;
+                temp4 = 0;
+                switch (nextNode) {
+                case 0:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector0R(*p) | getWT8BitVector0M(*(p + 1)) | getWT8BitVector0L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 1:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector1R(*p) | getWT8BitVector1M(*(p + 1)) | getWT8BitVector1L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 2:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector2R(*p) | getWT8BitVector2M(*(p + 1)) | getWT8BitVector2L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 3:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector3R(*p) | getWT8BitVector3M(*(p + 1)) | getWT8BitVector3L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 4:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector4R(*p) | getWT8BitVector4M(*(p + 1)) | getWT8BitVector4L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 5:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector5R(*p) | getWT8BitVector5M(*(p + 1)) | getWT8BitVector5L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                case 6:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector6R(*p) | getWT8BitVector6M(*(p + 1)) | getWT8BitVector6L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                        break;
+                default:
+                        switch (iLast / 63) {
+                        case 3:
+                                temp4 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 2:
+                                temp3 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 1:
+                                temp2 = __builtin_popcountll(getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2)));
+                                p += 3;
+                        case 0:
+                                temp1 = __builtin_popcountll((getWT8BitVector7R(*p) | getWT8BitVector7M(*(p + 1)) | getWT8BitVector7L(*(p + 2))) & interlacedMask3[iLast % 63]);
+                        }
+                }
+                rank += temp1 + temp2 + temp3 + temp4;
+
+                if (wtLevel + 1 < codeLen) __builtin_prefetch(wt->nodes[nextNode]->alignedBits + 16 * (rank / 252), 0, 3);
+                iLast = rank;
+                
+                wt = wt->nodes[nextNode];
+        }
+	return make_pair(iFirst, iLast);
 }
 
 unsigned int count_WT8_1024(unsigned char *pattern, unsigned int i, unsigned int *C, WT *wt, unsigned int firstVal, unsigned int lastVal, unsigned long long *code, unsigned int *codeLen) {
@@ -1456,13 +2056,13 @@ unsigned int count_WT8_1024(unsigned char *pattern, unsigned int i, unsigned int
 	__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 252), 0, 3);
 	__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 252), 0, 3);
 
-	while (firstVal <= lastVal && i > 1)
-	{
+	while (firstVal <= lastVal && i > 1) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT8_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
+                tie(firstVal, lastVal) = getRankWT8_1024(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+		firstVal += C[c] + 1;
 		__builtin_prefetch(wt->alignedBits + 16 * ((firstVal - 1) / 252), 0, 3);
-		lastVal = C[c] + getRankWT8_1024(code[c], codeLen[c], lastVal, wt, 0);
+		lastVal += C[c];
 		__builtin_prefetch(wt->alignedBits + 16 * (lastVal / 252), 0, 3);
 		--i;
 	}
@@ -1470,8 +2070,9 @@ unsigned int count_WT8_1024(unsigned char *pattern, unsigned int i, unsigned int
 	if (firstVal <= lastVal) {
 		c = pattern[i - 1];
                 if (codeLen[c] == 0) return 0;
-		firstVal = C[c] + getRankWT8_1024(code[c], codeLen[c], firstVal - 1, wt, 0) + 1;
-		lastVal = C[c] + getRankWT8_1024(code[c], codeLen[c], lastVal, wt, 0);
+		tie(firstVal, lastVal) = getRankWT8_1024(code[c], codeLen[c], firstVal - 1, lastVal, wt, 0);
+                firstVal += C[c] + 1;
+                lastVal += C[c];
 	}
 
 	if (firstVal > lastVal) return 0;
