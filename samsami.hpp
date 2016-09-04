@@ -14,9 +14,9 @@ using namespace shared;
 namespace samsami {
     
 enum SamSAMiType {
-        STANDARD = 1,
-        WITH_SKETCHES_8x2 = 2,
-        WITH_SKETCHES_4x4 = 3
+        SAMSAMI_STANDARD = 1,
+        SAMSAMI_SKETCHES_8x2 = 2,
+        SAMSAMI_SKETCHES_4x4 = 3
 };
 
 void markSketch_8x2(unsigned char *text, unsigned int bitShift, unsigned int textIndex, unsigned int *sketches, unsigned int sketchesIndex);
@@ -181,7 +181,7 @@ protected:
 
             unsigned int sketchesTempLen = this->samSAMiLen + (this->samSAMiLen % 2);
             switch (T) {
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->bitShift = getBitShift_8x2(this->alignedText, this->textLen);
                     break;
                 default:
@@ -192,7 +192,7 @@ protected:
             for (unsigned int i = 0; i < sketchesTempLen; ++i) sketchesTemp[i] = 0;
             unsigned int sketchesCounter = 0;
             switch (T) {
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     markSketch_8x2(this->alignedText, this->bitShift, sa[0], sketchesTemp, sketchesCounter);
                     break;
                 default:
@@ -204,7 +204,7 @@ protected:
             for (unsigned int i = 1; i < saLen; ++i) if (markers[sa[i]]) {
                     this->alignedSamSAMi[samSAMiCounter++] = sa[i];
                     switch (T) {
-                        case SamSAMiType::WITH_SKETCHES_8x2:
+                        case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                             markSketch_8x2(this->alignedText, this->bitShift, sa[i], sketchesTemp, sketchesCounter);
                             break;
                         default:
@@ -263,7 +263,7 @@ protected:
             else {
                 unsigned int sketchLen, patternSketch;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
@@ -316,7 +316,7 @@ protected:
             else {
                 unsigned int sketchLen, patternSketch;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
@@ -355,8 +355,8 @@ public:
             unsigned int saLen;
             unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->build_sketches(sa, saLen);
                     break;
                 default:
@@ -480,8 +480,8 @@ public:
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     return this->count_sketches(pattern, patternLen);
                     break;
                 default:
@@ -492,8 +492,8 @@ public:
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->locate_sketches(pattern, patternLen, res);
                     break;
                 default:
@@ -571,7 +571,7 @@ private:
             else {
                     unsigned int sketchLen, patternSketch;
                     switch(T) {
-                        case SamSAMiType::WITH_SKETCHES_8x2:
+                        case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                             patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                             for (unsigned int i = beg; i < end; ++i) {
                                 if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
@@ -628,7 +628,7 @@ private:
             else {
                 unsigned int sketchLen, patternSketch;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
@@ -664,8 +664,8 @@ public:
             unsigned int saLen;
             unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->build_sketches(sa, saLen);
                     break;
                 default:
@@ -786,8 +786,8 @@ public:
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     return this->count_sketches(pattern, patternLen);
                     break;
                 default:
@@ -798,8 +798,8 @@ public:
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->locate_sketches(pattern, patternLen, res);
                     break;
                 default:
@@ -1018,7 +1018,7 @@ public:
             unsigned int uniqueSuffixNum = getUniqueSuffixNumForSamSAMi2(this->k, text, textLen, sa, saLen);
             this->bucketsNum = (double)uniqueSuffixNum * (1.0 / this->loadFactor);
             switch(T) {
-                case HTType::DENSE:
+                case HTType::HT_DENSE:
                     this->fillDenseHTData(text, textLen, sa, saLen);
                     break;
                 default:
@@ -1029,7 +1029,7 @@ public:
         
         void getBoundaries(unsigned char *pattern, unsigned char *text, unsigned int *sa, unsigned int &leftBoundary, unsigned int &rightBoundary) {
             switch(T) {
-                case HTType::DENSE:
+                case HTType::HT_DENSE:
                     return this->getDenseHTBoundaries(pattern, text, sa, leftBoundary, rightBoundary);
                     break;
                 default:
@@ -1127,7 +1127,7 @@ protected:
 
             unsigned int sketchesTempLen = this->samSAMiLen + (this->samSAMiLen % 2);
             switch (T) {
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->bitShift = getBitShift_8x2(this->alignedText, this->textLen);
                     break;
                 default:
@@ -1138,7 +1138,7 @@ protected:
             for (unsigned int i = 0; i < sketchesTempLen; ++i) sketchesTemp[i] = 0;
             unsigned int sketchesCounter = 0;
             switch (T) {
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     markSketch_8x2(this->alignedText, this->bitShift, sa[0], sketchesTemp, sketchesCounter);
                     break;
                 default:
@@ -1150,7 +1150,7 @@ protected:
             for (unsigned int i = 1; i < saLen; ++i) if (markers[sa[i]]) {
                     this->alignedSamSAMi[samSAMiCounter++] = (((unsigned int)sa[i]) | (positions[sa[i]] << 28));
                     switch (T) {
-                        case SamSAMiType::WITH_SKETCHES_8x2:
+                        case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                             markSketch_8x2(this->alignedText, this->bitShift, sa[i], sketchesTemp, sketchesCounter);
                             break;
                         default:
@@ -1215,7 +1215,7 @@ protected:
             else {
                 unsigned int sketchLen, patternSketch, diffPos;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             diffPos = this->alignedSamSAMi[i] >> 28;
@@ -1282,7 +1282,7 @@ protected:
             } else {
                 unsigned int sketchLen, patternSketch, diffPos;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             diffPos = this->alignedSamSAMi[i] >> 28;
@@ -1326,8 +1326,8 @@ public:
             unsigned int saLen;
             unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->build_sketches(sa, saLen);
                     break;
                 default:
@@ -1339,8 +1339,8 @@ public:
         
         unsigned int count(unsigned char *pattern, unsigned int patternLen) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     return this->count_sketches(pattern, patternLen);
                     break;
                 default:
@@ -1351,8 +1351,8 @@ public:
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->locate_sketches(pattern, patternLen, res);
                     break;
                 default:
@@ -1434,7 +1434,7 @@ private:
             else {
                 unsigned int sketchLen, patternSketch, diffPos;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             diffPos = this->alignedSamSAMi[i] >> 28;
@@ -1505,7 +1505,7 @@ private:
             } else {
                 unsigned int sketchLen, patternSketch, diffPos;
                 switch(T) {
-                    case SamSAMiType::WITH_SKETCHES_8x2:
+                    case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             diffPos = this->alignedSamSAMi[i] >> 28;
@@ -1545,8 +1545,8 @@ public:
             unsigned int saLen;
             unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0, this->verbose);
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->build_sketches(sa, saLen);
                     break;
                 default:
@@ -1667,8 +1667,8 @@ public:
         
         unsigned int count(unsigned char *pattern, unsigned int patternLen) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     return this->count_sketches(pattern, patternLen);
                     break;
                 default:
@@ -1679,8 +1679,8 @@ public:
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             switch(T) {
-                case SamSAMiType::WITH_SKETCHES_4x4:
-                case SamSAMiType::WITH_SKETCHES_8x2:
+                case SamSAMiType::SAMSAMI_SKETCHES_4x4:
+                case SamSAMiType::SAMSAMI_SKETCHES_8x2:
                     this->locate_sketches(pattern, patternLen, res);
                     break;
                 default:
@@ -1692,8 +1692,8 @@ public:
 };
 
 enum SamSAMiFMType {
-        TYPE_512 = 8,
-        TYPE_1024 = 16
+        FM_512 = 8,
+        FM_1024 = 16
 };
 
 template<SamSAMiFMType T> class SamSAMiFM : public Index {
@@ -1921,7 +1921,7 @@ public:
             if (this->verbose) cout << "Done" << endl;
             if (this->verbose) cout << "Building WT ... " << flush;
             switch(T) {
-                case SamSAMiFMType::TYPE_1024:
+                case SamSAMiFMType::FM_1024:
                     this->wt = createWT2_1024_counter32(bwt, bwtLen, 0, this->code, this->codeLen);
                     break;
                 default:
@@ -2118,7 +2118,7 @@ public:
             else {  
                 if (beg == end) return 0;
                 switch(T) {
-                    case SamSAMiFMType::TYPE_1024:
+                    case SamSAMiFMType::FM_1024:
                         return count_WT2_1024_counter32(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
                         break;
                     default:
@@ -2188,7 +2188,7 @@ public:
             if (this->verbose) cout << "Done" << endl;
             if (this->verbose) cout << "Building WT ... " << flush;
             switch(T) {
-                case SamSAMiFMType::TYPE_1024:
+                case SamSAMiFMType::FM_1024:
                     this->wt = createWT2_1024_counter32(bwt, bwtLen, 0, this->code, this->codeLen);
                     break;
                 default:
@@ -2383,7 +2383,7 @@ public:
             else {
                 if (beg == end) return 0;
                 switch(T) {
-                    case SamSAMiFMType::TYPE_1024:
+                    case SamSAMiFMType::FM_1024:
                         return count_WT2_1024_counter32(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
                         break;
                     default:

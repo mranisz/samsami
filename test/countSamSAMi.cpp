@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 }
 
 void samSAMi1(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1<SamSAMiType::STANDARD> *samSAMi = new SamSAMi1<SamSAMiType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi1<SAMSAMI_STANDARD> *samSAMi = new SamSAMi1<SAMSAMI_STANDARD>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi1-std-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -157,7 +157,7 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 }
 
 void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1<SamSAMiType::WITH_SKETCHES_4x4> *samSAMi = new SamSAMi1<SamSAMiType::WITH_SKETCHES_4x4>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi1<SAMSAMI_SKETCHES_4x4> *samSAMi = new SamSAMi1<SAMSAMI_SKETCHES_4x4>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi1-4x4-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -206,7 +206,7 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 }
 
 void samSAMi1Sketches8x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1<SamSAMiType::WITH_SKETCHES_8x2> *samSAMi = new SamSAMi1<SamSAMiType::WITH_SKETCHES_8x2>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi1<SAMSAMI_SKETCHES_8x2> *samSAMi = new SamSAMi1<SAMSAMI_SKETCHES_8x2>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi1-8x2-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -255,7 +255,7 @@ void samSAMi1Sketches8x2(string q, string p, const char *textFileName, unsigned 
 }
 
 void samSAMi2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2<SamSAMiType::STANDARD> *samSAMi = new SamSAMi2<SamSAMiType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi2<SAMSAMI_STANDARD> *samSAMi = new SamSAMi2<SAMSAMI_STANDARD>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi2-std-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -304,7 +304,7 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 }
 
 void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2<SamSAMiType::WITH_SKETCHES_4x4> *samSAMi = new SamSAMi2<SamSAMiType::WITH_SKETCHES_4x4>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi2<SAMSAMI_SKETCHES_4x4> *samSAMi = new SamSAMi2<SAMSAMI_SKETCHES_4x4>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi2-4x4-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -353,7 +353,7 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 }
 
 void samSAMi2Sketches8x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2<SamSAMiType::WITH_SKETCHES_8x2> *samSAMi = new SamSAMi2<SamSAMiType::WITH_SKETCHES_8x2>(atoi(q.c_str()), atoi(p.c_str()));
+	SamSAMi2<SAMSAMI_SKETCHES_8x2> *samSAMi = new SamSAMi2<SAMSAMI_SKETCHES_8x2>(atoi(q.c_str()), atoi(p.c_str()));
     string indexFileNameString = "SamSAMi2-8x2-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -402,7 +402,7 @@ void samSAMi2Sketches8x2(string q, string p, const char *textFileName, unsigned 
 }
 
 void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::STANDARD, HTType::STANDARD> *samSAMi = new SamSAMi1Hash<SamSAMiType::STANDARD, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_STANDARD, HT_STANDARD> *samSAMi = new SamSAMi1Hash<SAMSAMI_STANDARD, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-std-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -451,7 +451,7 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 }
 
 void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::STANDARD> *samSAMi = new SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_SKETCHES_4x4, HT_STANDARD> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_4x4, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-4x4-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -500,7 +500,7 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 }
 
 void samSAMi1HashSketches8x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::STANDARD> *samSAMi = new SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_SKETCHES_8x2, HT_STANDARD> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_8x2, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-8x2-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -549,7 +549,7 @@ void samSAMi1HashSketches8x2(string q, string p, string k, string loadFactor, co
 }
 
 void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::STANDARD, HTType::STANDARD> *samSAMi = new SamSAMi2Hash<SamSAMiType::STANDARD, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_STANDARD, HT_STANDARD> *samSAMi = new SamSAMi2Hash<SAMSAMI_STANDARD, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-std-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -598,7 +598,7 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 }
 
 void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::STANDARD> *samSAMi = new SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_SKETCHES_4x4, HT_STANDARD> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_4x4, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-4x4-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -647,7 +647,7 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 }
 
 void samSAMi2HashSketches8x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::STANDARD> *samSAMi = new SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_SKETCHES_8x2, HT_STANDARD> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_8x2, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-8x2-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -696,7 +696,7 @@ void samSAMi2HashSketches8x2(string q, string p, string k, string loadFactor, co
 }
 
 void samSAMi1HashDense(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::STANDARD, HTType::DENSE> *samSAMi = new SamSAMi1Hash<SamSAMiType::STANDARD, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_STANDARD, HT_DENSE> *samSAMi = new SamSAMi1Hash<SAMSAMI_STANDARD, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-std-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -745,7 +745,7 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 }
 
 void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::DENSE> *samSAMi = new SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_SKETCHES_4x4, HT_DENSE> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_4x4, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-4x4-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -794,7 +794,7 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 }
 
 void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::DENSE> *samSAMi = new SamSAMi1Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi1Hash<SAMSAMI_SKETCHES_8x2, HT_DENSE> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_8x2, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi1-8x2-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -843,7 +843,7 @@ void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFacto
 }
 
 void samSAMi2HashDense(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::STANDARD, HTType::DENSE> *samSAMi = new SamSAMi2Hash<SamSAMiType::STANDARD, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_STANDARD, HT_DENSE> *samSAMi = new SamSAMi2Hash<SAMSAMI_STANDARD, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-std-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -892,7 +892,7 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 }
 
 void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::DENSE> *samSAMi = new SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_4x4, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_SKETCHES_4x4, HT_DENSE> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_4x4, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-4x4-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -941,7 +941,7 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 }
 
 void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::DENSE> *samSAMi = new SamSAMi2Hash<SamSAMiType::WITH_SKETCHES_8x2, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMi2Hash<SAMSAMI_SKETCHES_8x2, HT_DENSE> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_8x2, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMi2-8x2-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -990,7 +990,7 @@ void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFacto
 }
 
 void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFM<SamSAMiFMType::TYPE_512> *samSAMi = new SamSAMiFM<SamSAMiFMType::TYPE_512>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+	SamSAMiFM<FM_512> *samSAMi = new SamSAMiFM<FM_512>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
     string indexFileNameString = "SamSAMiFM-512-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -1039,7 +1039,7 @@ void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsig
 }
 
 void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFM<SamSAMiFMType::TYPE_1024> *samSAMi = new SamSAMiFM<SamSAMiFMType::TYPE_1024>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+	SamSAMiFM<FM_1024> *samSAMi = new SamSAMiFM<FM_1024>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
     string indexFileNameString = "SamSAMiFM-1024-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -1088,7 +1088,7 @@ void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsi
 }
 
 void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<SamSAMiFMType::TYPE_512, HTType::STANDARD> *samSAMi = new SamSAMiFMHash<SamSAMiFMType::TYPE_512, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMiFMHash<FM_512, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_512, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMiFM-512-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -1137,7 +1137,7 @@ void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor
 }
 
 void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<SamSAMiFMType::TYPE_1024, HTType::STANDARD> *samSAMi = new SamSAMiFMHash<SamSAMiFMType::TYPE_1024, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMiFMHash<FM_1024, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_1024, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMiFM-1024-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -1186,7 +1186,7 @@ void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFacto
 }
 
 void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<SamSAMiFMType::TYPE_512, HTType::DENSE> *samSAMi = new SamSAMiFMHash<SamSAMiFMType::TYPE_512, HTType::DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMiFMHash<FM_512, HT_DENSE> *samSAMi = new SamSAMiFMHash<FM_512, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMiFM-512-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
@@ -1235,7 +1235,7 @@ void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadF
 }
 
 void samSAMiFMHashDense_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<SamSAMiFMType::TYPE_1024, HTType::STANDARD> *samSAMi = new SamSAMiFMHash<SamSAMiFMType::TYPE_1024, HTType::STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+	SamSAMiFMHash<FM_1024, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_1024, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
     string indexFileNameString = "SamSAMiFM-1024-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
