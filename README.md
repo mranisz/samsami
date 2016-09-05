@@ -63,10 +63,6 @@ unsigned int count(unsigned char *pattern, unsigned int patternLen);
 ```
 void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 ```
-- set **verbose** mode:
-```
-void setVerbose(bool verbose);
-```
 
 ##SamSAMi1\<SamSAMiType T\>
 
@@ -240,7 +236,6 @@ int main(int argc, char *argv[]) {
 	if (fileExists(indexFileName)) {
 		samSAMi1->load(indexFileName);
 	} else {
-		samSAMi1->setVerbose(true);
 		samSAMi1->build(textFileName);
 		samSAMi1->save(indexFileName);
 	}

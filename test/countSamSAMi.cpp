@@ -115,7 +115,6 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -164,7 +163,6 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -213,7 +211,6 @@ void samSAMi1Sketches8x2(string q, string p, const char *textFileName, unsigned 
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -262,7 +259,6 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -311,7 +307,6 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -360,7 +355,6 @@ void samSAMi2Sketches8x2(string q, string p, const char *textFileName, unsigned 
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -409,7 +403,6 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -458,7 +451,6 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -507,7 +499,6 @@ void samSAMi1HashSketches8x2(string q, string p, string k, string loadFactor, co
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -556,7 +547,6 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -605,7 +595,6 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -654,7 +643,6 @@ void samSAMi2HashSketches8x2(string q, string p, string k, string loadFactor, co
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -703,7 +691,6 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -752,7 +739,6 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -801,7 +787,6 @@ void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFacto
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -850,7 +835,6 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -899,7 +883,6 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -948,7 +931,6 @@ void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFacto
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -997,7 +979,6 @@ void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsig
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -1046,7 +1027,6 @@ void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsi
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -1095,7 +1075,6 @@ void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -1144,7 +1123,6 @@ void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFacto
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -1193,7 +1171,6 @@ void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadF
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
@@ -1242,7 +1219,6 @@ void samSAMiFMHashDense_1024(string q, string p, string l, string k, string load
 	if (fileExists(indexFileName)) {
 		samSAMi->load(indexFileName);
 	} else {
-		samSAMi->setVerbose(true);
 		samSAMi->build(textFileName);
 		samSAMi->save(indexFileName);
 	}
