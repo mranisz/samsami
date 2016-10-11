@@ -163,14 +163,18 @@ Constructors:
 SamSAMi2<SamSAMiType T, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int k, double loadFactor);
 ```
 
-##SamSAMiFM\<SamSAMiFMType T\>
-SamSAMiFM is a hybrid of SamSAMi and FM. To speed up the verification phase (which is costly for short patterns in standard SamSAMi indexes), the FM index (employing a binary Huffman-shaped wavelet tree) is used.
+##SamSAMiFMHWT\<class RANK32\>
+SamSAMiFMHWT is a hybrid of SamSAMi and FM. To speed up the verification phase (which is costly for short patterns in standard SamSAMi indexes), the FM index (employing a binary Huffman-shaped wavelet tree) is used.
 The current version handles only the count query.
 
 Parameters:
-- T:
-      - FM_512 - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
-      - FM_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+- RANK32 class:
+      - RankBasic32<RANK_BASIC_STANDARD>
+      - RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>
+      - RankCF32
+      - RankMPE32<RANK_MPE1>
+      - RankMPE32<RANK_MPE2>
+      - RankMPE32<RANK_MPE3>
 - q - window length (default: q = 4)
 - p - minimizer length (default: p = 1)
 - l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster (default: l = 16)
@@ -182,17 +186,21 @@ Limitations:
 
 Constructors:
 ```
-SamSAMiFM<SamSAMiFMType T>();
-SamSAMiFM<SamSAMiFMType T>(unsigned int q, unsigned int p, unsigned int l);
+SamSAMiFMHWT<class RANK32>();
+SamSAMiFMHWT<class RANK32>(unsigned int q, unsigned int p, unsigned int l);
 ```
 
-##SamSAMiFMHash\<SamSAMiFMType T, HTType HASHTYPE\>
-SamSAMiFMHash is SamSAMiFM with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
+##SamSAMiFMHWTHash\<class RANK32, HTType HASHTYPE\>
+SamSAMiFMHWTHash is SamSAMiFMHWT with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
 
 Parameters:
-- T:
-      - FM_512 - using 512b blocks in WT: 64b of rank data and 448b of encoded text data
-      - FM_1024 - using 1024b blocks in WT: 64b of rank data and 960b of encoded text data
+- RANK32 class:
+      - RankBasic32<RANK_BASIC_STANDARD>
+      - RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>
+      - RankCF32
+      - RankMPE32<RANK_MPE1>
+      - RankMPE32<RANK_MPE2>
+      - RankMPE32<RANK_MPE3>
 - q - window length
 - p - minimizer length
 - l - sampling parameter for mapping between SamSAMi and SA indexes, larger l reduces the space somewhat but also makes the search somewhat faster
@@ -211,14 +219,14 @@ Limitations:
 
 Constructors:
 ```
-SamSAMiFM<SamSAMiFMType T, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int l, unsigned int k, double loadFactor);
+SamSAMiFMHWTHash<class RANK32, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int l, unsigned int k, double loadFactor);
 ```
 
 ##SamSAMi1 usage example
 ```
 #include <iostream>
 #include <stdlib.h>
-#include "samsami/shared/patterns.h"
+#include "samsami/shared/patterns.hpp"
 #include "samsami/samsami.hpp"
 
 using namespace std;
@@ -243,7 +251,7 @@ int main(int argc, char *argv[]) {
 	double indexSize = (double)samSAMi1->getIndexSize();
 	cout << "Index size: " << indexSize << "B (" << (indexSize / (double)samSAMi1->getTextSize()) << "n)" << endl << endl;
 
-	Patterns *P = new Patterns(textFileName, queriesNum, patternLen);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, patternLen);
 	unsigned char **patterns = P->getPatterns();
 
 	for (unsigned int i = 0; i < queriesNum; ++i) {

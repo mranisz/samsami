@@ -2,8 +2,8 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
-#include "../shared/patterns.h"
-#include "../shared/timer.h"
+#include "../shared/patterns.hpp"
+#include "../shared/timer.hpp"
 #include "../samsami.hpp"
 
 using namespace std;
@@ -30,12 +30,24 @@ void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFacto
 void samSAMi2HashDense(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMiFMHashDense_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTBasic(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTBch(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTCf(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTMpe1(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTMpe2(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTMpe3(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashBasic(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashBch(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashCf(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashMpe1(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashMpe2(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashMpe3(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseBasic(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseBch(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseCf(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseMpe1(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseMpe2(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMiFMHWTHashDenseMpe3(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 
 void getUsage(char **argv) {
 	cout << "Select index you want to test (count):" << endl;
@@ -57,12 +69,9 @@ void getUsage(char **argv) {
 	cout << "SamSAMi2-hash-dense: " << argv[0] << " 2-hash-dense q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash-dense-sketches4x4: " << argv[0] << " 2-hash-dense-4x4 q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash-dense-sketches8x2: " << argv[0] << " 2-hash-dense-8x2 q p k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-512: " << argv[0] << " FM-512 q p l fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-1024: " << argv[0] << " FM-1024 q p l fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-hash-512: " << argv[0] << " FM-hash-512 q p l k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-hash-1024: " << argv[0] << " FM-hash-1024 q p l k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-hash-dense-512: " << argv[0] << " FM-hash-dense-512 q p l k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMiFM-hash-dense-1024: " << argv[0] << " FM-hash-dense-1024 q p l k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMiFMHWT: " << argv[0] << " FMHWT-basic|FMHWT-bch|FMHWT-cf|FMHWT-mpe1|FMHWT-mpe2|FMHWT-mpe3 q p l fileName patternNum patternLen" << endl;
+	cout << "SamSAMiFMHWT-hash: " << argv[0] << " FMHWT-hash-basic|FMHWT-hash-bch|FMHWT-hash-cf|FMHWT-hash-mpe1|FMHWT-hash-mpe2|FMHWT-hash-mpe3 q p l k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMiFMHWT-hash-dense: " << argv[0] << " FMHWT-hash-dense-basic|FMHWT-hash-dense-bch|FMHWT-hash-dense-cf|FMHWT-hash-dense-mpe1|FMHWT-hash-dense-mpe2|FMHWT-hash-dense-mpe3 q p l k loadFactor fileName patternNum patternLen" << endl;
 	cout << "where:" << endl;
 	cout << "q - window length" << endl;
 	cout << "p - minimizer length, p <= q" << endl;
@@ -97,12 +106,24 @@ int main(int argc, char *argv[]) {
 	if (string(argv[1]) == "2-hash-dense") samSAMi2HashDense(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash-dense-4x4") samSAMi2HashDenseSketches4x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash-dense-8x2") samSAMi2HashDenseSketches8x2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
-	if (string(argv[1]) == "FM-512") samSAMiFM_512(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
-	if (string(argv[1]) == "FM-1024") samSAMiFM_1024(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
-	if (string(argv[1]) == "FM-hash-512") samSAMiFMHash_512(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
-	if (string(argv[1]) == "FM-hash-1024") samSAMiFMHash_1024(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
-	if (string(argv[1]) == "FM-hash-dense-512") samSAMiFMHashDense_512(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
-	if (string(argv[1]) == "FM-hash-dense-1024") samSAMiFMHashDense_1024(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-basic") samSAMiFMHWTBasic(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-bch") samSAMiFMHWTBch(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-cf") samSAMiFMHWTCf(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-mpe1") samSAMiFMHWTMpe1(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-mpe2") samSAMiFMHWTMpe2(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-mpe3") samSAMiFMHWTMpe3(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
+	if (string(argv[1]) == "FMHWT-hash-basic") samSAMiFMHWTHashBasic(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-bch") samSAMiFMHWTHashBch(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-cf") samSAMiFMHWTHashCf(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-mpe1") samSAMiFMHWTHashMpe1(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-mpe2") samSAMiFMHWTHashMpe2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-mpe3") samSAMiFMHWTHashMpe3(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-basic") samSAMiFMHWTHashDenseBasic(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-bch") samSAMiFMHWTHashDenseBch(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-cf") samSAMiFMHWTHashDenseCf(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-mpe1") samSAMiFMHWTHashDenseMpe1(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-mpe2") samSAMiFMHWTHashDenseMpe2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
+	if (string(argv[1]) == "FMHWT-hash-dense-mpe3") samSAMiFMHWTHashDenseMpe3(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), string(argv[6]), argv[7], atoi(argv[8]), atoi(argv[9]));
 	getUsage(argv);
 	exit(1);
 }
@@ -119,9 +140,9 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -167,9 +188,9 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -215,9 +236,9 @@ void samSAMi1Sketches8x2(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -263,9 +284,9 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -311,9 +332,9 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -359,9 +380,9 @@ void samSAMi2Sketches8x2(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -407,9 +428,9 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -455,9 +476,9 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -503,9 +524,9 @@ void samSAMi1HashSketches8x2(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -551,9 +572,9 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -599,9 +620,9 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -647,9 +668,9 @@ void samSAMi2HashSketches8x2(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -695,9 +716,9 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -743,9 +764,9 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -791,9 +812,9 @@ void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -839,9 +860,9 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -887,9 +908,9 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -935,9 +956,9 @@ void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -971,9 +992,9 @@ void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFacto
     exit(0);
 }
 
-void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFM<FM_512> *samSAMi = new SamSAMiFM<FM_512>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
-    string indexFileNameString = "SamSAMiFM-512-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
+void samSAMiFMHWTBasic(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankBasic32<RANK_BASIC_STANDARD>> *samSAMi = new SamSAMiFMHWT<RankBasic32<RANK_BASIC_STANDARD>>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-basic-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -983,9 +1004,9 @@ void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsig
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -997,11 +1018,11 @@ void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsig
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM.txt";
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-512-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 512 " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-basic-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " basic " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -1019,9 +1040,9 @@ void samSAMiFM_512(string q, string p, string l, const char *textFileName, unsig
     exit(0);
 }
 
-void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFM<FM_1024> *samSAMi = new SamSAMiFM<FM_1024>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
-    string indexFileNameString = "SamSAMiFM-1024-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
+void samSAMiFMHWTBch(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>> *samSAMi = new SamSAMiFMHWT<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-bch-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -1031,9 +1052,9 @@ void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsi
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -1045,11 +1066,11 @@ void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsi
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM.txt";
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-1024-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 1024 " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-bch-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " bch " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -1067,9 +1088,9 @@ void samSAMiFM_1024(string q, string p, string l, const char *textFileName, unsi
     exit(0);
 }
 
-void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<FM_512, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_512, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMiFM-512-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMiFMHWTCf(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankCF32> *samSAMi = new SamSAMiFMHWT<RankCF32>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-cf-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -1079,9 +1100,9 @@ void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -1093,11 +1114,11 @@ void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash.txt";
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-hash-512-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 512 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-cf-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " cf " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -1115,9 +1136,9 @@ void samSAMiFMHash_512(string q, string p, string l, string k, string loadFactor
     exit(0);
 }
 
-void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<FM_1024, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_1024, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMiFM-1024-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMiFMHWTMpe1(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankMPE32<RANK_MPE1>> *samSAMi = new SamSAMiFMHWT<RankMPE32<RANK_MPE1>>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-mpe1-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -1127,9 +1148,9 @@ void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -1141,11 +1162,11 @@ void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash.txt";
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-hash-1024-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 1024 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-mpe1-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe1 " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -1163,9 +1184,9 @@ void samSAMiFMHash_1024(string q, string p, string l, string k, string loadFacto
     exit(0);
 }
 
-void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<FM_512, HT_DENSE> *samSAMi = new SamSAMiFMHash<FM_512, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMiFM-512-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMiFMHWTMpe2(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankMPE32<RANK_MPE2>> *samSAMi = new SamSAMiFMHWT<RankMPE32<RANK_MPE2>>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-mpe2-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -1175,9 +1196,393 @@ void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadF
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-mpe2-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe2 " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTMpe3(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWT<RankMPE32<RANK_MPE3>> *samSAMi = new SamSAMiFMHWT<RankMPE32<RANK_MPE3>>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-mpe3-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-mpe3-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe3 " << q << " " << p << " " << l << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashBasic(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_STANDARD>, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_STANDARD>, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-basic-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-basic-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " basic " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashBch(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-bch-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-bch-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " bch " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashCf(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankCF32, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankCF32, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-cf-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-cf-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " cf " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashMpe1(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE1>, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE1>, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-mpe1-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-mpe1-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe1 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashMpe2(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE2>, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE2>, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-mpe2-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-mpe2-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe2 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashMpe3(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE3>, HT_STANDARD> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE3>, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-mpe3-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFM-hash-mpe3-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe3 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashDenseBasic(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_STANDARD>, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_STANDARD>, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-basic-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -1192,8 +1597,8 @@ void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadF
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-hash-dense-512-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 512 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-hash-dense-basic-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " basic " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -1211,9 +1616,9 @@ void samSAMiFMHashDense_512(string q, string p, string l, string k, string loadF
     exit(0);
 }
 
-void samSAMiFMHashDense_1024(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMiFMHash<FM_1024, HT_STANDARD> *samSAMi = new SamSAMiFMHash<FM_1024, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMiFM-1024-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMiFMHWTHashDenseBch(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankBasic32<RANK_BASIC_COMPRESSED_HEADERS>, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-bch-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -1223,9 +1628,9 @@ void samSAMiFMHashDense_1024(string q, string p, string l, string k, string load
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -1240,8 +1645,200 @@ void samSAMiFMHashDense_1024(string q, string p, string l, string k, string load
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMiFM-hash-dense-1024-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 1024 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMiFMHWT-hash-dense-bch-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " bch " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashDenseCf(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankCF32, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankCF32, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-cf-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-hash-dense-cf-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " cf " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashDenseMpe1(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE1>, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE1>, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-mpe1-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-hash-dense-mpe1-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe1 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashDenseMpe2(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE2>, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE2>, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-mpe2-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-hash-dense-mpe2-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe2 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+
+	unsigned int differences = P->getErrorCountsNumber(indexCounts);
+	if (differences > 0) {
+		cout << "DIFFERENCES: " << differences << endl;
+		resultFile << " DIFFERENCES: " << differences;
+	} else {
+		cout << "Differences: " << differences << endl;
+	}
+	resultFile << endl;
+	resultFile.close();
+
+	delete[] indexCounts;
+	delete samSAMi;
+	delete P;
+    exit(0);
+}
+
+void samSAMiFMHWTHashDenseMpe3(string q, string p, string l, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMiFMHWTHash<RankMPE32<RANK_MPE3>, HT_DENSE> *samSAMi = new SamSAMiFMHWTHash<RankMPE32<RANK_MPE3>, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(l.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMiFMHWT-hash-dense-mpe3-" + (string)textFileName + "-" +  q + "-" + p + "-" + l + "-" +  k + "-" + loadFactor + ".idx";
+	const char *indexFileName = indexFileNameString.c_str();
+
+	if (fileExists(indexFileName)) {
+		samSAMi->load(indexFileName);
+	} else {
+		samSAMi->build(textFileName);
+		samSAMi->save(indexFileName);
+	}
+
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
+	queriesNum = P->getQueriesNum();
+	if (queriesNum == 0) exit(1);*/
+	unsigned char **patterns = P->getPatterns();
+	unsigned int *indexCounts = new unsigned int[queriesNum];
+
+	timer.startTimer();
+	for (unsigned int i = 0; i < queriesNum; ++i) {
+		indexCounts[i] = samSAMi->count(patterns[i], m);
+	}
+	timer.stopTimer();
+
+	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
+	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
+	cout << "count SamSAMiFMHWT-hash-dense-mpe3-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " mpe3 " << q << " " << p << " " << l << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {

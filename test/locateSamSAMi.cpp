@@ -2,8 +2,8 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
-#include "../shared/patterns.h"
-#include "../shared/timer.h"
+#include "../shared/patterns.hpp"
+#include "../shared/timer.hpp"
 #include "../samsami.hpp"
 
 using namespace std;
@@ -100,9 +100,9 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -148,9 +148,9 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -196,9 +196,9 @@ void samSAMi1Sketches8x2(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -244,9 +244,9 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -292,9 +292,9 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -340,9 +340,9 @@ void samSAMi2Sketches8x2(string q, string p, const char *textFileName, unsigned 
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -388,9 +388,9 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -436,9 +436,9 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -484,9 +484,9 @@ void samSAMi1HashSketches8x2(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -532,9 +532,9 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -580,9 +580,9 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -628,9 +628,9 @@ void samSAMi2HashSketches8x2(string q, string p, string k, string loadFactor, co
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -676,9 +676,9 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -724,9 +724,9 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -772,9 +772,9 @@ void samSAMi1HashDenseSketches8x2(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -820,9 +820,9 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -868,9 +868,9 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();
@@ -916,9 +916,9 @@ void samSAMi2HashDenseSketches8x2(string q, string p, string k, string loadFacto
 		samSAMi->save(indexFileName);
 	}
 
-	Patterns *P = new Patterns(textFileName, queriesNum, m);
-	//NegativePatterns *P = new NegativePatterns(textFileName, queriesNum, m);
-	/*MaliciousPatterns *P = new MaliciousPatterns(textFileName, m);
+	Patterns32 *P = new Patterns32(textFileName, queriesNum, m);
+	//NegativePatterns32 *P = new NegativePatterns32(textFileName, queriesNum, m);
+	/*MaliciousPatterns32 *P = new MaliciousPatterns32(textFileName, m);
 	queriesNum = P->getQueriesNum();
 	if (queriesNum == 0) exit(1);*/
 	unsigned char **patterns = P->getPatterns();

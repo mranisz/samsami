@@ -3,9 +3,9 @@
 
 #include <cstdio>
 #include "libs/asmlib.h"
-#include "shared/common.h"
-#include "shared/wt.h"
-#include "shared/huff.h"
+#include "shared/common.hpp"
+#include "shared/fm.hpp"
+#include "shared/huff.hpp"
 #include "shared/hash.hpp"
 
 using namespace std;
@@ -236,7 +236,7 @@ protected:
                     pos = i;
                 }
             }
-            binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+            binarySearch(this->alignedSamSAMi, this->alignedText, 0U, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
             if (pos == 0) return end - beg;
             else {
                 for (unsigned int i = beg; i < end; ++i) {
@@ -257,7 +257,7 @@ protected:
                     pos = i;
                 }
             }
-            binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+            binarySearch(this->alignedSamSAMi, this->alignedText, 0U, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
             if (pos == 0) return end - beg;
             else {
                 unsigned int sketchLen, patternSketch;
@@ -290,7 +290,7 @@ protected:
                     pos = i;
                 }
             }
-            binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+            binarySearch(this->alignedSamSAMi, this->alignedText, 0U, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
             if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
             else {
                 for (unsigned int i = beg; i < end; ++i) {
@@ -310,7 +310,7 @@ protected:
                     pos = i;
                 }
             }
-            binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+            binarySearch(this->alignedSamSAMi, this->alignedText, 0U, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
             if (pos == 0) res.insert(res.end(), this->alignedSamSAMi + beg, this->alignedSamSAMi + end);
             else {
                 unsigned int sketchLen, patternSketch;
@@ -352,7 +352,7 @@ public:
             this->free();
             this->loadText(textFileName);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_8x2:
@@ -504,7 +504,7 @@ public:
 template<SamSAMiType T, HTType HASHTYPE> class SamSAMi1Hash : public SamSAMi1<T> {
 private:
         unsigned int minPatternLenForHash;
-	HT<HASHTYPE> *ht = NULL;
+	HT32<HASHTYPE> *ht = NULL;
 
 	void freeMemory() {
             SamSAMi1<T>::freeMemory();
@@ -647,7 +647,7 @@ public:
 		this->initialize();
                 this->setQ(q);
                 this->setP(p);
-                this->ht = new HT<HASHTYPE>(k, loadFactor);
+                this->ht = new HT32<HASHTYPE>(k, loadFactor);
                 this->setMinPatternLenForHash();
 	}
 
@@ -660,7 +660,7 @@ public:
             this->free();
             this->loadText(textFileName);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_8x2:
@@ -689,7 +689,7 @@ public:
 	void load(FILE *inFile) {
             SamSAMi1<T>::load(inFile);
             delete this->ht;
-            this->ht = new HT<HASHTYPE>();
+            this->ht = new HT32<HASHTYPE>();
             this->ht->load(inFile);
             this->setMinPatternLenForHash();
         }
@@ -737,7 +737,7 @@ public:
         
 };
 
-template<HTType T> class HTSamSAMi2 : public HTBase {
+template<HTType T> class HTSamSAMi2 : public HTBase32 {
 private:     
 	void fillStandardHTData(unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen) {
             unsigned long long hash = this->bucketsNum;
@@ -1251,7 +1251,7 @@ public:
             this->free();
             this->loadText(textFileName);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_8x2:
@@ -1470,7 +1470,7 @@ public:
             this->free();
             this->loadText(textFileName);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_8x2:
@@ -1547,12 +1547,7 @@ public:
         
 };
 
-enum SamSAMiFMType {
-        FM_512 = 8,
-        FM_1024 = 16
-};
-
-template<SamSAMiFMType T> class SamSAMiFM {
+template<class RANK32> class SamSAMiFMHWT {
 protected:
 	unsigned int *samSAMi;
 	unsigned int *alignedSamSAMi;
@@ -1566,10 +1561,7 @@ protected:
         unsigned int *H;
         unsigned int HLen;
         unsigned int *alignedH;
-        alignas(128) unsigned int c[257];
-        alignas(128) unsigned long long code[256];
-	alignas(128) unsigned int codeLen[256];
-        WT *wt;
+        FMHWT32<RANK32> *fm;
 
         unsigned int q;
         unsigned int p;
@@ -1578,13 +1570,13 @@ protected:
 	void freeMemory() {
             if (this->samSAMi != NULL) delete[] this->samSAMi;
             if (this->text != NULL) delete[] this->text;
-            if (this->wt != NULL) delete this->wt;
+            if (this->fm != NULL) delete this->fm;
             if (this->M != NULL) delete this->M;
             if (this->H != NULL) delete this->H;
         }
         
 	void initialize() {
-            this->wt = NULL;
+            this->fm = new FMHWT32<RANK32>();
             this->samSAMi = NULL;
             this->alignedSamSAMi = NULL;
             this->samSAMiLen = 0;
@@ -1597,11 +1589,6 @@ protected:
             this->H = NULL;
             this->alignedH = NULL;
             this->HLen = 0;
-            for (int i = 0; i < 256; ++i) {
-                    this->code[i] = 0;
-                    this->codeLen[i] = 0;
-            }
-            for (int i = 0; i < 257; ++i) this->c[i] = 0;
         }
         
         void setQ(unsigned int q) {
@@ -1643,7 +1630,6 @@ protected:
                     exit(1);
             }
             fclose(inFile);
-            checkNullChar(this->alignedText, this->textLen);
             cout << "Done" << endl;
         }
         
@@ -1744,56 +1730,35 @@ protected:
         
         
 public:
-	SamSAMiFM() {
+	SamSAMiFMHWT() {
 		this->initialize();
                 this->setQ(4);
                 this->setP(1);
                 this->setL(16);
 	}
 
-	SamSAMiFM(unsigned int q, unsigned int p, unsigned int l) {
+	SamSAMiFMHWT(unsigned int q, unsigned int p, unsigned int l) {
 		this->initialize();
                 this->setQ(q);
                 this->setP(p);
                 this->setL(l);
 	}
 
-	~SamSAMiFM() {
+	~SamSAMiFMHWT() {
 		this->free();
 	}
 
 	void build(const char *textFileName) {
             this->free();
+            this->fm->build(textFileName);
             this->loadText(textFileName);
-            fillArrayC(this->alignedText, this->textLen, this->c);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
-
-            unsigned int bwtLen;
-            unsigned char *bwt = getBWT(this->alignedText, this->textLen, sa, saLen, bwtLen, 0);
-            cout << "Huffman encoding ... " << flush;
-            encodeHuffFromText(2, bwt, bwtLen, this->code, this->codeLen);
-            cout << "Done" << endl;
-            cout << "Building WT ... " << flush;
-            switch(T) {
-                case SamSAMiFMType::FM_1024:
-                    this->wt = createWT2_1024_counter32(bwt, bwtLen, 0, this->code, this->codeLen);
-                    break;
-                default:
-                    this->wt = createWT2_512_counter40(bwt, bwtLen, 0, this->code, this->codeLen);
-                    break;
-            }
-            delete[] bwt;
-            cout << "Done" << endl;
-
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             this->build_samsami(sa, saLen);
-
             delete[] sa;
         }
         
 	void save(FILE *outFile) {
-            bool nullPointer = false;
-            bool notNullPointer = true;
             fwrite(&this->q, (size_t)sizeof(unsigned int), (size_t)1, outFile);
             fwrite(&this->p, (size_t)sizeof(unsigned int), (size_t)1, outFile);
             fwrite(&this->l, (size_t)sizeof(unsigned int), (size_t)1, outFile);
@@ -1801,18 +1766,11 @@ public:
             if (this->samSAMiLen > 0) fwrite(this->alignedSamSAMi, (size_t)sizeof(unsigned int), (size_t)this->samSAMiLen, outFile);
             fwrite(&this->textLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
             if (this->textLen > 0) fwrite(this->alignedText, (size_t)sizeof(unsigned char), (size_t)this->textLen, outFile);
-            fwrite(this->c, (size_t)sizeof(unsigned int), (size_t)257, outFile);
-            fwrite(this->code, (size_t)sizeof(unsigned long long), (size_t)256, outFile);
-            fwrite(this->codeLen, (size_t)sizeof(unsigned int), (size_t)256, outFile);
             fwrite(&this->MLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
             if (this->MLen > 0) fwrite(this->alignedM, (size_t)sizeof(unsigned int), (size_t)this->MLen, outFile);
             fwrite(&this->HLen, (size_t)sizeof(unsigned int), (size_t)1, outFile);
             if (this->HLen > 0) fwrite(this->alignedH, (size_t)sizeof(unsigned int), (size_t)this->HLen, outFile);
-            if (this->wt == NULL) fwrite(&nullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
-            else {
-                    fwrite(&notNullPointer, (size_t)sizeof(bool), (size_t)1, outFile);
-                    this->wt->save(outFile);
-            }
+            this->fm->save(outFile);
         }
         
         void save(const char *fileName) {
@@ -1825,7 +1783,6 @@ public:
         
 	void load(FILE *inFile) {
             this->free();
-            bool isNotNullPointer;
             size_t result = fread(&this->q, (size_t)sizeof(unsigned int), (size_t)1, inFile);
             if (result != 1) {
                     cout << "Error loading index" << endl;
@@ -1873,21 +1830,6 @@ public:
                             exit(1);
                     }
             }
-            result = fread(this->c, (size_t)sizeof(unsigned int), (size_t)257, inFile);
-            if (result != 257) {
-                    cout << "Error loading index" << endl;
-                    exit(1);
-            }
-            result = fread(this->code, (size_t)sizeof(unsigned long long), (size_t)256, inFile);
-            if (result != 256) {
-                    cout << "Error loading index" << endl;
-                    exit(1);
-            }
-            result = fread(this->codeLen, (size_t)sizeof(unsigned int), (size_t)256, inFile);
-            if (result != 256) {
-                    cout << "Error loading index" << endl;
-                    exit(1);
-            }
             result = fread(&this->MLen, (size_t)sizeof(unsigned int), (size_t)1, inFile);
             if (result != 1) {
                     cout << "Error loading index" << endl;
@@ -1918,15 +1860,7 @@ public:
                             exit(1);
                     }
             }
-            result = fread(&isNotNullPointer, (size_t)sizeof(bool), (size_t)1, inFile);
-            if (result != 1) {
-                    cout << "Error loading index" << endl;
-                    exit(1);
-            }
-            if (isNotNullPointer) {
-                    this->wt = new WT();
-                    this->wt->load(inFile);
-            }
+            this->fm->load(inFile);
         }
         
         void load(const char *fileName) {
@@ -1943,12 +1877,12 @@ public:
         }
         
 	unsigned int getIndexSize() {
-            unsigned int size = sizeof(this->q) + sizeof(this->p) + sizeof(this->l) + sizeof(this->samSAMiLen) + sizeof(this->wt) + sizeof(this->MLen) + sizeof(HLen) + 257 * sizeof(unsigned int) + 256 * sizeof(unsigned int) + 256 * sizeof(unsigned long long);
+            unsigned int size = sizeof(this->q) + sizeof(this->p) + sizeof(this->l) + sizeof(this->samSAMiLen) + sizeof(this->MLen) + sizeof(HLen);
             if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
             if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
             if (this->MLen > 0) size += (this->MLen + 32) * sizeof(unsigned int);
             if (this->HLen > 0) size += (this->HLen + 32) * sizeof(unsigned int);
-            if (this->wt != NULL) size += this->wt->getWTSize();
+            size += this->fm->getIndexSize();
             return size;
         }
         
@@ -1967,30 +1901,23 @@ public:
                     pos = i;
                 }
             }
-            binarySearch(this->alignedSamSAMi, this->alignedText, 0, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
+            binarySearch(this->alignedSamSAMi, this->alignedText, 0U, this->samSAMiLen, pattern + pos, patternLen - pos, beg, end);
             if (pos == 0) return end - beg;
             else {  
                 if (beg == end) return 0;
-                switch(T) {
-                    case SamSAMiFMType::FM_1024:
-                        return count_WT2_1024_counter32(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
-                        break;
-                    default:
-                        return count_WT2_512_counter40(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
-                        break;
-                } 
+                return this->fm->count(pattern, pos, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1); 
             }
         }
         
 };
 
-template<SamSAMiFMType T, HTType HASHTYPE> class SamSAMiFMHash : public SamSAMiFM<T> {
+template<class RANK32, HTType HASHTYPE> class SamSAMiFMHWTHash : public SamSAMiFMHWT<RANK32> {
 private:
         unsigned int minPatternLenForHash;
-	HT<HASHTYPE> *ht = NULL;
+	HT32<HASHTYPE> *ht = NULL;
 
 	void freeMemory() {
-            SamSAMiFM<T>::freeMemory();
+            SamSAMiFMHWT<RANK32>::freeMemory();
             if (this->ht != NULL) this->ht->free();
         }
         
@@ -2000,7 +1927,7 @@ private:
         }
         
 	void build_samsami(unsigned int *sa, unsigned int saLen) {
-            SamSAMiFM<T>::build_samsami(sa, saLen);
+            SamSAMiFMHWT<RANK32>::build_samsami(sa, saLen);
             if (this->ht != NULL) {
                 cout << "Building hash table ... " << flush;
                 this->ht->build(this->alignedText, this->textLen, this->alignedSamSAMi, this->samSAMiLen);
@@ -2014,51 +1941,32 @@ public:
 		TYPE_1024 = 16
 	};
 
-	SamSAMiFMHash(unsigned int q, unsigned int p, unsigned int l, unsigned int k, double loadFactor) {
+	SamSAMiFMHWTHash(unsigned int q, unsigned int p, unsigned int l, unsigned int k, double loadFactor) {
 		this->initialize();
                 this->setQ(q);
                 this->setP(p);
                 this->setL(l);
-                this->ht = new HT<HASHTYPE>(k, loadFactor);
+                this->ht = new HT32<HASHTYPE>(k, loadFactor);
                 this->setMinPatternLenForHash();
 	}
 
-	~SamSAMiFMHash() {
+	~SamSAMiFMHWTHash() {
 		this->freeMemory();
                 if (this->ht != NULL) delete this->ht;
 	}
         
         void build(const char *textFileName) {
             this->free();
+            this->fm->build(textFileName);
             this->loadText(textFileName);
-            fillArrayC(this->alignedText, this->textLen, this->c);
             unsigned int saLen;
-            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0);
-
-            unsigned int bwtLen;
-            unsigned char *bwt = getBWT(this->alignedText, this->textLen, sa, saLen, bwtLen, 0);
-            cout << "Huffman encoding ... " << flush;
-            encodeHuffFromText(2, bwt, bwtLen, this->code, this->codeLen);
-            cout << "Done" << endl;
-            cout << "Building WT ... " << flush;
-            switch(T) {
-                case SamSAMiFMType::FM_1024:
-                    this->wt = createWT2_1024_counter32(bwt, bwtLen, 0, this->code, this->codeLen);
-                    break;
-                default:
-                    this->wt = createWT2_512_counter40(bwt, bwtLen, 0, this->code, this->codeLen);
-                    break;
-            }
-            delete[] bwt;
-            cout << "Done" << endl;
-
+            unsigned int *sa = getSA(textFileName, this->alignedText, this->textLen, saLen, 0U);
             this->build_samsami(sa, saLen);
-
             delete[] sa;
         }
 
 	void save(FILE *outFile) {
-            SamSAMiFM<T>::save(outFile);
+            SamSAMiFMHWT<RANK32>::save(outFile);
             this->ht->save(outFile);
         }
         
@@ -2071,9 +1979,9 @@ public:
         }
         
 	void load(FILE *inFile) {
-            SamSAMiFM<T>::load(inFile);
+            SamSAMiFMHWT<RANK32>::load(inFile);
             delete this->ht;
-            this->ht = new HT<HASHTYPE>();
+            this->ht = new HT32<HASHTYPE>();
             this->ht->load(inFile);
             this->setMinPatternLenForHash();
         }
@@ -2087,7 +1995,7 @@ public:
         }
         
 	unsigned int getIndexSize() {
-            return SamSAMiFM<T>::getIndexSize() + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + this->ht->getHTSize();
+            return SamSAMiFMHWT<RANK32>::getIndexSize() + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + this->ht->getHTSize();
         }
         
         void free() {
@@ -2096,7 +2004,7 @@ public:
         }
 
 	unsigned int count(unsigned char *pattern, unsigned int patternLen) {
-            if (patternLen < this->minPatternLenForHash) return SamSAMiFM<T>::count(pattern, patternLen);
+            if (patternLen < this->minPatternLenForHash) return SamSAMiFMHWT<RANK32>::count(pattern, patternLen);
             unsigned int beg, end, pos = 0;
             for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
                 if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
@@ -2109,14 +2017,7 @@ public:
             if (pos == 0) return end - beg;
             else {
                 if (beg == end) return 0;
-                switch(T) {
-                    case SamSAMiFMType::FM_1024:
-                        return count_WT2_1024_counter32(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
-                        break;
-                    default:
-                        return count_WT2_512_counter40(pattern, pos, this->c, this->wt, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1, this->code, this->codeLen);
-                        break;
-                }
+                return this->fm->count(pattern, pos, this->getSAPos(beg) + 1, this->getSAPos(end - 1) + 1);
             }
         }
 };

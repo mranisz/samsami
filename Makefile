@@ -17,9 +17,9 @@ countSamSAMi: test/countSamSAMi.cpp libsamsami.a libs/$(ASMLIB)
 locateSamSAMi: test/locateSamSAMi.cpp libsamsami.a libs/$(ASMLIB)
 	$(CXX) $(CFLAGS) test/locateSamSAMi.cpp libsamsami.a libs/$(ASMLIB) -o test/locateSamSAMi
 
-libsamsami.a: samsami.hpp shared/common.h shared/common.cpp shared/patterns.h shared/patterns.cpp shared/timer.h shared/timer.cpp shared/sais.h shared/sais.c shared/xxhash.h shared/xxhash.c shared/hash.hpp shared/wt.h shared/wt.cpp shared/huff.h shared/huff.cpp
-	$(CXX) $(CFLAGS) -c shared/common.cpp shared/patterns.cpp shared/timer.cpp shared/sais.c shared/xxhash.c shared/wt.cpp shared/huff.cpp
-	ar rcs libsamsami.a samsami.hpp common.o patterns.o timer.o sais.o xxhash.o wt.o huff.o shared/hash.hpp
+libsamsami.a: samsami.hpp shared/common.hpp shared/patterns.hpp shared/timer.hpp shared/sais.h shared/sais.c shared/xxhash.h shared/xxhash.c shared/hash.hpp shared/rank.hpp shared/wt.hpp shared/fm.hpp shared/huff.hpp
+	$(CXX) $(CFLAGS) -c shared/sais.c shared/xxhash.c
+	ar rcs libsamsami.a samsami.hpp sais.o xxhash.o shared/common.hpp shared/patterns.hpp shared/timer.hpp shared/hash.hpp shared/rank.hpp shared/wt.hpp shared/fm.hpp shared/huff.hpp
 	make cleanObjects
 
 cleanObjects:
