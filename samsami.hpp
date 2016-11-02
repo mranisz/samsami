@@ -66,7 +66,7 @@ protected:
             this->alignedSketches = NULL;
             this->sketchesLen = 0;
             this->bitShift = 0;
-        }
+            }
         
         void setQ(unsigned int q) {
             if (q == 0) {
@@ -225,7 +225,7 @@ protected:
             delete[] markers;
         }
         
-        inline unsigned int count_std(unsigned char *pattern, unsigned int patternLen) {
+        unsigned int count_std(unsigned char *pattern, unsigned int patternLen) {
             if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
@@ -246,7 +246,7 @@ protected:
             return count;
         }
         
-        inline unsigned int count_sketches(unsigned char *pattern, unsigned int patternLen) {
+        unsigned int count_sketches(unsigned char *pattern, unsigned int patternLen) {
             if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
@@ -266,7 +266,7 @@ protected:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
-                        }
+                            }
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
@@ -279,7 +279,7 @@ protected:
             return count;
         }
         
-        inline void locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        void locate_std(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
@@ -299,7 +299,7 @@ protected:
             }
         }
         
-        inline void locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+        void locate_sketches(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
             if (patternLen < this->q) {
                 cout << "Error: pattern length must be greater than " << (this->q - 1) << endl;
                 exit(1);
@@ -464,8 +464,8 @@ public:
             this->initialize();
         }
         
-	unsigned int getIndexSize() {
-            unsigned int size = sizeof(this->q) + sizeof(this->p) + sizeof(this->samSAMiLen) + sizeof(this->sketchesLen) + sizeof(this->bitShift);
+	unsigned long long getIndexSize() {
+            unsigned long long size = sizeof(this->q) + sizeof(this->p) + sizeof(this->samSAMiLen) + sizeof(this->sketchesLen) + sizeof(this->bitShift);
             if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
             if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
             if (this->sketchesLen > 0) size += (this->sketchesLen + 32) * sizeof(unsigned int);
@@ -707,7 +707,7 @@ public:
             this->initialize();
         }
         
-        unsigned int getIndexSize() {
+        unsigned long long getIndexSize() {
             return SamSAMi1<T>::getIndexSize() + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + this->ht->getHTSize();
         }
 
@@ -1148,7 +1148,7 @@ protected:
                             diffPos = this->alignedSamSAMi[i] >> 28;
                             if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
-                        }
+                            }
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
@@ -1517,7 +1517,7 @@ public:
             this->initialize();
         }
         
-	unsigned int getIndexSize() {
+	unsigned long long getIndexSize() {
             return SamSAMi2<T>::getIndexSize() + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + this->ht->getHTSize();
         }
         
@@ -1876,8 +1876,8 @@ public:
             this->initialize();
         }
         
-	unsigned int getIndexSize() {
-            unsigned int size = sizeof(this->q) + sizeof(this->p) + sizeof(this->l) + sizeof(this->samSAMiLen) + sizeof(this->MLen) + sizeof(HLen);
+	unsigned long long getIndexSize() {
+            unsigned long long size = sizeof(this->q) + sizeof(this->p) + sizeof(this->l) + sizeof(this->samSAMiLen) + sizeof(this->MLen) + sizeof(HLen);
             if (this->samSAMiLen > 0) size += (this->samSAMiLen + 32) * sizeof(unsigned int);
             if (this->textLen > 0) size += (this->textLen + this->q + 128 + 1) * sizeof(unsigned char);
             if (this->MLen > 0) size += (this->MLen + 32) * sizeof(unsigned int);
@@ -1994,7 +1994,7 @@ public:
             cout << "Done" << endl;
         }
         
-	unsigned int getIndexSize() {
+	unsigned long long getIndexSize() {
             return SamSAMiFMHWT<RANK32>::getIndexSize() + sizeof(this->minPatternLenForHash) + sizeof(this->ht) + this->ht->getHTSize();
         }
         
