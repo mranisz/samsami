@@ -113,7 +113,7 @@ protected:
             unsigned char *curr = new unsigned char[this->p + 1];
             minimizer[this->p] = '\0';
             curr[this->p] = '\0';
-            int pos = -1, prevPos = -1;
+            long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
                     for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
@@ -154,7 +154,7 @@ protected:
             unsigned char *curr = new unsigned char[this->p + 1];
             minimizer[this->p] = '\0';
             curr[this->p] = '\0';
-            int pos = -1, prevPos = -1;
+            long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
                     for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
@@ -266,7 +266,7 @@ protected:
                         patternSketch = getPatternSketch_8x2(this->bitShift, pattern, pos, sketchLen);
                         for (unsigned int i = beg; i < end; ++i) {
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
-                            }
+                        }
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
@@ -981,7 +981,7 @@ protected:
             unsigned char *curr = new unsigned char[this->p + 1];
             minimizer[this->p] = '\0';
             curr[this->p] = '\0';
-            int pos = -1, prevPos = -1;
+            long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
                     for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
@@ -1027,7 +1027,7 @@ protected:
             unsigned char *curr = new unsigned char[this->p + 1];
             minimizer[this->p] = '\0';
             curr[this->p] = '\0';
-            int pos = -1, prevPos = -1;
+            long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
                     for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
@@ -1148,7 +1148,7 @@ protected:
                             diffPos = this->alignedSamSAMi[i] >> 28;
                             if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
                             if (isSketchEqual_8x2(patternSketch, sketchLen, this->alignedSketches[i / 2], i) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
-                            }
+                        }
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
@@ -1643,7 +1643,7 @@ protected:
             unsigned char *curr = new unsigned char[this->p + 1];
             minimizer[this->p] = '\0';
             curr[this->p] = '\0';
-            int pos = -1, prevPos = -1;
+            long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
                     for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
