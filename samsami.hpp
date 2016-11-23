@@ -22,7 +22,6 @@ enum SamSAMiType {
 unsigned int markSketch_4x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex);
 unsigned int getBitShift_4(unsigned char *text, unsigned int textLen);
 unsigned int getPatternSketch_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen);
-bool isSketchEqual_4x4(unsigned int patternSketch, unsigned int sketchLen, unsigned int sketch);
 unsigned int markSketch_2x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex);
 unsigned int getPatternSketch_2x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen);
 bool isSketchEqual_2x4(unsigned int patternSketch, unsigned int sketchLen, unsigned char sketch);
@@ -259,8 +258,27 @@ protected:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                }
+                                break;
                         }
                         break;
                 }
@@ -312,8 +330,27 @@ protected:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
                         }
                         break;
                 }
@@ -566,8 +603,27 @@ private:
                             break;
                         default:
                             patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                            for (unsigned int i = beg; i < end; ++i) {
-                                if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                            switch (sketchLen) {
+                                case 4:
+                                    for (unsigned int i = beg; i < end; ++i) {
+                                        if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                    }
+                                    break;
+                                case 3:
+                                    for (unsigned int i = beg; i < end; ++i) {
+                                        if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                    }
+                                    break;
+                                case 2:
+                                    for (unsigned int i = beg; i < end; ++i) {
+                                        if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                    }
+                                    break;
+                                default:
+                                    for (unsigned int i = beg; i < end; ++i) {
+                                        if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) ++count;
+                                    }
+                                    break;
                             }
                             break;
                     }
@@ -623,8 +679,27 @@ private:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + this->alignedSamSAMi[i] - pos), pos) == 0) res.push_back(this->alignedSamSAMi[i] - pos);
+                                }
+                                break;
                         }
                         break;
                 }
@@ -1130,10 +1205,35 @@ protected:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            diffPos = this->alignedSamSAMi[i] >> 28;
-                            if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
                         }
                         break;
                 }
@@ -1197,10 +1297,35 @@ protected:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            diffPos = this->alignedSamSAMi[i] >> 28;
-                            if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
                         }
                         break;
                 }
@@ -1349,10 +1474,35 @@ private:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            diffPos = this->alignedSamSAMi[i] >> 28;
-                            if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) ++count;
+                                }
+                                break;
                         }
                         break;
                 }
@@ -1420,10 +1570,35 @@ private:
                         break;
                     default:
                         patternSketch = getPatternSketch_4x4(this->bitShift, pattern, pos, sketchLen);
-                        for (unsigned int i = beg; i < end; ++i) {
-                            diffPos = this->alignedSamSAMi[i] >> 28;
-                            if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
-                            if (isSketchEqual_4x4(patternSketch, sketchLen, (((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                        switch (sketchLen) {
+                            case 4:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 8) + this->alignedSketches[2 * i + 1])) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            case 3:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == ((((unsigned int)this->alignedSketches[2 * i]) << 4) + (this->alignedSketches[2 * i + 1] >> 4))) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            case 2:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)this->alignedSketches[2 * i]) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
+                            default:
+                                for (unsigned int i = beg; i < end; ++i) {
+                                    diffPos = this->alignedSamSAMi[i] >> 28;
+                                    if (diffPos != 0 && diffPos <= pos && prevPos != (pos - diffPos)) continue;
+                                    if ((patternSketch == (unsigned int)(this->alignedSketches[2 * i] >> 4)) && strncmp((const char *)pattern, (const char *)(this->alignedText + (this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos), pos) == 0) res.push_back((this->alignedSamSAMi[i] & 0x0FFFFFFF) - pos);
+                                }
+                                break;
                         }
                         break;
                 }
@@ -2058,11 +2233,6 @@ unsigned int getPatternSketch_4x4(unsigned int bitShift, unsigned char *pattern,
                 patternSketch += (((pattern[pos - i] >> bitShift) & 15) << (4 * (sketchLen - i)));
         }
         return patternSketch;
-}
-
-bool isSketchEqual_4x4(unsigned int patternSketch, unsigned int sketchLen, unsigned int sketch) {
-	if ((sketch >> (4 * (4 - sketchLen))) != patternSketch) return false;
-	return true;
 }
 
 unsigned int getPatternSketch_2x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen) {
