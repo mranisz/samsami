@@ -70,7 +70,6 @@ void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int
 Parameters:
 - T:
       - SAMSAMI_STANDARD
-      - SAMSAMI_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_2x4 - reduces the number of verifications using 2 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (2/(q-p+2))n bytes (quarter of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
@@ -93,7 +92,6 @@ SamSAMi1Hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled 
 Parameters:
 - T:
       - SAMSAMI_STANDARD
-      - SAMSAMI_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_2x4 - reduces the number of verifications using 2 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (2/(q-p+2))n bytes (quarter of the memory occupied by SamSAMi structure without text)
 - q - window length
@@ -122,7 +120,6 @@ To speed up searches, SamSAMi2 stores some extra data on 4 most significant bits
 Parameters:
 - T:
       - SAMSAMI_STANDARD
-      - SAMSAMI_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_2x4 - reduces the number of verifications using 2 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (2/(q-p+2))n bytes (quarter of the memory occupied by SamSAMi structure without text)
 - q - window length (default: q = 4)
@@ -145,7 +142,6 @@ SamSAMi2Hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled 
 Parameters:
 - T:
       - SAMSAMI_STANDARD
-      - SAMSAMI_SKETCHES_8x2 - reduces the number of verifications using 8 2-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_4x4 - reduces the number of verifications using 4 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (4/(q-p+2))n bytes (half of the memory occupied by SamSAMi structure without text)
       - SAMSAMI_SKETCHES_2x4 - reduces the number of verifications using 2 4-bits sketches of sampled suffix preceding symbols, on average the additional required memory is about (2/(q-p+2))n bytes (quarter of the memory occupied by SamSAMi structure without text)
 - q - window length
