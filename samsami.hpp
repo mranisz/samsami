@@ -1799,10 +1799,10 @@ protected:
             long long pos = -1, prevPos = -1;
 
             for (unsigned int i = 0; i < this->textLen - this->q + 1; ++i) {
-                    for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)255;
+                    for (unsigned int j = 0; j < this->p; ++j) minimizer[j] = (unsigned char)1;
                     for (unsigned int j = i; j < i + this->q - this->p + 1; ++j) {
                             strncpy((char *)curr, (const char *)(this->alignedText + j), this->p);
-                            if (strncmp((char *)curr, (const char *)minimizer, this->p) < 0) {
+                            if (strncmp((char *)curr, (const char *)minimizer, this->p) > 0) {
                                     strcpy((char *)minimizer, (const char *)curr);
                                     pos = j;
                             }
@@ -2050,7 +2050,7 @@ public:
             }
             unsigned int beg, end, pos = 0;
             for (unsigned int i = 1; i < this->q - this->p + 1; ++i) {
-                if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) < 0) {
+                if (strncmp((const char *)(pattern + i), (const char *)(pattern + pos), this->p) > 0) {
                     pos = i;
                 }
             }
