@@ -19,10 +19,10 @@ enum SamSAMiType {
         SAMSAMI_SKETCHES_2x4 = 4
 };
 
-unsigned int markSketch_4x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex);
 unsigned int getBitShift_4(unsigned char *text, unsigned int textLen);
-unsigned int getPatternSketch_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen);
+unsigned int markSketch_4x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex);
 unsigned int markSketch_2x4(unsigned char *text, unsigned int bitShift, unsigned int textIndex);
+unsigned int getPatternSketch_4x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen);
 unsigned int getPatternSketch_2x4(unsigned int bitShift, unsigned char *pattern, unsigned int pos, unsigned int &sketchLen);
 bool isSketchEqual_2x4(unsigned int patternSketch, unsigned int sketchLen, unsigned char sketch);
 unsigned int getUniqueSuffixNumForSamSAMi2(unsigned int k, unsigned char *text, unsigned int textLen, unsigned int *sa, unsigned int saLen, vector<unsigned char> selectedChars = {});
@@ -174,15 +174,14 @@ protected:
             this->samSAMi = new unsigned int[this->samSAMiLen + 32];
             this->alignedSamSAMi = this->samSAMi;
             while ((unsigned long long)this->alignedSamSAMi % 128) ++this->alignedSamSAMi;
-
+            this->bitShift = getBitShift_4(this->alignedText, this->textLen);
+            
             switch (T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_2x4:
                     this->sketchesLen = this->samSAMiLen;
-                    this->bitShift = getBitShift_4(this->alignedText, this->textLen);
                     break;
                 default:
                     this->sketchesLen = 2 * this->samSAMiLen;
-                    this->bitShift = getBitShift_4(this->alignedText, this->textLen);
                     break;
             }
             this->sketches = new unsigned char[this->sketchesLen + 128];
@@ -1114,15 +1113,14 @@ protected:
             this->samSAMi = new unsigned int[this->samSAMiLen + 32];
             this->alignedSamSAMi = this->samSAMi;
             while ((unsigned long long)this->alignedSamSAMi % 128) ++this->alignedSamSAMi;
+            this->bitShift = getBitShift_4(this->alignedText, this->textLen);
 
             switch (T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_2x4:
                     this->sketchesLen = this->samSAMiLen;
-                    this->bitShift = getBitShift_4(this->alignedText, this->textLen);
                     break;
                 default:
                     this->sketchesLen = 2 * this->samSAMiLen;
-                    this->bitShift = getBitShift_4(this->alignedText, this->textLen);
                     break;
             }
             this->sketches = new unsigned char[this->sketchesLen + 128];
