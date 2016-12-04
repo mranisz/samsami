@@ -14,22 +14,22 @@ ChronoStopWatch timer;
 
 void samSAMi1(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi1Sketches2x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi1Sketches4x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi2Sketches2x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi2Sketches4x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi1HashSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi1HashSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi2HashSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi2HashSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi1HashDense(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi1HashDenseSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi1HashDenseSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2HashDense(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
-void samSAMi2HashDenseSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
+void samSAMi2HashDenseSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMiFMHWTBasic(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMiFMHWTBch(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
 void samSAMiFMHWTCf(string q, string p, string l, const char *textFileName, unsigned int queriesNum, unsigned int m);
@@ -53,22 +53,22 @@ void getUsage(char **argv) {
 	cout << "Select index you want to test (count):" << endl;
 	cout << "SamSAMi1: " << argv[0] << " 1 q p fileName patternNum patternLen" << endl;
 	cout << "SamSAMi1-sketches4x4: " << argv[0] << " 1-4x4 q p fileName patternNum patternLen" << endl;
-	cout << "SamSAMi1-sketches2x4: " << argv[0] << " 1-2x4 q p fileName patternNum patternLen" << endl;
+	cout << "SamSAMi1-sketches4x2: " << argv[0] << " 1-4x2 q p fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2: " << argv[0] << " 2 q p fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-sketches4x4: " << argv[0] << " 2-4x4 q p fileName patternNum patternLen" << endl;
-	cout << "SamSAMi2-sketches2x4: " << argv[0] << " 2-2x4 q p fileName patternNum patternLen" << endl;
+	cout << "SamSAMi2-sketches4x2: " << argv[0] << " 2-4x2 q p fileName patternNum patternLen" << endl;
 	cout << "SamSAMi1-hash: " << argv[0] << " 1-hash q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi1-hash-sketches4x4: " << argv[0] << " 1-hash-4x4 q p k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMi1-hash-sketches2x4: " << argv[0] << " 1-hash-2x4 q p k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi1-hash-sketches4x2: " << argv[0] << " 1-hash-4x2 q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash: " << argv[0] << " 2-hash q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash-sketches4x4: " << argv[0] << " 2-hash-4x4 q p k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMi2-hash-sketches2x4: " << argv[0] << " 2-hash-2x4 q p k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi2-hash-sketches4x2: " << argv[0] << " 2-hash-4x2 q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi1-hash-dense: " << argv[0] << " 1-hash-dense q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi1-hash-dense-sketches4x4: " << argv[0] << " 1-hash-dense-4x4 q p k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMi1-hash-dense-sketches2x4: " << argv[0] << " 1-hash-dense-2x4 q p k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi1-hash-dense-sketches4x2: " << argv[0] << " 1-hash-dense-4x2 q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash-dense: " << argv[0] << " 2-hash-dense q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMi2-hash-dense-sketches4x4: " << argv[0] << " 2-hash-dense-4x4 q p k loadFactor fileName patternNum patternLen" << endl;
-	cout << "SamSAMi2-hash-dense-sketches2x4: " << argv[0] << " 2-hash-dense-2x4 q p k loadFactor fileName patternNum patternLen" << endl;
+	cout << "SamSAMi2-hash-dense-sketches4x2: " << argv[0] << " 2-hash-dense-4x2 q p k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMiFMHWT: " << argv[0] << " FMHWT-basic|FMHWT-bch|FMHWT-cf|FMHWT-mpe1|FMHWT-mpe2|FMHWT-mpe3 q p l fileName patternNum patternLen" << endl;
 	cout << "SamSAMiFMHWT-hash: " << argv[0] << " FMHWT-hash-basic|FMHWT-hash-bch|FMHWT-hash-cf|FMHWT-hash-mpe1|FMHWT-hash-mpe2|FMHWT-hash-mpe3 q p l k loadFactor fileName patternNum patternLen" << endl;
 	cout << "SamSAMiFMHWT-hash-dense: " << argv[0] << " FMHWT-hash-dense-basic|FMHWT-hash-dense-bch|FMHWT-hash-dense-cf|FMHWT-hash-dense-mpe1|FMHWT-hash-dense-mpe2|FMHWT-hash-dense-mpe3 q p l k loadFactor fileName patternNum patternLen" << endl;
@@ -90,22 +90,22 @@ int main(int argc, char *argv[]) {
 	}
     if (string(argv[1]) == "1") samSAMi1(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
 	if (string(argv[1]) == "1-4x4") samSAMi1Sketches4x4(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
-	if (string(argv[1]) == "1-2x4") samSAMi1Sketches2x4(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
+	if (string(argv[1]) == "1-4x2") samSAMi1Sketches4x2(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
 	if (string(argv[1]) == "2") samSAMi2(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
 	if (string(argv[1]) == "2-4x4") samSAMi2Sketches4x4(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
-	if (string(argv[1]) == "2-2x4") samSAMi2Sketches2x4(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
+	if (string(argv[1]) == "2-4x2") samSAMi2Sketches4x2(string(argv[2]), string(argv[3]), argv[4], atoi(argv[5]), atoi(argv[6]));
 	if (string(argv[1]) == "1-hash") samSAMi1Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "1-hash-4x4") samSAMi1HashSketches4x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
-	if (string(argv[1]) == "1-hash-2x4") samSAMi1HashSketches2x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
+	if (string(argv[1]) == "1-hash-4x2") samSAMi1HashSketches4x2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash") samSAMi2Hash(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash-4x4") samSAMi2HashSketches4x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
-	if (string(argv[1]) == "2-hash-2x4") samSAMi2HashSketches2x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
+	if (string(argv[1]) == "2-hash-4x2") samSAMi2HashSketches4x2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "1-hash-dense") samSAMi1HashDense(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "1-hash-dense-4x4") samSAMi1HashDenseSketches4x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
-	if (string(argv[1]) == "1-hash-dense-2x4") samSAMi1HashDenseSketches2x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
+	if (string(argv[1]) == "1-hash-dense-4x2") samSAMi1HashDenseSketches4x2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash-dense") samSAMi2HashDense(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "2-hash-dense-4x4") samSAMi2HashDenseSketches4x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
-	if (string(argv[1]) == "2-hash-dense-2x4") samSAMi2HashDenseSketches2x4(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
+	if (string(argv[1]) == "2-hash-dense-4x2") samSAMi2HashDenseSketches4x2(string(argv[2]), string(argv[3]), string(argv[4]), string(argv[5]), argv[6], atoi(argv[7]), atoi(argv[8]));
 	if (string(argv[1]) == "FMHWT-basic") samSAMiFMHWTBasic(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
 	if (string(argv[1]) == "FMHWT-bch") samSAMiFMHWTBch(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
 	if (string(argv[1]) == "FMHWT-cf") samSAMiFMHWTCf(string(argv[2]), string(argv[3]), string(argv[4]), argv[5], atoi(argv[6]), atoi(argv[7]));
@@ -224,9 +224,9 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
     exit(0);
 }
 
-void samSAMi1Sketches2x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1<SAMSAMI_SKETCHES_2x4> *samSAMi = new SamSAMi1<SAMSAMI_SKETCHES_2x4>(atoi(q.c_str()), atoi(p.c_str()));
-    string indexFileNameString = "SamSAMi1-2x4-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
+void samSAMi1Sketches4x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi1<SAMSAMI_SKETCHES_4x2> *samSAMi = new SamSAMi1<SAMSAMI_SKETCHES_4x2>(atoi(q.c_str()), atoi(p.c_str()));
+    string indexFileNameString = "SamSAMi1-4x2-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -253,8 +253,8 @@ void samSAMi1Sketches2x4(string q, string p, const char *textFileName, unsigned 
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi1-2x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi1-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -368,9 +368,9 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
     exit(0);
 }
 
-void samSAMi2Sketches2x4(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2<SAMSAMI_SKETCHES_2x4> *samSAMi = new SamSAMi2<SAMSAMI_SKETCHES_2x4>(atoi(q.c_str()), atoi(p.c_str()));
-    string indexFileNameString = "SamSAMi2-2x4-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
+void samSAMi2Sketches4x2(string q, string p, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi2<SAMSAMI_SKETCHES_4x2> *samSAMi = new SamSAMi2<SAMSAMI_SKETCHES_4x2>(atoi(q.c_str()), atoi(p.c_str()));
+    string indexFileNameString = "SamSAMi2-4x2-" + (string)textFileName + "-" +  q + "-" + p + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -397,8 +397,8 @@ void samSAMi2Sketches2x4(string q, string p, const char *textFileName, unsigned 
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi2-2x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi2-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -512,9 +512,9 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
     exit(0);
 }
 
-void samSAMi1HashSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SAMSAMI_SKETCHES_2x4, HT_STANDARD> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_2x4, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMi1-2x4-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMi1HashSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi1Hash<SAMSAMI_SKETCHES_4x2, HT_STANDARD> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_4x2, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMi1-4x2-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -541,8 +541,8 @@ void samSAMi1HashSketches2x4(string q, string p, string k, string loadFactor, co
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi1-hash-2x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi1-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -656,9 +656,9 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
     exit(0);
 }
 
-void samSAMi2HashSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SAMSAMI_SKETCHES_2x4, HT_STANDARD> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_2x4, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMi2-2x4-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMi2HashSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi2Hash<SAMSAMI_SKETCHES_4x2, HT_STANDARD> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_4x2, HT_STANDARD>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMi2-4x2-hash-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -685,8 +685,8 @@ void samSAMi2HashSketches2x4(string q, string p, string k, string loadFactor, co
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi2-hash-2x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi2-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -800,9 +800,9 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
     exit(0);
 }
 
-void samSAMi1HashDenseSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi1Hash<SAMSAMI_SKETCHES_2x4, HT_DENSE> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_2x4, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMi1-2x4-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMi1HashDenseSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi1Hash<SAMSAMI_SKETCHES_4x2, HT_DENSE> *samSAMi = new SamSAMi1Hash<SAMSAMI_SKETCHES_4x2, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMi1-4x2-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -829,8 +829,8 @@ void samSAMi1HashDenseSketches2x4(string q, string p, string k, string loadFacto
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi1-hash-dense-2x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi1-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
@@ -944,9 +944,9 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
     exit(0);
 }
 
-void samSAMi2HashDenseSketches2x4(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
-	SamSAMi2Hash<SAMSAMI_SKETCHES_2x4, HT_DENSE> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_2x4, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
-    string indexFileNameString = "SamSAMi2-2x4-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
+void samSAMi2HashDenseSketches4x2(string q, string p, string k, string loadFactor, const char *textFileName, unsigned int queriesNum, unsigned int m) {
+	SamSAMi2Hash<SAMSAMI_SKETCHES_4x2, HT_DENSE> *samSAMi = new SamSAMi2Hash<SAMSAMI_SKETCHES_4x2, HT_DENSE>(atoi(q.c_str()), atoi(p.c_str()), atoi(k.c_str()), atof(loadFactor.c_str()));
+    string indexFileNameString = "SamSAMi2-4x2-hash-dense-" + (string)textFileName + "-" +  q + "-" + p + "-" +  k + "-" + loadFactor + ".idx";
 	const char *indexFileName = indexFileNameString.c_str();
 
 	if (fileExists(indexFileName)) {
@@ -973,8 +973,8 @@ void samSAMi2HashDenseSketches2x4(string q, string p, string k, string loadFacto
 	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
-	cout << "count SamSAMi2-hash-dense-2x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
-	resultFile << m << " " << queriesNum << " 2x4 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
+	cout << "count SamSAMi2-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
+	resultFile << m << " " << queriesNum << " 4x2 " << q << " " << p << " " << k << " " << loadFactor << " " << size << " " << timer.getElapsedTime();
 
 	unsigned int differences = P->getErrorCountsNumber(indexCounts);
 	if (differences > 0) {
