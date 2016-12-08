@@ -154,10 +154,10 @@ protected:
                 return left.second > right.second;
             });
             
-            unsigned int sum = 0, label = 0, sketchesNum = 16;
+            unsigned long long sum = 0, label = 0, sketchesNum = 16;
             if (T == SamSAMiType::SAMSAMI_SKETCHES_4x2) sketchesNum = 4;
             for (unsigned int i = 0; i < 256; ++i) {
-                if (sum >= (((label + 1) * this->textLen) / sketchesNum)) {
+                if (sum >= (((label + 1) * (unsigned long long)this->textLen) / sketchesNum)) {
                     ++label;
                 }
                 if (vecFreq[i].second > 0) {
@@ -1110,10 +1110,10 @@ protected:
                 return left.second > right.second;
             });
             
-            unsigned int sum = 0, label = 0, sketchesNum = 16;
+            unsigned long long sum = 0, label = 0, sketchesNum = 16;
             if (T == SamSAMiType::SAMSAMI_SKETCHES_4x2) sketchesNum = 4;
             for (unsigned int i = 0; i < 256; ++i) {
-                if (sum >= (((label + 1) * this->textLen) / sketchesNum)) {
+                if (sum >= (((label + 1) * (unsigned long long)this->textLen) / sketchesNum)) {
                     ++label;
                 }
                 if (vecFreq[i].second > 0) {
