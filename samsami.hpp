@@ -929,7 +929,7 @@ private:
                             if (this->alignedBoundariesHT[hash] == HTBase::emptyValueHT) {
                                     beg = this->lut2[pattern[0]][pattern[1]][0];
                                     end = this->lut2[pattern[0]][pattern[1]][1];
-                                    step = (unsigned int)ceil(((double)end + 1 - beg) / 65535);
+                                    step = (unsigned int)ceil(((double)end - beg) / 65535);
                                     this->alignedBoundariesHT[hash] = i;
                                     break;
                             }
@@ -983,7 +983,7 @@ private:
                     while (true) {
                             leftBoundary = this->alignedBoundariesHT[hash];
                             if (leftBoundary >= leftBoundaryLUT2 && leftBoundary < rightBoundaryLUT2 && strncmp((const char *)pattern, (const char *)(text + (sa[leftBoundary] & 0x0FFFFFFF)), this->k) == 0) {
-                                    step = (unsigned int)ceil(((double)rightBoundaryLUT2 + 1 - leftBoundaryLUT2) / 65535);
+                                    step = (unsigned int)ceil(((double)rightBoundaryLUT2 - leftBoundaryLUT2) / 65535);
                                     if ((hash & 1) == 0) rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] >> 16) * step + leftBoundaryLUT2;
                                     else rightBoundary = (this->alignedDenseBoundariesHT[hash / 2] & 0xFFFF) * step + leftBoundaryLUT2;
                                     break;
