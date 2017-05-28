@@ -1,11 +1,11 @@
 # SamSAMi text indexes library
 
-##What is it?
+## What is it?
 The SamSAMi text indexes are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
 
 SamSAMi1 uses 5n bytes of RAM in the worst case (which is however unlikely). This includes 1n bytes for the input text and 4n bytes for the index. Typically its memory use depends on the parameters q, p and on average the required memory is about 1n+8/(q-p+2)n bytes.
 
-##Requirements
+## Requirements
 The SamSAMi text indexes require:
 - C++11 ready compiler such as g++ version 4.7 or higher
 - a 64-bit operating system
@@ -14,7 +14,7 @@ The SamSAMi text indexes require:
     - < 512MB for SamSAMiFMHWT
     - < 256MB for SamSAMi2
 
-##Installation
+## Installation
 To download and build the library use the following commands:
 ```
 git clone https://github.com/mranisz/samsami.git
@@ -22,7 +22,7 @@ cd samsami
 make
 ```
 
-##Usage
+## Usage
 To use the SamSAMi library:
 - include "samsami/samsami.hpp" to your project
 - compile it with "-std=c++11 -O3 -mpopcnt" options and link it with libraries:
@@ -30,7 +30,7 @@ To use the SamSAMi library:
   - samsami/libs/libaelf64.a (linux) or samsami/libs/libacof64.lib (windows)
 - use "samsami" and "shared" namespaces
 
-##API
+## API
 There are several functions you can call on each of the FBCSA text index:
 - **build** the index using text file called textFileName:
 ```
@@ -65,7 +65,7 @@ unsigned int count(unsigned char *pattern, unsigned int patternLen);
 void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res);
 ```
 
-##SamSAMi1\<SamSAMiType T\>
+## SamSAMi1\<SamSAMiType T\>
 
 Parameters:
 - T:
@@ -86,7 +86,7 @@ SamSAMi1<SamSAMiType T>();
 SamSAMi1<SamSAMiType T>(unsigned int q, unsigned int p);
 ```
 
-##SamSAMi1Hash\<SamSAMiType T, HTType HASHTYPE\>
+## SamSAMi1Hash\<SamSAMiType T, HTType HASHTYPE\>
 SamSAMi1Hash is SamSAMi1 with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
 
 Parameters:
@@ -114,7 +114,7 @@ Constructors:
 SamSAMi1<SamSAMiType T, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int k, double loadFactor);
 ```
 
-##SamSAMi2\<SamSAMiType T\> 
+## SamSAMi2\<SamSAMiType T\> 
 To speed up searches, SamSAMi2 stores some extra data on 4 most significant bits in each SamSAMi offset (this is the reason for which the longest indexed text for SamSAMi2 is limited in our implementation to 256 MB only).
 
 Parameters:
@@ -136,7 +136,7 @@ SamSAMi2<SamSAMiType T>();
 SamSAMi2<SamSAMiType T>(unsigned int q, unsigned int p);
 ```
 
-##SamSAMi2Hash\<SamSAMiType T, HTType HASHTYPE\>
+## SamSAMi2Hash\<SamSAMiType T, HTType HASHTYPE\>
 SamSAMi2Hash is SamSAMi2 with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
 
 Parameters:
@@ -164,7 +164,7 @@ Constructors:
 SamSAMi2<SamSAMiType T, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int k, double loadFactor);
 ```
 
-##SamSAMiFMHWT\<class RANK32\>
+## SamSAMiFMHWT\<class RANK32\>
 SamSAMiFMHWT is a hybrid of SamSAMi and FM. To speed up the verification phase (which is costly for short patterns in standard SamSAMi indexes), the FM index (employing a binary Huffman-shaped wavelet tree) is used.
 The current version handles only the count query.
 
@@ -191,7 +191,7 @@ SamSAMiFMHWT<class RANK32>();
 SamSAMiFMHWT<class RANK32>(unsigned int q, unsigned int p, unsigned int l);
 ```
 
-##SamSAMiFMHWTHash\<class RANK32, HTType HASHTYPE\>
+## SamSAMiFMHWTHash\<class RANK32, HTType HASHTYPE\>
 SamSAMiFMHWTHash is SamSAMiFMHWT with hashed k-symbol prefixes of suffixes from sampled suffix array to speed up searches (k ≥ 2). This variant is particularly efficient in speed for short patterns (not much longer than max(q, k + q - p)).
 
 Parameters:
@@ -223,7 +223,7 @@ Constructors:
 SamSAMiFMHWTHash<class RANK32, HTType HASHTYPE>(unsigned int q, unsigned int p, unsigned int l, unsigned int k, double loadFactor);
 ```
 
-##SamSAMi1 usage example
+## SamSAMi1 usage example
 ```
 #include <iostream>
 #include <stdlib.h>
@@ -265,11 +265,11 @@ int main(int argc, char *argv[]) {
 ```
 Using other SamSAMi indexes is analogous.
 
-##External resources used in SamSAMi project
+## External resources used in SamSAMi project
 - Suffix array building by Yuta Mori (sais)
 - A multi-platform library of highly optimized functions for C and C++ by Agner Fog (asmlib)
 - A very fast hash function by Yann Collet (xxHash)
 
-##Authors
+## Authors
 - Szymon Grabowski
 - [Marcin Raniszewski](https://github.com/mranisz)
