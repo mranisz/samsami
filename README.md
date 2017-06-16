@@ -8,7 +8,7 @@ SamSAMi1 uses 5n bytes of RAM in the worst case (which is however unlikely). Thi
 ## Requirements
 The SamSAMi text indexes require:
 - C++11 ready compiler such as g++ version 4.7 or higher
-- a 64-bit operating system
+- a 64-bit UNIX operating system
 - text size:
     - < 2GB for SamSAMi1
     - < 512MB for SamSAMiFMHWT
@@ -27,7 +27,7 @@ To use the SamSAMi library:
 - include "samsami/samsami.hpp" to your project
 - compile it with "-std=c++11 -O3 -mpopcnt" options and link it with libraries:
   - samsami/libsamsami.a
-  - samsami/libs/libaelf64.a (linux) or samsami/libs/libacof64.lib (windows)
+  - samsami/libs/libaelf64.a
 - use "samsami" and "shared" namespaces
 
 ## API
