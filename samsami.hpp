@@ -535,6 +535,7 @@ public:
         }
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+            res.reserve(256);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_4x2:
@@ -544,6 +545,7 @@ public:
                     this->locate_std(pattern, patternLen, res);
                     break;
             }
+            res.shrink_to_fit();
         }
 };
 
@@ -808,6 +810,7 @@ public:
         }
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+            res.reserve(256);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_4x2:
@@ -817,6 +820,7 @@ public:
                     this->locate_std(pattern, patternLen, res);
                     break;
             }
+            res.shrink_to_fit();
         }
         
 };
@@ -1420,6 +1424,7 @@ public:
         }
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+            res.reserve(256);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_4x2:
@@ -1429,6 +1434,7 @@ public:
                     this->locate_std(pattern, patternLen, res);
                     break;
             }
+            res.shrink_to_fit();
         }
 };
 
@@ -1727,6 +1733,7 @@ public:
         }
         
 	void locate(unsigned char* pattern, unsigned int patternLen, vector<unsigned int>& res) {
+            res.reserve(256);
             switch(T) {
                 case SamSAMiType::SAMSAMI_SKETCHES_4x4:
                 case SamSAMiType::SAMSAMI_SKETCHES_4x2:
@@ -1736,6 +1743,7 @@ public:
                     this->locate_std(pattern, patternLen, res);
                     break;
             }
+            res.shrink_to_fit();
         }
         
 };
