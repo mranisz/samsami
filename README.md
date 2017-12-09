@@ -1,7 +1,7 @@
 # SamSAMi text indexes library
 
 ## What is it?
-The SamSAMi text indexes are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
+The SamSAMi text indexes \[[1](#references)\] are variations of the sampled suffix array, which uses only a subset of the offsets in the suffix array yet allows to search for a pattern relatively fast. The novelty of the SamSAMi (Sampled Suffix Array with Minimizers) idea is to select the offset subset in such a way that allows to search for the pattern with only a single binary search over the suffixes (followed with verifications).
 
 SamSAMi1 uses 5n bytes of RAM in the worst case (which is however unlikely). This includes 1n bytes for the input text and 4n bytes for the index. Typically its memory use depends on the parameters q, p and on average the required memory is about 1n+8/(q-p+2)n bytes.
 
@@ -269,6 +269,9 @@ Using other SamSAMi indexes is analogous.
 - Suffix array building by Yuta Mori (sais)
 - A multi-platform library of highly optimized functions for C and C++ by Agner Fog (asmlib)
 - A very fast hash function by Yann Collet (xxHash)
+
+## References
+1. Sz. Grabowski, M. Raniszewski. Sampled suffix array with minimizers. Software: Practice & Experience, vol. 47, no. 11, pp. 1755-1771 (2017).
 
 ## Authors
 - Szymon Grabowski
