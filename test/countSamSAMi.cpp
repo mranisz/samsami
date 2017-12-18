@@ -154,7 +154,7 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-std-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -202,7 +202,7 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-4x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -250,7 +250,7 @@ void samSAMi1Sketches4x2(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -298,7 +298,7 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-std-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -346,7 +346,7 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-4x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -394,7 +394,7 @@ void samSAMi2Sketches4x2(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -442,7 +442,7 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -490,7 +490,7 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -538,7 +538,7 @@ void samSAMi1HashSketches4x2(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -586,7 +586,7 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -634,7 +634,7 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -682,7 +682,7 @@ void samSAMi2HashSketches4x2(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -730,7 +730,7 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-dense-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -778,7 +778,7 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-dense-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -826,7 +826,7 @@ void samSAMi1HashDenseSketches4x2(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi1-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -874,7 +874,7 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-dense-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -922,7 +922,7 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-dense-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -970,7 +970,7 @@ void samSAMi2HashDenseSketches4x2(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMi2-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1018,7 +1018,7 @@ void samSAMiFMHWTBasic(string q, string p, string l, const char *textFileName, u
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-basic-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1066,7 +1066,7 @@ void samSAMiFMHWTBch(string q, string p, string l, const char *textFileName, uns
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-bch-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1114,7 +1114,7 @@ void samSAMiFMHWTCf(string q, string p, string l, const char *textFileName, unsi
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-cf-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1162,7 +1162,7 @@ void samSAMiFMHWTMpe1(string q, string p, string l, const char *textFileName, un
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-mpe1-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1210,7 +1210,7 @@ void samSAMiFMHWTMpe2(string q, string p, string l, const char *textFileName, un
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-mpe2-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1258,7 +1258,7 @@ void samSAMiFMHWTMpe3(string q, string p, string l, const char *textFileName, un
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-mpe3-" << q << "-" << p << "-" << l << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1306,7 +1306,7 @@ void samSAMiFMHWTHashBasic(string q, string p, string l, string k, string loadFa
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-basic-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1354,7 +1354,7 @@ void samSAMiFMHWTHashBch(string q, string p, string l, string k, string loadFact
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-bch-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1402,7 +1402,7 @@ void samSAMiFMHWTHashCf(string q, string p, string l, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-cf-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1450,7 +1450,7 @@ void samSAMiFMHWTHashMpe1(string q, string p, string l, string k, string loadFac
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-mpe1-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1498,7 +1498,7 @@ void samSAMiFMHWTHashMpe2(string q, string p, string l, string k, string loadFac
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-mpe2-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1546,7 +1546,7 @@ void samSAMiFMHWTHashMpe3(string q, string p, string l, string k, string loadFac
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFMHWT-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFM-hash-mpe3-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1594,7 +1594,7 @@ void samSAMiFMHWTHashDenseBasic(string q, string p, string l, string k, string l
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-basic-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1642,7 +1642,7 @@ void samSAMiFMHWTHashDenseBch(string q, string p, string l, string k, string loa
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-bch-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1690,7 +1690,7 @@ void samSAMiFMHWTHashDenseCf(string q, string p, string l, string k, string load
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-cf-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1738,7 +1738,7 @@ void samSAMiFMHWTHashDenseMpe1(string q, string p, string l, string k, string lo
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-mpe1-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1786,7 +1786,7 @@ void samSAMiFMHWTHashDenseMpe2(string q, string p, string l, string k, string lo
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-mpe2-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -1834,7 +1834,7 @@ void samSAMiFMHWTHashDenseMpe3(string q, string p, string l, string k, string lo
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_count_SamSAMiFM-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "count SamSAMiFMHWT-hash-dense-mpe3-" << q << "-" << p << "-" << l << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;

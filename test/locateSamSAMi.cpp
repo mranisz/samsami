@@ -114,7 +114,7 @@ void samSAMi1(string q, string p, const char *textFileName, unsigned int queries
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-std-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -162,7 +162,7 @@ void samSAMi1Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-4x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -210,7 +210,7 @@ void samSAMi1Sketches4x2(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -258,7 +258,7 @@ void samSAMi2(string q, string p, const char *textFileName, unsigned int queries
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-std-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -306,7 +306,7 @@ void samSAMi2Sketches4x4(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-4x4-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -354,7 +354,7 @@ void samSAMi2Sketches4x2(string q, string p, const char *textFileName, unsigned 
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-4x2-" << q << "-" << p << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -402,7 +402,7 @@ void samSAMi1Hash(string q, string p, string k, string loadFactor, const char *t
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -450,7 +450,7 @@ void samSAMi1HashSketches4x4(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -498,7 +498,7 @@ void samSAMi1HashSketches4x2(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -546,7 +546,7 @@ void samSAMi2Hash(string q, string p, string k, string loadFactor, const char *t
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -594,7 +594,7 @@ void samSAMi2HashSketches4x4(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -642,7 +642,7 @@ void samSAMi2HashSketches4x2(string q, string p, string k, string loadFactor, co
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -690,7 +690,7 @@ void samSAMi1HashDense(string q, string p, string k, string loadFactor, const ch
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-dense-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -738,7 +738,7 @@ void samSAMi1HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-dense-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -786,7 +786,7 @@ void samSAMi1HashDenseSketches4x2(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi1-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi1-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -834,7 +834,7 @@ void samSAMi2HashDense(string q, string p, string k, string loadFactor, const ch
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-dense-std-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -882,7 +882,7 @@ void samSAMi2HashDenseSketches4x4(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-dense-4x4-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
@@ -930,7 +930,7 @@ void samSAMi2HashDenseSketches4x2(string q, string p, string k, string loadFacto
 	}
 	timer.stopTimer();
 
-	string resultFileName = "results/samsami/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
+	string resultFileName = "results/" + string(textFileName) + "_locate_SamSAMi2-hash-dense.txt";
 	fstream resultFile(resultFileName.c_str(), ios::out | ios::binary | ios::app);
 	double size = (double)samSAMi->getIndexSize() / (double)samSAMi->getTextSize();
 	cout << "locate SamSAMi2-hash-dense-4x2-" << q << "-" << p << "-" << k << "-" << loadFactor << " " << textFileName << " m=" << m << " queries=" << queriesNum << " size=" << size << "n time=" << timer.getElapsedTime() << endl;
